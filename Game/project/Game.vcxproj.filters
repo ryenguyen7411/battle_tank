@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="..\source\Game.h">
+      <Filter>MainGame</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\stdafx.h">
+      <Filter>Supports</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\config.h">
+      <Filter>Supports</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\support.h">
+      <Filter>Supports</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Map.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\ResourcesManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Entity.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Components.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Factory.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Singleton.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\EntitiesSystem.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source\Game.cpp">
+      <Filter>MainGame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\main.cpp">
+      <Filter>MainGame</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\stdafx.cpp">
+      <Filter>Supports</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\support.cpp">
+      <Filter>Supports</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Map.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\ResourcesManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Components.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Entity.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\EntitiesSystem.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Factory.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="MainGame">
+      <UniqueIdentifier>{dcb18555-6c94-44a0-a07e-58f3e33e718c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{eafe34f9-6f51-4ef5-a760-699c41f50ac5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StateMachine">
+      <UniqueIdentifier>{86f54f66-c9c4-4347-b40b-250e9b450781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities">
+      <UniqueIdentifier>{1e40f598-ede4-45d2-9c90-50ac1bfc3f69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{ec6f88a8-d834-4e20-bdae-584c92c9178a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Supports">
+      <UniqueIdentifier>{1c9f8dca-1518-4fb3-b2e9-6cf614bdf4bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{93a87f34-80ea-4ddf-ae6c-d6a8cd250550}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\source\Note.txt">
+      <Filter>Supports</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

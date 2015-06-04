@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{c2352185-258d-40f1-9e67-c4c18c66714f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Video">
+      <UniqueIdentifier>{a57b4f87-002e-42d6-bc6d-f86dfe47005b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{f76151fa-4f0d-4ac0-a848-e9677f2a980c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\STDIO_FW\stdio_fw.h" />
+    <ClInclude Include="..\include\STDIO_FW\macros.h" />
+    <ClInclude Include="..\include\STDIO_FW\Core\Application.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\STDIO_FW\Video\Graphics.h">
+      <Filter>Video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\STDIO_FW\Video\Image.h">
+      <Filter>Video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\STDIO_FW\defined.h" />
+    <ClInclude Include="..\include\STDIO_FW\Video\Font.h">
+      <Filter>Video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\STDIO_FW\Utils\stdio_math.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\STDIO_FW\types.h" />
+    <ClInclude Include="..\include\STDIO_FW\Utils\AffineTransform.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source\Core\Application.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Video\Graphics.cpp">
+      <Filter>Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Video\Image.cpp">
+      <Filter>Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\stdio_fw.cpp" />
+    <ClCompile Include="..\source\Video\Font.cpp">
+      <Filter>Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Utils\stdio_math.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Utils\AffineTransform.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
