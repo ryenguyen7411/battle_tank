@@ -1,0 +1,268 @@
+#include "stdafx.h"
+#include "Entity.h"
+#include "EntitiesSystem.h"
+#include "Factory.h"
+#include <ctime>
+
+#include "Scripts.h"
+
+#pragma region TankController
+TankController::TankController(Tank _tankType)
+{
+	m_type = CompType::COMP_TANKCONTROLLER;
+
+	m_tank = _tankType;
+	m_bullet = Bullet::BULLET_NORMAL;
+
+	switch(m_tank)
+	{
+		case Tank::TANK_NORMAL:
+			m_speed = 5.0f;
+			m_damage = 20.0f;
+
+			m_shootSpeed = 10.0f;
+			m_shootRange = 400.0f;
+			m_shootDelay = 1.0f;
+			break;
+		case Tank::TANK_DEFENSE:
+			m_speed = 2.0f;
+			m_damage = 80.0f;
+
+			m_shootSpeed = 10.0f;
+			m_shootRange = 200.0f;
+			m_shootDelay = 4.0f;
+			break;
+		case Tank::TANK_BOLT:
+			m_speed = 8.0f;
+			m_damage = 20.0f;
+
+			m_shootSpeed = 20.0f;
+			m_shootRange = 300.0f;
+			m_shootDelay = 0.5f;
+			break;
+	}
+
+	m_previousTime = clock();
+	m_canShoot = true;
+	m_lockDirection = Direction::DIR_NONE;
+}
+
+TankController::~TankController()
+{
+
+}
+
+void TankController::Update()
+{
+	if(m_control == Control::CTRL_ARROW)
+	{
+		std::vector<Component*> collider2dList = m_parent->GetComponents(CompType::COMP_COLLIDER2D);
+		Entity* entity = NULL;
+
+		for(int i = 0; i < collider2dList.size(); i++)
+		{
+			entity = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
+			if(entity && entity->IsTaggedAs("Tank"))
+				break;
+		}
+
+		if(GetAsyncKeyState(VK_UP))
+		{
+			if(m_lockDirection != Direction::DIR_UP)
+			{
+				if(m_lockDirection == Direction::DIR_LEFT)
+					m_parent->m_transform->m_position.x = entity->m_transform->m_position.x + 33;
+				if(m_lockDirection == Direction::DIR_RIGHT)
+					m_parent->m_transform->m_position.x = entity->m_transform->m_position.x - 33;
+
+				m_parent->m_transform->m_position.y -= m_speed;
+			}
+			m_direction = Direction::DIR_UP;
+			m_lockDirection = Direction::DIR_NONE;
+
+			m_parent->m_animator->m_currentFrame = 0;
+			m_parent->m_renderer->m_sprite = m_parent->m_animator->m_frameList[m_parent->m_animator->m_currentFrame];
+			m_parent->m_renderer->UpdateBound();
+		}
+		else if(GetAsyncKeyState(VK_DOWN))
+		{
+			if(m_lockDirection != Direction::DIR_DOWN)
+			{
+				if(m_lockDirection == Direction::DIR_LEFT)
+					m_parent->m_transform->m_position.x = entity->m_transform->m_position.x + 33;
+				if(m_lockDirection == Direction::DIR_RIGHT)
+					m_parent->m_transform->m_position.x = entity->m_transform->m_position.x - 33;
+
+				m_parent->m_transform->m_position.y += m_speed;
+			}
+			m_direction = Direction::DIR_DOWN;
+			m_lockDirection = Direction::DIR_NONE;
+
+			m_parent->m_animator->m_currentFrame = 1;
+			m_parent->m_renderer->m_sprite = m_parent->m_animator->m_frameList[m_parent->m_animator->m_currentFrame];
+			m_parent->m_renderer->UpdateBound();
+		}
+		else if(GetAsyncKeyState(VK_LEFT))
+		{
+			if(m_lockDirection != Direction::DIR_LEFT)
+			{
+				if(m_lockDirection == Direction::DIR_UP)
+					m_parent->m_transform->m_position.y = entity->m_transform->m_position.y + 33;
+				if(m_lockDirection == Direction::DIR_DOWN)
+					m_parent->m_transform->m_position.y = entity->m_transform->m_position.y - 33;
+
+				m_parent->m_transform->m_position.x -= m_speed;
+			}
+			m_direction = Direction::DIR_LEFT;
+			m_lockDirection = Direction::DIR_NONE;
+
+			m_parent->m_animator->m_currentFrame = 2;
+			m_parent->m_renderer->m_sprite = m_parent->m_animator->m_frameList[m_parent->m_animator->m_currentFrame];
+			m_parent->m_renderer->UpdateBound();
+		}
+		else if(GetAsyncKeyState(VK_RIGHT))
+		{
+			if(m_lockDirection != Direction::DIR_RIGHT)
+			{
+				if(m_lockDirection == Direction::DIR_UP)
+					m_parent->m_transform->m_position.y = entity->m_transform->m_position.y + 33;
+				if(m_lockDirection == Direction::DIR_DOWN)
+					m_parent->m_transform->m_position.y = entity->m_transform->m_position.y - 33;
+
+				m_parent->m_transform->m_position.x += m_speed;
+			}
+			m_direction = Direction::DIR_RIGHT;
+			m_lockDirection = Direction::DIR_NONE;
+
+			m_parent->m_animator->m_currentFrame = 3;
+			m_parent->m_renderer->m_sprite = m_parent->m_animator->m_frameList[m_parent->m_animator->m_currentFrame];
+			m_parent->m_renderer->UpdateBound();
+		}
+
+		if(GetAsyncKeyState(VK_SPACE))
+		{
+			if(m_canShoot)
+			{
+				Entity* bullet = Factory::GetInstance()->CreateBullet(m_parent->m_transform->m_position, m_direction, m_bullet, m_shootSpeed, m_shootRange, m_damage);
+				static_cast<BulletController*>(bullet->GetComponent(COMP_BULLETCONTROLLER))->m_team = m_team;
+
+				m_canShoot = false;
+				m_previousTime = clock();
+			}
+		}
+
+		if(1000.0f * (clock() - m_previousTime) / CLOCKS_PER_SEC > m_shootDelay)
+			m_canShoot = true;
+	}
+}
+#pragma endregion
+
+
+#pragma region BulletController
+BulletController::BulletController()
+{
+	m_type = CompType::COMP_BULLETCONTROLLER;
+}
+
+BulletController::~BulletController()
+{
+
+}
+
+void BulletController::Update()
+{
+	if(m_direction == Direction::DIR_UP)
+	{
+		m_parent->m_transform->m_position.y -= m_speed;
+
+		if(m_savePosition.y - m_parent->m_transform->m_position.y >= m_range)
+			EntitiesSystem::GetInstance()->Remove(m_parent);
+	}
+	else if(m_direction == Direction::DIR_DOWN)
+	{
+		m_parent->m_transform->m_position.y += m_speed;
+
+		if(m_parent->m_transform->m_position.y - m_savePosition.y >= m_range)
+			EntitiesSystem::GetInstance()->Remove(m_parent);
+	}
+	else if(m_direction == Direction::DIR_LEFT)
+	{
+		m_parent->m_transform->m_position.x -= m_speed;
+
+		if(m_savePosition.x - m_parent->m_transform->m_position.x >= m_range)
+			EntitiesSystem::GetInstance()->Remove(m_parent);
+	}
+	else if(m_direction == Direction::DIR_RIGHT)
+	{
+		m_parent->m_transform->m_position.x += m_speed;
+
+		if(m_parent->m_transform->m_position.x - m_savePosition.x >= m_range)
+			EntitiesSystem::GetInstance()->Remove(m_parent);
+	}
+}
+#pragma endregion
+
+
+#pragma region CheckCollideWithBullet
+void CheckCollideWithBullet::Update()
+{
+
+}
+#pragma endregion
+
+
+#pragma region HealthControl
+HealthControl::HealthControl(Tank _type)
+{
+	switch(_type)
+	{
+		case Tank::TANK_NORMAL:
+			m_health = 100.0f;
+			m_defense = 10.0f;
+			break;
+		case Tank::TANK_DEFENSE:
+			m_health = 60.0f;
+			m_defense = 15.0f;
+			break;
+		case Tank::TANK_BOLT:
+			m_health = 80.0f;
+			m_defense = 5.0f;
+			break;
+	}
+}
+
+HealthControl::~HealthControl()
+{
+
+}
+
+void HealthControl::Update()
+{
+	std::vector<Component*> collider2dList = m_parent->GetComponents(CompType::COMP_COLLIDER2D);
+	Entity* bullet = NULL;
+
+	for(int i = 0; i < collider2dList.size(); i++)
+	{
+		Entity* x = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
+		if(x && x->IsTaggedAs("Bullet"))
+		{
+			bullet = x;
+			break;
+		}
+	}
+
+	if(bullet)
+	{
+		BulletController* bulletController = static_cast<BulletController*>(bullet->GetComponent(CompType::COMP_BULLETCONTROLLER));
+
+		if(static_cast<TankController*>(m_parent->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team != bulletController->m_team)
+		{
+			m_health -= (bulletController->m_damage - m_defense);
+			EntitiesSystem::GetInstance()->Remove(bullet);
+		}
+	}
+
+	if(m_health <= 0)
+		EntitiesSystem::GetInstance()->Remove(m_parent);
+}
+#pragma endregion

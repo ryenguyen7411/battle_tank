@@ -12,7 +12,12 @@
 #define FPS							30
 #define FRAME_TIME					10
 
-//const char*	SPR_TANK_1 = 			"image//spr_tank1.png";
+static const char*	SPR_TANK_1_UP		= "image//spr_tank1_up.png";
+static const char*	SPR_TANK_1_DOWN		= "image//spr_tank1_down.png";
+static const char*	SPR_TANK_1_LEFT		= "image//spr_tank1_left.png";
+static const char*	SPR_TANK_1_RIGHT	= "image//spr_tank1_right.png";
+
+static const char*	SPR_BULLET_NORMAL	= "image//spr_bullet.png";
 
 #define WHITE			0xFFFFFFFF;
 #define BLACK			0x00000000;

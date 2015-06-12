@@ -79,7 +79,9 @@
     <ClInclude Include="..\source\Factory.h" />
     <ClInclude Include="..\source\Game.h" />
     <ClInclude Include="..\source\Map.h" />
+    <ClInclude Include="..\source\Quadtree.h" />
     <ClInclude Include="..\source\ResourcesManager.h" />
+    <ClInclude Include="..\source\Scripts.h" />
     <ClInclude Include="..\source\Singleton.h" />
     <ClInclude Include="..\source\stdafx.h" />
     <ClInclude Include="..\source\support.h" />
@@ -92,7 +94,9 @@
     <ClCompile Include="..\source\Game.cpp" />
     <ClCompile Include="..\source\main.cpp" />
     <ClCompile Include="..\source\Map.cpp" />
+    <ClCompile Include="..\source\Quadtree.cpp" />
     <ClCompile Include="..\source\ResourcesManager.cpp" />
+    <ClCompile Include="..\source\Scripts.cpp" />
     <ClCompile Include="..\source\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>

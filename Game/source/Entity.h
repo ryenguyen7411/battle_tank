@@ -6,18 +6,21 @@
 class Component;
 class Transform;
 class Renderer;
+class Rigidbody2D;
+class Animator;
 
 class Entity
 {
 public:
-	Team			m_team;
+	char			m_tag[256];
 
 	Transform*		m_transform;
 	Renderer*		m_renderer;
-	//Collider2D		m_collider2D;
+	Rigidbody2D*	m_rigidbody2d;
+	Animator*		m_animator;
 
 	std::vector<Component*>		m_componentList;
-public:
+
 	Entity();
 	virtual ~Entity();
 
@@ -25,6 +28,10 @@ public:
 	Component*					GetComponent(CompType _type);
 	std::vector<Component*>		GetComponents(CompType _type);
 
+	void			SetTag(const char* _tag);
+	bool			IsTaggedAs(const char* _tag);
+
+	void			Update();
 	void			Draw(Graphics* g);
 };
 

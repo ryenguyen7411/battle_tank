@@ -1,21 +1,30 @@
 #ifndef __COMPONENTS_H__
 #define __COMPONENTS_H__
 
-#include <vector>
-
 using namespace stdio_fw;
 
+#include <vector>
+
+class Entity;
 class Transform;
 class Renderer;
+class Rigidbody2D;
+class Collider2D;
+class Animator;
 
 class Component
 {
 public:
 	CompType	m_type;
-	Component(){}
-	virtual ~Component(){}
+	Entity*		m_parent;
+
+	Component();
+	virtual ~Component();
+
+	virtual void	Update() = 0;
 };
 
+// Basic components
 class Transform : public Component
 {
 public:
@@ -23,18 +32,10 @@ public:
 	Vec3	m_rotation;
 	Vec3	m_scale;
 
-	Transform(Vec3 _position = Vec3().zero(), Vec3 _rotation = Vec3().zero(), Vec3 _scale = Vec3().one())
-	{
-		m_position = _position;
-		m_rotation = _rotation;
-		m_scale = _scale;
+	Transform(Vec3 _position = Vec3().zero(), Vec3 _rotation = Vec3().zero(), Vec3 _scale = Vec3().one());
+	virtual ~Transform();
 
-		m_type = CompType::COMP_TRANSFORM;
-	}
-	~Transform()
-	{
-
-	}
+	virtual void	Update();
 };
 
 
@@ -44,114 +45,60 @@ public:
 	Image*			m_sprite;
 	Rect			m_bound;
 
-	Renderer(Image* _sprite = NULL)
-	{
-		m_sprite = _sprite;
+	Renderer(Image* _sprite = NULL);
+	virtual ~Renderer();
 
-		m_type = CompType::COMP_RENDERER;
-	}
-	~Renderer()
-	{
-		m_sprite->unloadImage();
-		SAFE_DEL(m_sprite);
-	}
+	virtual void	Update();
+	void			UpdateBound();
+};
+
+
+class Rigidbody2D : public Component
+{
+public:
+	float		m_gravity;
+	Vec3		m_velocity;
+	Vec3		m_friction;
+
+	Rigidbody2D();
+	~Rigidbody2D();
+
+	virtual void	Update();
 };
 
 
 class Collider2D : public Component
 {
+public:
+	Rect		m_bound;
 
+	Entity*					m_collisionObject;
+
+	Collider2D(Rect _bound = Rect());
+	~Collider2D();
+
+	virtual void		Update();
+
+	bool		CheckAABB(Collider2D* _collider2d);
 };
 
 
-//struct Animation : public Component
-//{
-//	ImageList*			m_image_list;
-//	ImageListIterator	m_current_frame;
-//
-//	Animation(ImageList* _image_list)
-//	{
-//		m_image_list = _image_list;
-//		m_current_frame = m_image_list->begin();
-//	}
-//	~Animation()
-//	{
-//		while(!m_image_list->empty())
-//		{
-//			m_image_list->back()->unloadImage();
-//			SAFE_DEL(m_image_list->back());
-//			m_image_list->pop_back();
-//		}
-//
-//		SAFE_DEL(m_image_list);
-//	}
-//};
+class Animator : public Component
+{
+public:
+	std::vector<Image*>		m_frameList;
+	std::vector<float>		m_frameTime;
 
+	int				m_currentFrame;
+	long			m_previousTime;
 
+	Animator();
+	~Animator();
 
-//struct Label : public Component
-//{
-//	Image*		m_font;
-//	char*		m_text;
-//
-//	char*		m_char;
-//	Rect**		m_char_map;
-//
-//	int			m_char_distance;
-//	int*		m_char_offset;
-//
-//	Label(Image* _font, char* _text, char* _char, Rect** _char_map, int _char_distance, int* _char_offset)
-//	{
-//		m_font = _font;
-//		m_text = _text;
-//
-//		m_char = _char;
-//		m_char_map = _char_map;
-//
-//		m_char_distance = _char_distance;
-//		m_char_offset = _char_offset;
-//	}
-//	~Label()
-//	{
-//		m_font->unloadImage();
-//		SAFE_DEL(m_font);
-//
-//		for(int i = 0; i < strlen(m_char); i++)
-//			delete m_char_map[i];
-//		SAFE_DEL_ARR(m_char_map);
-//
-//		SAFE_DEL_ARR(m_char);
-//		SAFE_DEL_ARR(m_char_offset);
-//	}
-//};
-//
-//
-//
-//struct SpriteSheet : public Component
-//{
-//	Image*	m_spritesheet;
-//	int		m_frame_count;
-//	Rect**	m_frame_map;
-//
-//	int		m_current_frame;
-//
-//	SpriteSheet(Image* spritesheet, int frame_count, Rect** frame_map)
-//	{
-//		m_spritesheet = spritesheet;
-//		m_frame_count = frame_count;
-//		m_frame_map = frame_map;
-//
-//		m_current_frame = 1;
-//	}
-//	~SpriteSheet()
-//	{
-//		m_spritesheet->unloadImage();
-//		SAFE_DEL(m_spritesheet);
-//
-//		for(int i = 0; i < m_frame_count; i++)
-//			delete m_frame_map[i];
-//		SAFE_DEL_ARR(m_frame_map);
-//	}
-//};
+	virtual void		Update();
+
+	void			SetFrameList(int _count, ...);
+	void			SetFrameTime(int _count, ...);
+};
 
 #endif

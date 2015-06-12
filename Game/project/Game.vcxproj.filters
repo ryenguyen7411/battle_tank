@@ -34,6 +34,12 @@
     <ClInclude Include="..\source\EntitiesSystem.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\Scripts.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Quadtree.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\Game.cpp">
@@ -64,6 +70,12 @@
       <Filter>Entities</Filter>
     </ClCompile>
     <ClCompile Include="..\source\Factory.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Scripts.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Quadtree.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
   </ItemGroup>

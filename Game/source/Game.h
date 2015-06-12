@@ -1,10 +1,12 @@
 #pragma once
 
 using namespace stdio_fw;
+
+class Entity;
+
 class Game : public Application
 {
 private:
-
 public:
 	Game();
 	virtual ~Game();
