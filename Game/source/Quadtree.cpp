@@ -54,6 +54,8 @@ void Quadtree::Clear()
 			delete m_subRegion[i];
 		}
 	}
+
+	m_entityList.clear();
 }
 
 void Quadtree::Insert(Entity* _entity) 

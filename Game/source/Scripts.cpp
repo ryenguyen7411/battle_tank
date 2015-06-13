@@ -1,9 +1,10 @@
 #include "stdafx.h"
+#include "Factory.h"
+
 #include "Entity.h"
 #include "EntitiesSystem.h"
-#include "Factory.h"
-#include <ctime>
 
+#include <ctime>
 #include "Scripts.h"
 
 #pragma region TankController
@@ -45,9 +46,20 @@ TankController::TankController(Tank _tankType)
 	m_previousTime = clock();
 	m_canShoot = true;
 	m_lockDirection = Direction::DIR_NONE;
+
+	if(m_control == Control::CTRL_AUTO)
+	{
+		m_stateMachine = StateMachine(m_parent);
+		//m_stateMachine.ChangeState()
+	}
 }
 
 TankController::~TankController()
+{
+
+}
+
+void TankController::Release()
 {
 
 }
@@ -143,17 +155,24 @@ void TankController::Update()
 		{
 			if(m_canShoot)
 			{
-				Entity* bullet = Factory::GetInstance()->CreateBullet(m_parent->m_transform->m_position, m_direction, m_bullet, m_shootSpeed, m_shootRange, m_damage);
-				static_cast<BulletController*>(bullet->GetComponent(COMP_BULLETCONTROLLER))->m_team = m_team;
+				Factory::GetInstance()->CreateBullet(m_team, m_parent->m_transform->m_position, m_direction, m_bullet, m_shootSpeed, m_shootRange, m_damage);
 
 				m_canShoot = false;
 				m_previousTime = clock();
 			}
 		}
-
-		if(1000.0f * (clock() - m_previousTime) / CLOCKS_PER_SEC > m_shootDelay)
-			m_canShoot = true;
 	}
+	else if(m_control == Control::CTRL_WSAD)
+	{
+
+	}
+	else if(m_control == Control::CTRL_AUTO)
+	{
+		m_stateMachine.Update();
+	}
+
+	if(1000.0f * (clock() - m_previousTime) / CLOCKS_PER_SEC > m_shootDelay)
+		m_canShoot = true;
 }
 #pragma endregion
 
@@ -165,6 +184,11 @@ BulletController::BulletController()
 }
 
 BulletController::~BulletController()
+{
+
+}
+
+void BulletController::Release()
 {
 
 }
@@ -204,6 +228,21 @@ void BulletController::Update()
 
 
 #pragma region CheckCollideWithBullet
+CheckCollideWithBullet::CheckCollideWithBullet()
+{
+	m_type = CompType::COMP_CHECKCOLLIDEWITHBULET;
+}
+
+CheckCollideWithBullet:: ~CheckCollideWithBullet()
+{
+
+}
+
+void CheckCollideWithBullet::Release()
+{
+
+}
+
 void CheckCollideWithBullet::Update()
 {
 
@@ -214,6 +253,8 @@ void CheckCollideWithBullet::Update()
 #pragma region HealthControl
 HealthControl::HealthControl(Tank _type)
 {
+	m_type = CompType::COMP_HEALTHCONTROL;
+
 	switch(_type)
 	{
 		case Tank::TANK_NORMAL:
@@ -232,6 +273,11 @@ HealthControl::HealthControl(Tank _type)
 }
 
 HealthControl::~HealthControl()
+{
+
+}
+
+void HealthControl::Release()
 {
 
 }

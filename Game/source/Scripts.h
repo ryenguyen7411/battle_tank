@@ -1,6 +1,7 @@
 #ifndef __SCRIPTS_H__
 #define __SCRIPTS_H__
 
+#include "StateMachine.h"
 #include "Components.h"
 
 #pragma region TankController
@@ -26,8 +27,12 @@ public:
 	Tank		m_tank;
 	Bullet		m_bullet;
 
-	TankController(Tank	_tankType = Tank::TANK_NORMAL);
+	StateMachine	m_stateMachine;
+
+	TankController(Tank _tankType = Tank::TANK_NORMAL);
 	~TankController();
+
+	virtual void	Release();
 
 	virtual void	Update();
 };
@@ -51,6 +56,8 @@ public:
 	BulletController();
 	virtual ~BulletController();
 
+	virtual void	Release();
+
 	virtual void		Update();
 };
 #pragma endregion
@@ -60,11 +67,10 @@ public:
 class CheckCollideWithBullet : public Component
 {
 public:
-	CheckCollideWithBullet()
-	{
-		m_type = CompType::COMP_CHECKCOLLIDEWITHBULET;
-	}
-	virtual ~CheckCollideWithBullet(){}
+	CheckCollideWithBullet();
+	virtual ~CheckCollideWithBullet();
+
+	virtual void	Release();
 
 	virtual void		Update();
 };
@@ -80,6 +86,8 @@ public:
 
 	HealthControl(Tank _type = Tank::TANK_NORMAL);
 	virtual ~HealthControl();
+
+	virtual void	Release();
 
 	virtual void		Update();
 };

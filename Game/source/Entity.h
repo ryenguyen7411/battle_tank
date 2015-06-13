@@ -24,6 +24,8 @@ public:
 	Entity();
 	virtual ~Entity();
 
+	void			Release();
+
 	void						AddComponent(Component* _component);
 	Component*					GetComponent(CompType _type);
 	std::vector<Component*>		GetComponents(CompType _type);

@@ -1,4 +1,6 @@
 #include "stdafx.h"
+
+#include "ResourcesManager.h"
 #include "Entity.h"
 #include "EntitiesSystem.h"
 #include "Components.h"
@@ -15,7 +17,12 @@ Factory::Factory()
 
 Factory::~Factory()
 {
+	
+}
 
+void Factory::Release()
+{
+	SAFE_DEL(s_instance);
 }
 
 Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _tankType)
@@ -25,25 +32,21 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	
 	tank->m_transform->m_position = _position;
 
-	Image* sprite = new Image(SPR_TANK_1_UP);
-	sprite->loadImage();
-	Renderer* renderer = new Renderer(sprite);
+	Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[0]);
 	tank->AddComponent(renderer);
 
 	Animator* animator = new Animator();
-	animator->SetFrameList(4, SPR_TANK_1_UP, SPR_TANK_1_DOWN, SPR_TANK_1_LEFT, SPR_TANK_1_RIGHT);
+	animator->SetFrameList(4, ResourcesManager::GetInstance()->m_tank1[0], ResourcesManager::GetInstance()->m_tank1[1],
+		ResourcesManager::GetInstance()->m_tank1[2], ResourcesManager::GetInstance()->m_tank1[3]);
 	tank->AddComponent(animator);
 
 	Collider2D* collider2d = new Collider2D(renderer->m_bound);
 	tank->AddComponent(collider2d);
 
-	//if(_control == Control::CTRL_ARROW)
-	//{
-		TankController* tankController = new TankController(_tankType);
-		tankController->m_team = _team;
-		tankController->m_control = _control;
-		tank->AddComponent(tankController);
-	//}
+	TankController* tankController = new TankController(_tankType);
+	tankController->m_team = _team;
+	tankController->m_control = _control;
+	tank->AddComponent(tankController);
 
 	HealthControl* healthControl = new HealthControl(_tankType);
 	tank->AddComponent(healthControl);
@@ -53,20 +56,14 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	return tank;
 }
 
-Entity* Factory::CreateBullet(Vec3 _position, Direction _direction, Bullet _type, float _speed, float _range, float _damage)
+Entity* Factory::CreateBullet(Team _team, Vec3 _position, Direction _direction, Bullet _type, float _speed, float _range, float _damage)
 {
 	Entity* bullet = new Entity();
 	bullet->SetTag("Bullet");
 
 	bullet->m_transform->m_position = _position;
 
-	Image* sprite = NULL;
-	if(_type == Bullet::BULLET_NORMAL)
-		sprite = new Image(SPR_BULLET_NORMAL);
-	else
-		sprite = new Image(SPR_BULLET_NORMAL); // Fix later
-	sprite->loadImage();
-	Renderer* renderer = new Renderer(sprite);
+	Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_bullet);
 	bullet->AddComponent(renderer);
 
 	Collider2D* collider2d = new Collider2D(renderer->m_bound);
@@ -74,6 +71,7 @@ Entity* Factory::CreateBullet(Vec3 _position, Direction _direction, Bullet _type
 
 	BulletController* bulletController = new BulletController();
 	bullet->AddComponent(bulletController);
+	bulletController->m_team = _team;
 	bulletController->m_speed = _speed;
 	bulletController->m_range = _range;
 	bulletController->m_damage = _damage;

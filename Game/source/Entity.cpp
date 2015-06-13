@@ -16,13 +16,20 @@ Entity::Entity()
 
 Entity::~Entity()
 {
+	
+}
+
+void Entity::Release()
+{
 	m_transform = NULL;
 	m_renderer = NULL;
 	m_rigidbody2d = NULL;
 
 	while(!m_componentList.empty())
 	{
-		delete m_componentList.back();
+		m_componentList.back()->Release();
+		SAFE_DEL(m_componentList.back());
+
 		m_componentList.pop_back();
 	}
 }

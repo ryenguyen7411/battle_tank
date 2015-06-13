@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "ResourcesManager.h"
 #include "Factory.h"
 #include "Entity.h"
 #include "EntitiesSystem.h"
@@ -19,6 +20,8 @@ Game::~Game()
 ErrorCode Game::init(int screenW, int screenH, const char* title)
 {
 	ErrorCode errCode = Application::init(screenW, screenH, title);
+
+	ResourcesManager::GetInstance()->LoadResources();
 
 	Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(200, 200, 1), Control::CTRL_ARROW);
 	Factory::GetInstance()->CreateTank(Team::TEAM_BLUE, Vec3(100, 100, 1), Control::CTRL_WSAD);
@@ -57,8 +60,9 @@ void Game::render(Graphics* g)
 
 void Game::exit()
 {
-
-	//ResourcesManager::getInstance()->unloadResources();
+	Factory::GetInstance()->Release();
+	EntitiesSystem::GetInstance()->Release();
+	ResourcesManager::GetInstance()->Release();
 }
 
 void Game::onKeyProc(KeyCode key, KeyState state)

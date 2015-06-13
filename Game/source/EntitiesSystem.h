@@ -15,6 +15,8 @@ public:
 	EntitiesSystem();
 	virtual ~EntitiesSystem();
 
+	void			Release();
+
 	//std::vector<Entity*>		GetReds();
 	//std::vector<Entity*>		GetBlue();
 

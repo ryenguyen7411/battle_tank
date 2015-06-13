@@ -39,6 +39,11 @@ Transform::~Transform()
 
 }
 
+void Transform::Release()
+{
+
+}
+
 void Transform::Update()
 {
 
@@ -58,8 +63,12 @@ Renderer::Renderer(Image* _sprite)
 
 Renderer::~Renderer()
 {
-	m_sprite->unloadImage();
-	SAFE_DEL(m_sprite);
+	
+}
+
+void Renderer::Release()
+{
+	m_sprite = NULL;
 }
 
 void Renderer::Update()
@@ -86,6 +95,11 @@ Rigidbody2D::~Rigidbody2D()
 
 }
 
+void Rigidbody2D::Release()
+{
+
+}
+
 void Rigidbody2D::Update()
 {
 
@@ -106,6 +120,11 @@ Collider2D::Collider2D(Rect _bound)
 Collider2D::~Collider2D()
 {
 
+}
+
+void Collider2D::Release()
+{
+	m_collisionObject = NULL;
 }
 
 void Collider2D::Update()
@@ -160,7 +179,13 @@ Animator::Animator()
 
 Animator::~Animator()
 {
+	
+}
 
+void Animator::Release()
+{
+	m_frameList.clear();
+	m_frameTime.clear();
 }
 
 void Animator::Update()
@@ -170,16 +195,12 @@ void Animator::Update()
 
 void Animator::SetFrameList(int _count, ...)
 {
-	char* t;
 	va_list ap;
 	va_start(ap, _count);
 
 	for(int i = 0; i < _count; i++)
 	{
-		t = va_arg(ap, char*);
-
-		Image* image = new Image(t);
-		image->loadImage();
+		Image* image = va_arg(ap, Image*);
 		m_frameList.push_back(image);
 
 		m_frameTime.push_back(-1);

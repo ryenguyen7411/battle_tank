@@ -21,6 +21,8 @@ public:
 	Component();
 	virtual ~Component();
 
+	virtual void	Release() = 0;
+
 	virtual void	Update() = 0;
 };
 
@@ -35,6 +37,8 @@ public:
 	Transform(Vec3 _position = Vec3().zero(), Vec3 _rotation = Vec3().zero(), Vec3 _scale = Vec3().one());
 	virtual ~Transform();
 
+	virtual void	Release();
+
 	virtual void	Update();
 };
 
@@ -47,6 +51,8 @@ public:
 
 	Renderer(Image* _sprite = NULL);
 	virtual ~Renderer();
+
+	virtual void	Release();
 
 	virtual void	Update();
 	void			UpdateBound();
@@ -61,7 +67,9 @@ public:
 	Vec3		m_friction;
 
 	Rigidbody2D();
-	~Rigidbody2D();
+	virtual ~Rigidbody2D();
+
+	virtual void	Release();
 
 	virtual void	Update();
 };
@@ -72,12 +80,14 @@ class Collider2D : public Component
 public:
 	Rect		m_bound;
 
-	Entity*					m_collisionObject;
+	Entity*		m_collisionObject;
 
 	Collider2D(Rect _bound = Rect());
-	~Collider2D();
+	virtual ~Collider2D();
 
-	virtual void		Update();
+	virtual void	Update();
+
+	virtual void	Release();
 
 	bool		CheckAABB(Collider2D* _collider2d);
 };
@@ -93,9 +103,11 @@ public:
 	long			m_previousTime;
 
 	Animator();
-	~Animator();
+	virtual ~Animator();
 
-	virtual void		Update();
+	virtual void	Release();
+
+	virtual void	Update();
 
 	void			SetFrameList(int _count, ...);
 	void			SetFrameTime(int _count, ...);
