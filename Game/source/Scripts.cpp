@@ -284,6 +284,7 @@ void HealthControl::Release()
 
 void HealthControl::Update()
 {
+	
 	std::vector<Component*> collider2dList = m_baseEntity->GetComponents(CompType::COMP_COLLIDER2D);
 	Entity* bullet = NULL;
 

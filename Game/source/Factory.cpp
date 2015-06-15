@@ -64,6 +64,7 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 		strcpy(uiText->m_text, "Team Blue");
 	team->AddComponent(uiText);
 	team->m_transform->SetParent(tank->m_transform);
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(team);
 
 	if(_control == Control::CTRL_ARROW)
 	{
@@ -76,13 +77,21 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 		strcpy(uiText2->m_text, "Player");
 		playerPoint->AddComponent(uiText2);
 		playerPoint->m_transform->SetParent(tank->m_transform);
-
 		EntitiesSystem::GetInstance()->m_entitiesList.push_back(playerPoint);
 	}
 
+	Entity* hp = new Entity();
+	hp->SetTag("HP");
+	hp->m_transform->m_position = Vec3(0, -40, 0);
+	UIText* uiText3 = new UIText();
+	uiText3->m_fontSize = FNT_SIZE_SMALL;
+	uiText3->m_anchor = Anchor::ANCHOR_CENTER;
+	hp->AddComponent(uiText3);
+	hp->m_transform->SetParent(tank->m_transform);
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(hp);
+
 
 	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank);
-	EntitiesSystem::GetInstance()->m_entitiesList.push_back(team);
 
 	return tank;
 }
