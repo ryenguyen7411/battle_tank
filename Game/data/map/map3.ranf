@@ -24,11 +24,11 @@ map=
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 [TeamRed]
-tanktype_1=5
-tanktype_2=2
-tanktype_3=1
+tanktype_1=15
+tanktype_2=4
+tanktype_3=6
 
 [TeamBlue]
-tanktype_1=5
-tanktype_2=2
-tanktype_3=1
+tanktype_1=15
+tanktype_2=4
+tanktype_3=6
