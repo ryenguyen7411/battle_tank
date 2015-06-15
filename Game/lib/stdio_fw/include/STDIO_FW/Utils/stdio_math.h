@@ -119,7 +119,11 @@ namespace stdio_fw
 	{
 		float x, y, width, height;
 		Rect();
-		Rect(float x, float y, float width, float height);		
+		Rect(float x, float y, float width, float height);
+
+		// Additional
+		bool	operator == (Rect b);
+		bool	operator != (Rect b);
 	};
 }
 

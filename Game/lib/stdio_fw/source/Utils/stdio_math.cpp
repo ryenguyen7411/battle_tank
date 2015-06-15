@@ -225,6 +225,18 @@ namespace stdio_fw
 
 	Rect::Rect() :x(0), y(0), width(0), height(0) {}
 
+	// Additional
+	bool Rect::operator==(Rect b)
+	{
+		return x == b.x && y == b.y && width == b.width && height == b.height;
+	}
+
+	bool Rect::operator!=(Rect b)
+	{
+		return x != b.x || y != b.y || width != b.width || height != b.height;
+	}
+	//////////////////////////////////////////////
+
 	// Mat3 3x3
 	Mat3::Mat3(float val)
 	{

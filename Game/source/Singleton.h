@@ -4,7 +4,7 @@
 // Singleton
 template <class T> class Singleton
 {
-private:
+protected:
 	static T*     s_instance;
 public:
 	Singleton(){}
@@ -12,11 +12,9 @@ public:
 
 	static T*     GetInstance()
 	{
-		{
-			if(!s_instance)
-				s_instance = new T();
-			return s_instance;
-		}
+		if(!s_instance)
+			s_instance = new T();
+		return s_instance;
 	}
 };
 

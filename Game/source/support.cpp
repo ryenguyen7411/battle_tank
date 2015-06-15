@@ -16,9 +16,9 @@ Direction g_isCollide(Rect st, Rect nd, Vec2 stVeloc, Vec2 ndVeloc)
 		Direction collideDirection = Direction::DIR_UNKNOWN;
 
 		if(st.y + st.height - stVeloc.y <= nd.y - ndVeloc.y)
-			collideDirection = Direction::DIR_TOP;
+			collideDirection = Direction::DIR_UP;
 		else if(st.y - stVeloc.y > nd.y + nd.height - ndVeloc.y)
-			collideDirection = Direction::DIR_BOTTOM;
+			collideDirection = Direction::DIR_DOWN;
 		else if(st.x + st.width - stVeloc.x < nd.x - ndVeloc.x)
 				collideDirection = Direction::DIR_LEFT;
 		else if(st.x - stVeloc.x > nd.x + nd.width - ndVeloc.x)
@@ -31,7 +31,7 @@ Direction g_isCollide(Rect st, Rect nd, Vec2 stVeloc, Vec2 ndVeloc)
 ///////////////////////////////////////////////////////
 //Coder: Rye
 //Purpose: Reimplement getNumber function
-int g_getNumber(char* s)
+int GetNumber(char* s)
 {
 	int result = 0;
 	while(*s < '0' || *s > '9') s++;
@@ -55,4 +55,16 @@ bool		g_CheckAABB(Rect box1, Rect box2)
 		return false;
 
 	return true;
+}
+
+bool isInRect(Rect _rect, Vec2 _position)
+{
+	return !(_position.x < _rect.x || _position.x > _rect.x + _rect.width
+		|| _position.y < _rect.y || _position.y > _rect.y + _rect.height);
+}
+
+bool isInRect(Rect _rect, Vec3 _position)
+{
+	return !(_position.x < _rect.x || _position.x > _rect.x + _rect.width
+		|| _position.y < _rect.y || _position.y > _rect.y + _rect.height);
 }
