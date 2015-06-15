@@ -34,6 +34,21 @@
     <ClInclude Include="..\source\EntitiesSystem.h">
       <Filter>Entities</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\Scripts.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\Quadtree.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\StateMachine.h">
+      <Filter>StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\State.h">
+      <Filter>StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\TankAI.h">
+      <Filter>StateMachine\AutoTank</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\Game.cpp">
@@ -66,6 +81,18 @@
     <ClCompile Include="..\source\Factory.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\Scripts.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Quadtree.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\StateMachine.cpp">
+      <Filter>StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\TankAI.cpp">
+      <Filter>StateMachine\AutoTank</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MainGame">
@@ -88,6 +115,9 @@
     </Filter>
     <Filter Include="Managers">
       <UniqueIdentifier>{93a87f34-80ea-4ddf-ae6c-d6a8cd250550}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StateMachine\AutoTank">
+      <UniqueIdentifier>{00a34557-a7ba-486c-955b-37038d6632b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

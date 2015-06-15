@@ -1,16 +1,16 @@
 #include "stdafx.h"
 
-#include "Map.h"
 #include "ResourcesManager.h"
 #include "Factory.h"
-#include "EntitiesSystem.h"
 #include "Entity.h"
+#include "EntitiesSystem.h"
+#include "Components.h"
 
 #include "Game.h"
 
 Game::Game()
 {
-
+	
 }
 
 Game::~Game()
@@ -22,16 +22,23 @@ ErrorCode Game::init(int screenW, int screenH, const char* title)
 {
 	ErrorCode errCode = Application::init(screenW, screenH, title);
 
-	Entity* player = Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(300, 300, 1));
-	EntitiesSystem::GetInstance()->m_entitiesList.push_back(player);
+	ResourcesManager::GetInstance()->LoadResources();
 
+	Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(200, 200, 1), Control::CTRL_ARROW);
+	Factory::GetInstance()->CreateTank(Team::TEAM_BLUE, Vec3(100, 100, 1), Control::CTRL_WSAD);
+	
 	return errCode;
 }
 
 
 void Game::update(float deltaTime)
 {
-	
+	EntitiesSystem::GetInstance()->UpdateQuadtree();
+	std::vector<Entity*> entitiesList = EntitiesSystem::GetInstance()->m_entitiesList;
+	for(int i = 0; i < entitiesList.size(); i++)
+	{
+		entitiesList[i]->Update();
+	}
 
 	/////////////////////////////////////////////////
 	//Coder: Rye
@@ -44,7 +51,6 @@ void Game::render(Graphics* g)
 {
 	g->cleanScreen();
 	g->setClearColor(0xFFFFFFFF);
-	//g->setColor(0xFFFFFFFF);
 
 	std::vector<Entity*> entitiesList = EntitiesSystem::GetInstance()->m_entitiesList;
 	for(int i = 0; i < entitiesList.size(); i++)
@@ -55,10 +61,12 @@ void Game::render(Graphics* g)
 
 void Game::exit()
 {
-
-	//ResourcesManager::getInstance()->unloadResources();
+	Factory::GetInstance()->Release();
+	EntitiesSystem::GetInstance()->Release();
+	ResourcesManager::GetInstance()->Release();
 }
 
 void Game::onKeyProc(KeyCode key, KeyState state)
 {
+
 }

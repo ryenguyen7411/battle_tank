@@ -25,6 +25,8 @@
 #include "Singleton.h"
 
 //#define USE_VLD
+
 #ifdef USE_VLD
+	#pragma comment(lib, "vld.lib")
 	#include "vld.h"
 #endif

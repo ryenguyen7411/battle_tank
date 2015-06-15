@@ -1,0 +1,6 @@
+Giá trị trong map:
+0: ô trống.
+1: brick vỡ được.
+2: brick không vỡ.
+3: water.
+4: grass.

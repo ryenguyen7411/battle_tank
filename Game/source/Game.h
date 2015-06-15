@@ -1,10 +1,10 @@
 #pragma once
 
 using namespace stdio_fw;
+
 class Game : public Application
 {
 private:
-
 public:
 	Game();
 	virtual ~Game();
