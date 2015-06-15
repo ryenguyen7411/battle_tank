@@ -10,11 +10,17 @@ public:
 	Image*		m_tank1[4];
 	Image*		m_bullet;
 
+	Image*		m_font;
+	FontChar	m_fontChar[128];
+
 	ResourcesManager();
 	virtual ~ResourcesManager();
 
 	void		LoadResources();
 	void		Release();
+
+	ErrorCode		LoadFont(const char* _path);
+	void		LoadMap(const char* _path);
 };
 
 #endif

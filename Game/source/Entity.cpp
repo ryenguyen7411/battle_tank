@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Components.h"
+#include "ResourcesManager.h"
 
 #include "Entity.h"
 
@@ -9,6 +10,7 @@ Entity::Entity()
 
 	m_transform = new Transform();
 	m_componentList.push_back(static_cast<Component*>(m_transform));
+	m_transform->m_baseEntity = this;
 
 	m_renderer = NULL;
 	m_rigidbody2d = NULL;
@@ -73,7 +75,7 @@ void Entity::AddComponent(Component* _component)
 	}
 
 	m_componentList.push_back(_component);
-	_component->m_parent = this;
+	_component->m_baseEntity = this;
 }
 
 Component* Entity::GetComponent(CompType _type)
@@ -131,11 +133,67 @@ void Entity::Update()
 
 void Entity::Draw(Graphics* g)
 {
-	Rect rect;
-	rect.width = m_renderer->m_bound.width;
-	rect.height = m_renderer->m_bound.height;
-	rect.x = m_transform->m_position.x - rect.width / 2;
-	rect.y = m_transform->m_position.y - rect.height / 2;
+	if(m_renderer)
+	{
+		Rect rect;
+		rect.width = m_renderer->m_bound.width;
+		rect.height = m_renderer->m_bound.height;
+		rect.x = m_transform->m_position.x - rect.width / 2;
+		rect.y = m_transform->m_position.y - rect.height / 2;
 
-	g->drawImage(m_renderer->m_sprite, rect);
+		Transform* base = m_transform->m_parent;
+		while(base)
+		{
+			rect.x += m_transform->m_parent->m_position.x;
+			rect.y += m_transform->m_parent->m_position.y;
+
+			base = base->m_parent;
+		}
+
+		g->drawImage(m_renderer->m_sprite, rect);
+	}
+	
+	std::vector<Component*> uiTexts = GetComponents(CompType::COMP_UITEXT);
+	for(int i = 0; i < uiTexts.size(); i++)
+	{
+		UIText* uiText = static_cast<UIText*>(uiTexts[i]);
+
+		Vec3 drawPosition = m_transform->m_position;
+		Transform* base = m_transform->m_parent;
+		while(base)
+		{
+			drawPosition.x += base->m_position.x;
+			drawPosition.y += base->m_position.y;
+
+			base = base->m_parent;
+		}
+
+		if(uiText->m_anchor == Anchor::ANCHOR_RIGHT)
+		{
+			for(int i = 0; i < strlen(uiText->m_text); i++)
+			{
+				FontChar fontChar = ResourcesManager::GetInstance()->m_fontChar[uiText->m_text[i]];
+				drawPosition.x -= fontChar.m_xAdvance * uiText->m_fontSize;
+			}
+		}
+		else if(uiText->m_anchor == Anchor::ANCHOR_CENTER)
+		{
+			for(int i = 0; i < strlen(uiText->m_text); i++)
+			{
+				FontChar fontChar = ResourcesManager::GetInstance()->m_fontChar[uiText->m_text[i]];
+				drawPosition.x -= fontChar.m_xAdvance / 2 * uiText->m_fontSize;
+			}
+		}
+
+		for(int i = 0; i < strlen(uiText->m_text); i++)
+		{
+			FontChar fontChar = ResourcesManager::GetInstance()->m_fontChar[uiText->m_text[i]];
+			Rect dest = Rect(drawPosition.x + fontChar.m_offset.x * uiText->m_fontSize, drawPosition.y + fontChar.m_offset.y * uiText->m_fontSize,
+				fontChar.m_rect.width * uiText->m_fontSize, fontChar.m_rect.height * uiText->m_fontSize);
+
+			g->drawRegion(ResourcesManager::GetInstance()->m_font, dest, fontChar.m_rect);
+
+			drawPosition.x += fontChar.m_xAdvance * uiText->m_fontSize;
+		}
+	}
 }

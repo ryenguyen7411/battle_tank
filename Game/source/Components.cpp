@@ -18,7 +18,7 @@ Component::Component()
 
 Component::~Component()
 {
-	m_parent = NULL;
+	m_baseEntity = NULL;
 }
 ///////////////////////////////////////////
 
@@ -31,6 +31,9 @@ Transform::Transform(Vec3 _position, Vec3 _rotation, Vec3 _scale)
 	m_rotation = _rotation;
 	m_scale = _scale;
 
+	m_parent = NULL;
+	m_childCount = 0;
+
 	m_type = CompType::COMP_TRANSFORM;
 }
 
@@ -41,12 +44,25 @@ Transform::~Transform()
 
 void Transform::Release()
 {
+	m_parent = NULL;
 
+	while(!m_childList.empty())
+	{
+		EntitiesSystem::GetInstance()->Remove(m_childList.back()->m_baseEntity);
+		m_childList.pop_back();
+	}
 }
 
 void Transform::Update()
 {
 
+}
+
+void Transform::SetParent(Transform* _parent)
+{
+	m_parent = _parent;
+	m_parent->m_childCount++;
+	m_parent->m_childList.push_back(this);
 }
 ///////////////////////////////////////////
 
@@ -129,11 +145,11 @@ void Collider2D::Release()
 
 void Collider2D::Update()
 { 
-	m_bound.x = m_parent->m_transform->m_position.x - m_bound.width / 2;
-	m_bound.y = m_parent->m_transform->m_position.y - m_bound.height / 2;
+	m_bound.x = m_baseEntity->m_transform->m_position.x - m_bound.width / 2;
+	m_bound.y = m_baseEntity->m_transform->m_position.y - m_bound.height / 2;
 
 	std::vector<Entity*> detectEntityList;
-	detectEntityList = EntitiesSystem::GetInstance()->m_quadtree->Retrieve(m_parent);
+	detectEntityList = EntitiesSystem::GetInstance()->m_quadtree->Retrieve(m_baseEntity);
 
 
 	for(int i = 0; i < detectEntityList.size(); i++)
@@ -148,7 +164,7 @@ void Collider2D::Update()
 				
 				if(m_collisionObject->IsTaggedAs("Tank"))
 				{
-					TankController* tankController = static_cast<TankController*>(m_parent->GetComponent(CompType::COMP_TANKCONTROLLER));
+					TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 					if(tankController)
 						tankController->m_lockDirection = tankController->m_direction;
 				}
@@ -210,6 +226,32 @@ void Animator::SetFrameList(int _count, ...)
 }
 
 void Animator::SetFrameTime(int _count, ...)
+{
+
+}
+///////////////////////////////////////////
+
+
+///////////////////////////////////////////
+// UIText
+UIText::UIText()
+{
+	m_type = CompType::COMP_UITEXT;
+	m_fontSize = FNT_SIZE_DESIGN;
+}
+
+UIText::~UIText()
+{
+
+}
+
+void UIText::Release()
+{
+
+}
+
+
+void UIText::Update()
 {
 
 }

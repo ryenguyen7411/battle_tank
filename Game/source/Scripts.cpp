@@ -49,7 +49,7 @@ TankController::TankController(Tank _tankType)
 
 	if(m_control == Control::CTRL_AUTO)
 	{
-		m_stateMachine = StateMachine(m_parent);
+		m_stateMachine = StateMachine(m_baseEntity);
 		//m_stateMachine.ChangeState()
 	}
 }
@@ -68,7 +68,7 @@ void TankController::Update()
 {
 	if(m_control == Control::CTRL_ARROW)
 	{
-		std::vector<Component*> collider2dList = m_parent->GetComponents(CompType::COMP_COLLIDER2D);
+		std::vector<Component*> collider2dList = m_baseEntity->GetComponents(CompType::COMP_COLLIDER2D);
 		Entity* entity = NULL;
 
 		for(int i = 0; i < collider2dList.size(); i++)
@@ -83,79 +83,79 @@ void TankController::Update()
 			if(m_lockDirection != Direction::DIR_UP)
 			{
 				if(m_lockDirection == Direction::DIR_LEFT)
-					m_parent->m_transform->m_position.x = entity->m_transform->m_position.x + 33;
+					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + 33;
 				if(m_lockDirection == Direction::DIR_RIGHT)
-					m_parent->m_transform->m_position.x = entity->m_transform->m_position.x - 33;
+					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - 33;
 
-				m_parent->m_transform->m_position.y -= m_speed;
+				m_baseEntity->m_transform->m_position.y -= m_speed;
 			}
 			m_direction = Direction::DIR_UP;
 			m_lockDirection = Direction::DIR_NONE;
 
-			m_parent->m_animator->m_currentFrame = 0;
-			m_parent->m_renderer->m_sprite = m_parent->m_animator->m_frameList[m_parent->m_animator->m_currentFrame];
-			m_parent->m_renderer->UpdateBound();
+			m_baseEntity->m_animator->m_currentFrame = 0;
+			m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+			m_baseEntity->m_renderer->UpdateBound();
 		}
 		else if(GetAsyncKeyState(VK_DOWN))
 		{
 			if(m_lockDirection != Direction::DIR_DOWN)
 			{
 				if(m_lockDirection == Direction::DIR_LEFT)
-					m_parent->m_transform->m_position.x = entity->m_transform->m_position.x + 33;
+					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + 33;
 				if(m_lockDirection == Direction::DIR_RIGHT)
-					m_parent->m_transform->m_position.x = entity->m_transform->m_position.x - 33;
+					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - 33;
 
-				m_parent->m_transform->m_position.y += m_speed;
+				m_baseEntity->m_transform->m_position.y += m_speed;
 			}
 			m_direction = Direction::DIR_DOWN;
 			m_lockDirection = Direction::DIR_NONE;
 
-			m_parent->m_animator->m_currentFrame = 1;
-			m_parent->m_renderer->m_sprite = m_parent->m_animator->m_frameList[m_parent->m_animator->m_currentFrame];
-			m_parent->m_renderer->UpdateBound();
+			m_baseEntity->m_animator->m_currentFrame = 1;
+			m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+			m_baseEntity->m_renderer->UpdateBound();
 		}
 		else if(GetAsyncKeyState(VK_LEFT))
 		{
 			if(m_lockDirection != Direction::DIR_LEFT)
 			{
 				if(m_lockDirection == Direction::DIR_UP)
-					m_parent->m_transform->m_position.y = entity->m_transform->m_position.y + 33;
+					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + 33;
 				if(m_lockDirection == Direction::DIR_DOWN)
-					m_parent->m_transform->m_position.y = entity->m_transform->m_position.y - 33;
+					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - 33;
 
-				m_parent->m_transform->m_position.x -= m_speed;
+				m_baseEntity->m_transform->m_position.x -= m_speed;
 			}
 			m_direction = Direction::DIR_LEFT;
 			m_lockDirection = Direction::DIR_NONE;
 
-			m_parent->m_animator->m_currentFrame = 2;
-			m_parent->m_renderer->m_sprite = m_parent->m_animator->m_frameList[m_parent->m_animator->m_currentFrame];
-			m_parent->m_renderer->UpdateBound();
+			m_baseEntity->m_animator->m_currentFrame = 2;
+			m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+			m_baseEntity->m_renderer->UpdateBound();
 		}
 		else if(GetAsyncKeyState(VK_RIGHT))
 		{
 			if(m_lockDirection != Direction::DIR_RIGHT)
 			{
 				if(m_lockDirection == Direction::DIR_UP)
-					m_parent->m_transform->m_position.y = entity->m_transform->m_position.y + 33;
+					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + 33;
 				if(m_lockDirection == Direction::DIR_DOWN)
-					m_parent->m_transform->m_position.y = entity->m_transform->m_position.y - 33;
+					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - 33;
 
-				m_parent->m_transform->m_position.x += m_speed;
+				m_baseEntity->m_transform->m_position.x += m_speed;
 			}
 			m_direction = Direction::DIR_RIGHT;
 			m_lockDirection = Direction::DIR_NONE;
 
-			m_parent->m_animator->m_currentFrame = 3;
-			m_parent->m_renderer->m_sprite = m_parent->m_animator->m_frameList[m_parent->m_animator->m_currentFrame];
-			m_parent->m_renderer->UpdateBound();
+			m_baseEntity->m_animator->m_currentFrame = 3;
+			m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+			m_baseEntity->m_renderer->UpdateBound();
 		}
 
 		if(GetAsyncKeyState(VK_SPACE))
 		{
 			if(m_canShoot)
 			{
-				Factory::GetInstance()->CreateBullet(m_team, m_parent->m_transform->m_position, m_direction, m_bullet, m_shootSpeed, m_shootRange, m_damage);
+				Factory::GetInstance()->CreateBullet(m_team, m_baseEntity->m_transform->m_position, m_direction, m_bullet, m_shootSpeed, m_shootRange, m_damage);
 
 				m_canShoot = false;
 				m_previousTime = clock();
@@ -197,31 +197,31 @@ void BulletController::Update()
 {
 	if(m_direction == Direction::DIR_UP)
 	{
-		m_parent->m_transform->m_position.y -= m_speed;
+		m_baseEntity->m_transform->m_position.y -= m_speed;
 
-		if(m_savePosition.y - m_parent->m_transform->m_position.y >= m_range)
-			EntitiesSystem::GetInstance()->Remove(m_parent);
+		if(m_savePosition.y - m_baseEntity->m_transform->m_position.y >= m_range)
+			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 	}
 	else if(m_direction == Direction::DIR_DOWN)
 	{
-		m_parent->m_transform->m_position.y += m_speed;
+		m_baseEntity->m_transform->m_position.y += m_speed;
 
-		if(m_parent->m_transform->m_position.y - m_savePosition.y >= m_range)
-			EntitiesSystem::GetInstance()->Remove(m_parent);
+		if(m_baseEntity->m_transform->m_position.y - m_savePosition.y >= m_range)
+			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 	}
 	else if(m_direction == Direction::DIR_LEFT)
 	{
-		m_parent->m_transform->m_position.x -= m_speed;
+		m_baseEntity->m_transform->m_position.x -= m_speed;
 
-		if(m_savePosition.x - m_parent->m_transform->m_position.x >= m_range)
-			EntitiesSystem::GetInstance()->Remove(m_parent);
+		if(m_savePosition.x - m_baseEntity->m_transform->m_position.x >= m_range)
+			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 	}
 	else if(m_direction == Direction::DIR_RIGHT)
 	{
-		m_parent->m_transform->m_position.x += m_speed;
+		m_baseEntity->m_transform->m_position.x += m_speed;
 
-		if(m_parent->m_transform->m_position.x - m_savePosition.x >= m_range)
-			EntitiesSystem::GetInstance()->Remove(m_parent);
+		if(m_baseEntity->m_transform->m_position.x - m_savePosition.x >= m_range)
+			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 	}
 }
 #pragma endregion
@@ -284,7 +284,7 @@ void HealthControl::Release()
 
 void HealthControl::Update()
 {
-	std::vector<Component*> collider2dList = m_parent->GetComponents(CompType::COMP_COLLIDER2D);
+	std::vector<Component*> collider2dList = m_baseEntity->GetComponents(CompType::COMP_COLLIDER2D);
 	Entity* bullet = NULL;
 
 	for(int i = 0; i < collider2dList.size(); i++)
@@ -301,7 +301,7 @@ void HealthControl::Update()
 	{
 		BulletController* bulletController = static_cast<BulletController*>(bullet->GetComponent(CompType::COMP_BULLETCONTROLLER));
 
-		if(static_cast<TankController*>(m_parent->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team != bulletController->m_team)
+		if(static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team != bulletController->m_team)
 		{
 			m_health -= (bulletController->m_damage - m_defense);
 			EntitiesSystem::GetInstance()->Remove(bullet);
@@ -309,6 +309,6 @@ void HealthControl::Update()
 	}
 
 	if(m_health <= 0)
-		EntitiesSystem::GetInstance()->Remove(m_parent);
+		EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 }
 #pragma endregion

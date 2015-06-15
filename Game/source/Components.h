@@ -16,7 +16,7 @@ class Component
 {
 public:
 	CompType	m_type;
-	Entity*		m_parent;
+	Entity*		m_baseEntity;
 
 	Component();
 	virtual ~Component();
@@ -34,12 +34,18 @@ public:
 	Vec3	m_rotation;
 	Vec3	m_scale;
 
+	Transform*				m_parent;
+	int						m_childCount;
+	std::vector<Transform*>	m_childList;
+
 	Transform(Vec3 _position = Vec3().zero(), Vec3 _rotation = Vec3().zero(), Vec3 _scale = Vec3().one());
 	virtual ~Transform();
 
 	virtual void	Release();
 
 	virtual void	Update();
+
+	void			SetParent(Transform* _parent);
 };
 
 
@@ -111,6 +117,21 @@ public:
 
 	void			SetFrameList(int _count, ...);
 	void			SetFrameTime(int _count, ...);
+};
+
+class UIText : public Component
+{
+public:
+	char		m_text[256];
+	float		m_fontSize;
+	Anchor		m_anchor;
+
+	UIText();
+	virtual ~UIText();
+
+	virtual void	Release();
+
+	virtual void	Update();
 };
 
 #endif

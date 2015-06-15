@@ -19,8 +19,18 @@ static const char*	SPR_TANK_1_RIGHT	= "image//spr_tank1_right.png";
 
 static const char*	SPR_BULLET_NORMAL	= "image//spr_bullet.png";
 
-#define WHITE			0xFFFFFFFF;
-#define BLACK			0x00000000;
+static const char*	FNT_IMAGE			= "font//font.png";
+static const char*	FNT_DEFINE			= "font//font.fnt";
+
+static float		FNT_SIZE_DESIGN		= 1.0f;
+static float		FNT_SIZE_SMALL		= FNT_SIZE_DESIGN / 7.5f;
+static float		FNT_SIZE_NORMAL		= FNT_SIZE_DESIGN / 5;
+static float		FNT_SIZE_BIG		= FNT_SIZE_DESIGN / 2;
+static float		FNT_SIZE_TITLE		= FNT_SIZE_DESIGN;
+
+
+#define WHITE		0xFFFFFFFF;
+#define BLACK		0x00000000;
 
 
 ////////////////////////////////////////////////////////////

@@ -4,6 +4,7 @@
 #include "Factory.h"
 #include "Entity.h"
 #include "EntitiesSystem.h"
+#include "Components.h"
 
 #include "Game.h"
 

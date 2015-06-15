@@ -15,6 +15,7 @@ enum CompType
 	COMP_RIGIDBODY2D = 2,
 	COMP_COLLIDER2D = 3,
 	COMP_ANIMATOR = 4,
+	COMP_UITEXT = 5,
 
 	COMP_TANKCONTROLLER = 10,
 	COMP_BULLETCONTROLLER = 11,
@@ -66,13 +67,31 @@ enum Tank
 	TANK_BOLT = 2
 };
 
+enum Anchor
+{
+	ANCHOR_CENTER = 0,
+	ANCHOR_LEFT = 1,
+	ANCHOR_RIGHT = 2
+};
+
 struct MecanimKey
 {
 
 };
 
+struct FontChar
+{
+	int		m_id;
+	Rect	m_rect;
+	Vec2	m_offset;
+	int		m_xAdvance;
+
+	FontChar(){}
+	~FontChar(){}
+};
+
 Direction	g_isCollide(Rect st, Rect nd, Vec2 stVeloc, Vec2 ndVeloc = Vec2(0, 0));
-int			g_getNumber(char* s);
+int			GetNumber(char* s);
 
 bool		g_CheckAABB(Rect box1, Rect box2);
 

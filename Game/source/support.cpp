@@ -31,7 +31,7 @@ Direction g_isCollide(Rect st, Rect nd, Vec2 stVeloc, Vec2 ndVeloc)
 ///////////////////////////////////////////////////////
 //Coder: Rye
 //Purpose: Reimplement getNumber function
-int g_getNumber(char* s)
+int GetNumber(char* s)
 {
 	int result = 0;
 	while(*s < '0' || *s > '9') s++;
