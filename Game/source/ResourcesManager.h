@@ -10,7 +10,9 @@ public:
 	Image*		m_tank1[4];
 	Image*		m_bullet;
 
-	Image*		m_font;
+	Image*		m_fontBlack;
+	Image*		m_fontRed;
+	Image*		m_fontBlue;
 	FontChar	m_fontChar[128];
 
 	ResourcesManager();

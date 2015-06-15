@@ -68,3 +68,43 @@ bool isInRect(Rect _rect, Vec3 _position)
 	return !(_position.x < _rect.x || _position.x > _rect.x + _rect.width
 		|| _position.y < _rect.y || _position.y > _rect.y + _rect.height);
 }
+
+int convertToInt(char* __sNumber)
+{
+	int _returnValue = 0;
+
+	while(*__sNumber <= '9' && *__sNumber >= '0')
+	{
+		_returnValue *= 10;
+		_returnValue += *__sNumber - '0';
+
+		__sNumber++;
+	}
+
+	return _returnValue;
+}
+
+char* convertToString(int __number)
+{
+	if(__number == 0)
+		return "0";
+
+	char _sNumber[1024];
+
+	int i;
+	for(i = 0; __number != 0; i++)
+	{
+		_sNumber[i] = __number % 10 + '0';
+		__number /= 10;
+	}
+	_sNumber[i] = '\0';
+
+	for(i = 0; i < strlen(_sNumber) / 2; i++)
+	{
+		char _temp = _sNumber[i];
+		_sNumber[i] = _sNumber[strlen(_sNumber) - 1 - i];
+		_sNumber[strlen(_sNumber) - 1 - i] = _temp;
+	}
+
+	return _sNumber;
+}

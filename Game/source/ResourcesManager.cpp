@@ -40,16 +40,24 @@ void ResourcesManager::Release()
 	m_bullet->unloadImage();
 	delete m_bullet;
 
-	m_font->unloadImage();
-	SAFE_DEL(m_font);
+	m_fontBlack->unloadImage();
+	SAFE_DEL(m_fontBlack);
+	m_fontRed->unloadImage();
+	SAFE_DEL(m_fontRed);
+	m_fontBlue->unloadImage();
+	SAFE_DEL(m_fontBlue);
 
 	delete s_instance;
 }
 
 ErrorCode ResourcesManager::LoadFont(const char* _path)
 {
-	m_font = new Image(FNT_IMAGE);
-	m_font->loadImage();
+	m_fontBlack = new Image(FNT_BLACK);
+	m_fontBlack->loadImage();
+	m_fontRed = new Image(FNT_RED);
+	m_fontRed->loadImage();
+	m_fontBlue = new Image(FNT_BLUE);
+	m_fontBlue->loadImage();
 
 	FILE* f = fopen(_path, "rb");
 
@@ -65,49 +73,53 @@ ErrorCode ResourcesManager::LoadFont(const char* _path)
 
 	fclose(f);
 
-	while(buffer)
+	char* temp = buffer;
+
+	while(temp)
 	{
-		char* id = strstr(buffer, "char id=");
+		char* id = strstr(temp, "char id=");
 		if(!id)
 			break;
 
 		id += strlen("char id=");
 		int idNumber = GetNumber(id);
 		m_fontChar[idNumber].m_id = idNumber;
-		buffer = id;
+		temp = id;
 
 		// Rect
-		char* x = strstr(buffer, "x=");
+		char* x = strstr(temp, "x=");
 		x += strlen("x=");
 		m_fontChar[idNumber].m_rect.x = GetNumber(x);
 
-		char* y = strstr(buffer, "y=");
+		char* y = strstr(temp, "y=");
 		y += strlen("y=");
 		m_fontChar[idNumber].m_rect.y = GetNumber(y);
 
-		char* width = strstr(buffer, "width=");
+		char* width = strstr(temp, "width=");
 		width += strlen("width=");
 		m_fontChar[idNumber].m_rect.width = GetNumber(width);
 
-		char* height = strstr(buffer, "height=");
+		char* height = strstr(temp, "height=");
 		height += strlen("height=");
 		m_fontChar[idNumber].m_rect.height = GetNumber(height);
 		///////////////////////////////////////////////////
 
 		// Offset
-		char* offsetX = strstr(buffer, "xoffset=");
+		char* offsetX = strstr(temp, "xoffset=");
 		offsetX += strlen("xoffset=");
 		m_fontChar[idNumber].m_offset.x = GetNumber(offsetX);
 
-		char* offsetY = strstr(buffer, "yoffset=");
+		char* offsetY = strstr(temp, "yoffset=");
 		offsetY += strlen("yoffset=");
 		m_fontChar[idNumber].m_offset.y = GetNumber(offsetY);
 		///////////////////////////////////////////////////
 
-		char* xAdvance = strstr(buffer, "xadvance=");
+		char* xAdvance = strstr(temp, "xadvance=");
 		xAdvance += strlen("xadvance=");
 		m_fontChar[idNumber].m_xAdvance = GetNumber(xAdvance);
 	}
+
+	SAFE_DEL_ARR(buffer);
 
 	return ErrorCode::ERR_NO_ERROR;
 }

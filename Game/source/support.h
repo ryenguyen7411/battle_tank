@@ -98,4 +98,7 @@ bool		g_CheckAABB(Rect box1, Rect box2);
 bool		isInRect(Rect _rect, Vec2 _position);
 bool		isInRect(Rect _rect, Vec3 _position);
 
+int			convertToInt(char* __sNumber);
+char*		convertToString(int __number);
+
 #endif

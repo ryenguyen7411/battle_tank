@@ -126,6 +126,8 @@ public:
 	float		m_fontSize;
 	Anchor		m_anchor;
 
+	Image*		m_font;
+
 	UIText();
 	virtual ~UIText();
 

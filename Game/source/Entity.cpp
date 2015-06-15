@@ -191,7 +191,7 @@ void Entity::Draw(Graphics* g)
 			Rect dest = Rect(drawPosition.x + fontChar.m_offset.x * uiText->m_fontSize, drawPosition.y + fontChar.m_offset.y * uiText->m_fontSize,
 				fontChar.m_rect.width * uiText->m_fontSize, fontChar.m_rect.height * uiText->m_fontSize);
 
-			g->drawRegion(ResourcesManager::GetInstance()->m_font, dest, fontChar.m_rect);
+			g->drawRegion(uiText->m_font, dest, fontChar.m_rect);
 
 			drawPosition.x += fontChar.m_xAdvance * uiText->m_fontSize;
 		}

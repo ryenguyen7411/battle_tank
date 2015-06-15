@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Quadtree.h"
 #include "Entity.h"
+#include "Components.h"
 
 #include "EntitiesSystem.h"
 
@@ -17,12 +18,7 @@ EntitiesSystem::~EntitiesSystem()
 void EntitiesSystem::Release()
 {
 	while(!m_entitiesList.empty())
-	{
-		m_entitiesList.back()->Release();
-		SAFE_DEL(m_entitiesList.back());
-
-		m_entitiesList.pop_back();
-	}
+		Remove(m_entitiesList.back());
 	
 	if(m_quadtree)
 	{
@@ -46,6 +42,15 @@ void EntitiesSystem::Remove(Entity* _entity)
 			m_entitiesList.pop_back();
 
 			break;
+		}
+	}
+
+	for(int i = 0; i < m_entitiesList.size(); i++)
+	{
+		if(m_entitiesList[i] == NULL)
+		{
+			m_entitiesList[i] = m_entitiesList.back();
+			m_entitiesList.pop_back();
 		}
 	}
 }

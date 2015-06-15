@@ -48,7 +48,7 @@ void Transform::Release()
 
 	while(!m_childList.empty())
 	{
-		EntitiesSystem::GetInstance()->Remove(m_childList.back()->m_baseEntity);
+		m_childList.back()->m_baseEntity->Release();
 		m_childList.pop_back();
 	}
 }

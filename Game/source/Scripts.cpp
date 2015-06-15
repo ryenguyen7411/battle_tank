@@ -284,7 +284,20 @@ void HealthControl::Release()
 
 void HealthControl::Update()
 {
-	
+	std::vector<Transform*> childList = m_baseEntity->m_transform->m_childList;
+	for(int i = 0; i < childList.size(); i++)
+	{
+		if(childList[i]->m_baseEntity->IsTaggedAs("HP"))
+		{
+			char* uiText = static_cast<UIText*>(childList[i]->m_baseEntity->GetComponent(CompType::COMP_UITEXT))->m_text;
+			uiText[0] = '\0';
+			strcat(uiText, "HP = ");
+			strcat(uiText, convertToString(m_health));
+
+			break;
+		}
+	}
+
 	std::vector<Component*> collider2dList = m_baseEntity->GetComponents(CompType::COMP_COLLIDER2D);
 	Entity* bullet = NULL;
 
