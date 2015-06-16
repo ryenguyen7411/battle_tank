@@ -326,3 +326,56 @@ void HealthControl::Update()
 		EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 }
 #pragma endregion
+
+
+#pragma region BrickControl
+BrickControl::BrickControl()
+{
+	m_type = CompType::COMP_BRICKCONTROL;
+}
+
+BrickControl::~BrickControl()
+{
+
+}
+
+void BrickControl::Release()
+{
+
+}
+
+void BrickControl::Update()
+{
+	std::vector<Component*> collider2dList = m_baseEntity->GetComponents(CompType::COMP_COLLIDER2D);
+	Entity* bullet = NULL;
+
+	for(int i = 0; i < collider2dList.size(); i++)
+	{
+		Entity* x = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
+		if(x && x->IsTaggedAs("Bullet"))
+		{
+			bullet = x;
+			BulletController* bulletController = static_cast<BulletController*>(bullet->GetComponent(CompType::COMP_BULLETCONTROLLER));
+			m_health -= (bulletController->m_damage);
+			EntitiesSystem::GetInstance()->Remove(bullet);
+
+			break;
+		}
+	}
+
+	if(m_health <= 75.0f)
+	{
+
+	}
+	else if(m_health <= 50.0f)
+	{
+
+	}
+	else if(m_health <= 25.0f)
+	{
+
+	}
+	else if(m_health <= 0.0f)
+		EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+}
+#pragma endregion

@@ -13,6 +13,7 @@ public:
 
 	Entity*		CreateTank(Team _team, Vec3 _position, Control _control = Control::CTRL_AUTO, Tank _tankType = Tank::TANK_NORMAL);
 	Entity*		CreateBullet(Team _team, Vec3 _position, Direction _direction, Bullet _type, float _speed, float _range, float _damage);
+	Entity*		CreateMapPart(Rect _bound = Rect(), bool _isBreakable = false, Vec2 _position = Vec2());
 };
 
 #endif

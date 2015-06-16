@@ -87,20 +87,28 @@ public:
 	HealthControl(Tank _type = Tank::TANK_NORMAL);
 	virtual ~HealthControl();
 
-	virtual void	Release();
+	virtual void		Release();
 
 	virtual void		Update();
 };
 #pragma endregion
 
 
-//#pragma region PointToPlayer
-//class PointToPlayer : public Component
-//{
-//public:
-//
-//}
-//
-//#pragma endregion
+#pragma region BrickControl
+class BrickControl : public Component
+{
+public:
+	float		m_health;
+
+	Vec2		m_position;
+
+	BrickControl();
+	virtual ~BrickControl();
+
+	virtual void		Release();
+
+	virtual void		Update();
+};
+#pragma endregion
 
 #endif

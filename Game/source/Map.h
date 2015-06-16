@@ -1,24 +1,40 @@
 #ifndef __MAP_H__
 #define __MAP_H__
 
-class Map
+using namespace stdio_fw;
+
+class Map : public Singleton<Map>
 {
 private:
 	char		m_mapPath[256];
+	int			m_currentMap;
 
-	// Define needed variables
-	
+	int			m_mapWidth;
+	int			m_mapHeight;
+
+	int			m_tileWidth;
+	int			m_tileHeight;
+
+	int			m_map[128][128];
+
+	Vec2		m_offset;
+
+	int			m_teamRed[3];
+	int			m_teamBlue[3];
 public:
-	Map(const char* path);		// Set path
-	~Map();			// Release
+	Map();
+	virtual ~Map();
 
-	void			changeMap(const char* path);	// Unload, change path and load again
+	virtual void	Release();
 
-	void			loadMap();	// Load map, save to variables
-	void			unloadMap(); // Release map
+	void			ChangeMap(const char* _path);
 
-	void			update();	// Do later
-	//void			drawMap(Graphics* g);
+	ErrorCode		LoadMap();
+	void			UnloadMap();
+	void			CreateCollider();
+
+	void			Update();
+	void			Draw(Graphics* g);
 };
 
 #endif

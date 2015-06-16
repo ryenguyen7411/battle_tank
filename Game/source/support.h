@@ -21,6 +21,7 @@ enum CompType
 	COMP_BULLETCONTROLLER = 11,
 	COMP_CHECKCOLLIDEWITHBULET = 12,
 	COMP_HEALTHCONTROL = 13,
+	COMP_BRICKCONTROL = 14,
 };
 
 enum Team
@@ -98,7 +99,7 @@ bool		g_CheckAABB(Rect box1, Rect box2);
 bool		isInRect(Rect _rect, Vec2 _position);
 bool		isInRect(Rect _rect, Vec3 _position);
 
-int			convertToInt(char* __sNumber);
-char*		convertToString(int __number);
+int			convertToInt(char* _sNumber);
+char*		convertToString(int _number);
 
 #endif

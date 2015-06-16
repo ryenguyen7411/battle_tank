@@ -196,4 +196,11 @@ void Entity::Draw(Graphics* g)
 			drawPosition.x += fontChar.m_xAdvance * uiText->m_fontSize;
 		}
 	}
+
+	//g->setColor(BLACK);
+	//std::vector<Component*> colliders = GetComponents(CompType::COMP_COLLIDER2D);
+	//for(int i = 0; i < colliders.size(); i++)
+	//{
+	//	g->drawRect(static_cast<Collider2D*>(colliders[i])->m_bound);
+	//}
 }

@@ -23,6 +23,8 @@
 #include "config.h"
 #include "support.h"
 #include "Singleton.h"
+#include "ResourcesManager.h"
+#include "Factory.h"
 
 //#define USE_VLD
 

@@ -119,3 +119,27 @@ Entity* Factory::CreateBullet(Team _team, Vec3 _position, Direction _direction, 
 
 	return bullet;
 }
+
+Entity* Factory::CreateMapPart(Rect _bound, bool _isBreakable, Vec2 _position)
+{
+	Entity* mapPart = new Entity();
+	if(!_isBreakable)
+		mapPart->SetTag("MapPart");
+	else
+		mapPart->SetTag("Brick");
+
+	Collider2D* colider2d = new Collider2D(_bound);
+	mapPart->AddComponent(colider2d);
+
+	if(_isBreakable)
+	{
+		BrickControl* brickControl = new BrickControl();
+		brickControl->m_health = 100.0f;
+		brickControl->m_position = _position;
+		mapPart->AddComponent(brickControl);
+	}
+
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(mapPart);
+
+	return mapPart;
+}

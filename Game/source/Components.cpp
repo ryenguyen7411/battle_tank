@@ -145,6 +145,9 @@ void Collider2D::Release()
 
 void Collider2D::Update()
 { 
+	if(m_baseEntity->IsTaggedAs("MapPart"))
+		return;
+		
 	m_bound.x = m_baseEntity->m_transform->m_position.x - m_bound.width / 2;
 	m_bound.y = m_baseEntity->m_transform->m_position.y - m_bound.height / 2;
 

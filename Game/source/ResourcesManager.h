@@ -15,6 +15,8 @@ public:
 	Image*		m_fontBlue;
 	FontChar	m_fontChar[128];
 
+	Image*		m_mapPart[7];
+
 	ResourcesManager();
 	virtual ~ResourcesManager();
 
@@ -22,7 +24,6 @@ public:
 	void		Release();
 
 	ErrorCode		LoadFont(const char* _path);
-	void		LoadMap(const char* _path);
 };
 
 #endif

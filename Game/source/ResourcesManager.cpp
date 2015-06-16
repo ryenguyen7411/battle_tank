@@ -25,8 +25,18 @@ void ResourcesManager::LoadResources()
 	m_bullet = new Image(SPR_BULLET_NORMAL);
 	m_bullet->loadImage();
 
-	LoadFont(FNT_DEFINE);
+	m_mapPart[0] = new Image(SPR_GRASS);
+	m_mapPart[1] = new Image(SPR_WATER);
+	m_mapPart[2] = new Image(SPR_ROCK);
+	m_mapPart[3] = new Image(SPR_BRICK_1);
+	m_mapPart[4] = new Image(SPR_BRICK_1);
+	m_mapPart[5] = new Image(SPR_BRICK_1);
+	m_mapPart[6] = new Image(SPR_BRICK_1);
+	for(int i = 0; i < 7; i++)
+		m_mapPart[i]->loadImage();
 
+
+	LoadFont(FNT_DEFINE);
 }
 
 void ResourcesManager::Release()
@@ -46,6 +56,12 @@ void ResourcesManager::Release()
 	SAFE_DEL(m_fontRed);
 	m_fontBlue->unloadImage();
 	SAFE_DEL(m_fontBlue);
+
+	for(int i = 0; i < 7; i++)
+	{
+		m_mapPart[i]->unloadImage();
+		SAFE_DEL(m_mapPart[i]);
+	}
 
 	delete s_instance;
 }
@@ -68,8 +84,9 @@ ErrorCode ResourcesManager::LoadFont(const char* _path)
 	int size = ftell(f);
 	fseek(f, 0, SEEK_SET);
 
-	char* buffer = new char[size];
+	char* buffer = new char[size + 1];
 	fread(buffer, sizeof(char), size, f);
+	buffer[size] = NULL;
 
 	fclose(f);
 
@@ -122,9 +139,4 @@ ErrorCode ResourcesManager::LoadFont(const char* _path)
 	SAFE_DEL_ARR(buffer);
 
 	return ErrorCode::ERR_NO_ERROR;
-}
-
-void ResourcesManager::LoadMap(const char* _path)
-{
-
 }

@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "EntitiesSystem.h"
 #include "Components.h"
+#include "Map.h"
 
 #include "Game.h"
 
@@ -23,6 +24,7 @@ ErrorCode Game::init(int screenW, int screenH, const char* title)
 	ErrorCode errCode = Application::init(screenW, screenH, title);
 
 	ResourcesManager::GetInstance()->LoadResources();
+	Map::GetInstance()->ChangeMap(MAP_1);
 
 	Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(200, 200, 1), Control::CTRL_ARROW);
 	Factory::GetInstance()->CreateTank(Team::TEAM_BLUE, Vec3(100, 100, 1), Control::CTRL_WSAD);
@@ -50,18 +52,19 @@ void Game::update(float deltaTime)
 void Game::render(Graphics* g)
 {
 	g->cleanScreen();
-	g->setClearColor(0xFFFFFFFF);
+	g->setClearColor(WHITE);
 
 	std::vector<Entity*> entitiesList = EntitiesSystem::GetInstance()->m_entitiesList;
 	for(int i = 0; i < entitiesList.size(); i++)
-	{
 		entitiesList[i]->Draw(g);
-	}
+
+	Map::GetInstance()->Draw(g);
 }
 
 void Game::exit()
 {
 	Factory::GetInstance()->Release();
+	Map::GetInstance()->Release();
 	EntitiesSystem::GetInstance()->Release();
 	ResourcesManager::GetInstance()->Release();
 }
