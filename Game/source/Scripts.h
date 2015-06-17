@@ -99,7 +99,6 @@ class BrickControl : public Component
 {
 public:
 	float		m_health;
-
 	Vec2		m_position;
 
 	BrickControl();

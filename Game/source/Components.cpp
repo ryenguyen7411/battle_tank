@@ -145,15 +145,10 @@ void Collider2D::Release()
 
 void Collider2D::Update()
 { 
-	if(m_baseEntity->IsTaggedAs("MapPart"))
-		return;
-		
 	m_bound.x = m_baseEntity->m_transform->m_position.x - m_bound.width / 2;
 	m_bound.y = m_baseEntity->m_transform->m_position.y - m_bound.height / 2;
 
-	std::vector<Entity*> detectEntityList;
-	detectEntityList = EntitiesSystem::GetInstance()->m_quadtree->Retrieve(m_baseEntity);
-
+	std::vector<Entity*> detectEntityList = EntitiesSystem::GetInstance()->m_quadtree->Retrieve(m_baseEntity);
 
 	for(int i = 0; i < detectEntityList.size(); i++)
 	{
@@ -163,6 +158,10 @@ void Collider2D::Update()
 		{
 			if(CheckAABB(static_cast<Collider2D*>(collider2dList[j])))
 			{
+				if(m_baseEntity->IsTaggedAs("MapPart") && collider2dList[j]->m_baseEntity->IsTaggedAs("MapPart"))
+					break;
+
+				m_collideObject = static_cast<Collider2D*>(collider2dList[j]);
 				m_collisionObject = detectEntityList[i];
 				
 				if(m_collisionObject->IsTaggedAs("Tank"))

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Factory.h"
+#include "Map.h"
 
 #include "Entity.h"
 #include "EntitiesSystem.h"
@@ -332,6 +333,7 @@ void HealthControl::Update()
 BrickControl::BrickControl()
 {
 	m_type = CompType::COMP_BRICKCONTROL;
+	m_position = Vec2(0, 0);
 }
 
 BrickControl::~BrickControl()
@@ -365,7 +367,7 @@ void BrickControl::Update()
 
 	if(m_health <= 75.0f)
 	{
-
+		
 	}
 	else if(m_health <= 50.0f)
 	{
@@ -376,6 +378,9 @@ void BrickControl::Update()
 
 	}
 	else if(m_health <= 0.0f)
+	{
+		Map::GetInstance()->m_map[(int)m_position.x][(int)m_position.y] = 0;
 		EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+	}
 }
 #pragma endregion

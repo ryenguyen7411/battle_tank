@@ -120,13 +120,10 @@ Entity* Factory::CreateBullet(Team _team, Vec3 _position, Direction _direction, 
 	return bullet;
 }
 
-Entity* Factory::CreateMapPart(Rect _bound, bool _isBreakable, Vec2 _position)
+Entity* Factory::CreateCollider(Rect _bound, bool _isBreakable, Vec2 _position)
 {
 	Entity* mapPart = new Entity();
-	if(!_isBreakable)
-		mapPart->SetTag("MapPart");
-	else
-		mapPart->SetTag("Brick");
+	mapPart->SetTag("MapPart");
 
 	Collider2D* colider2d = new Collider2D(_bound);
 	mapPart->AddComponent(colider2d);

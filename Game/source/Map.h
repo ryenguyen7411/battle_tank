@@ -5,7 +5,7 @@ using namespace stdio_fw;
 
 class Map : public Singleton<Map>
 {
-private:
+public:
 	char		m_mapPath[256];
 	int			m_currentMap;
 

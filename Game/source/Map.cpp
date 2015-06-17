@@ -128,13 +128,10 @@ void Map::CreateCollider()
 	{
 		for(int j = 0; j < m_mapHeight; j++)
 		{
-			if(m_map[i][j] == 2 || m_map[i][j] == 3)
+			if(m_map[i][j] == 4)
 			{
-
-			}
-			else if(m_map[i][j] == 4)
-			{
-
+				Rect rect = Rect(j * m_tileWidth + m_offset.x, i * m_tileHeight + m_offset.y, m_tileWidth, m_tileHeight);
+				Factory::GetInstance()->CreateCollider(rect, true, Vec2(i, j));
 			}
 		}
 	}

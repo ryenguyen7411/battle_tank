@@ -73,6 +73,11 @@ void Entity::AddComponent(Component* _component)
 			return;
 		}
 	}
+	else if(_component->m_type == CompType::COMP_COLLIDER2D)
+	{
+		if(!m_firstCollider)
+			m_firstCollider = dynamic_cast<Collider2D*>(_component);
+	}
 
 	m_componentList.push_back(_component);
 	_component->m_baseEntity = this;
