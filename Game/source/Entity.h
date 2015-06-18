@@ -8,6 +8,7 @@ class Transform;
 class Renderer;
 class Rigidbody2D;
 class Animator;
+class Collider2D;
 
 class Entity
 {

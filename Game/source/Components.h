@@ -85,8 +85,6 @@ class Collider2D : public Component
 {
 public:
 	Rect		m_bound;
-
-	Collider2D*		m_collideObject;
 	Entity*		m_collisionObject;
 
 	Collider2D(Rect _bound = Rect());

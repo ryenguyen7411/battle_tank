@@ -44,13 +44,25 @@ Transform::~Transform()
 
 void Transform::Release()
 {
-	m_parent = NULL;
-
 	while(!m_childList.empty())
 	{
-		m_childList.back()->m_baseEntity->Release();
+		if(m_childList.back()->m_baseEntity)
+		{
+			for(int i = 0; i < EntitiesSystem::GetInstance()->m_entitiesList.size(); i++)
+			{
+				if(m_childList.back()->m_baseEntity == EntitiesSystem::GetInstance()->m_entitiesList[i])
+				{
+					m_childList.back()->m_baseEntity->Release();
+					EntitiesSystem::GetInstance()->m_entitiesList[i] = NULL;
+
+					break;
+				}
+			}
+		}
 		m_childList.pop_back();
 	}
+
+	m_parent = NULL;
 }
 
 void Transform::Update()
@@ -161,10 +173,14 @@ void Collider2D::Update()
 				if(m_baseEntity->IsTaggedAs("MapPart") && collider2dList[j]->m_baseEntity->IsTaggedAs("MapPart"))
 					break;
 
-				m_collideObject = static_cast<Collider2D*>(collider2dList[j]);
+				//if(m_baseEntity->IsTaggedAs("Tank"))
+				//{
+				//	
+				//}
+
 				m_collisionObject = detectEntityList[i];
 				
-				if(m_collisionObject->IsTaggedAs("Tank"))
+				if(m_collisionObject->IsTaggedAs("Tank") || m_collisionObject->IsTaggedAs("MapPart"))
 				{
 					TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 					if(tankController)
@@ -176,6 +192,8 @@ void Collider2D::Update()
 			}
 		}
 	}
+
+	detectEntityList.clear();
 }
 
 bool Collider2D::CheckAABB(Collider2D* _collider2d)

@@ -60,6 +60,9 @@ void Quadtree::Clear()
 
 void Quadtree::Insert(Entity* _entity) 
 {
+	if(!_entity)
+		return;
+
 	if(m_subRegion[0])
 	{
 		for(int i = 0; i < 4; i++)
@@ -113,7 +116,11 @@ std::vector<Entity*> Quadtree::Retrieve(Entity* _entity)
 		for(int i = 0; i < m_entityList.size(); i++)
 		{
 			if(m_entityList[i] != _entity)
-				returnList.push_back(m_entityList[i]);
+			{
+				if(m_entityList[i]->IsTaggedAs("Tank") || m_entityList[i]->IsTaggedAs("Bullet") || m_entityList[i]->IsTaggedAs("MapPart")
+					|| m_entityList[i]->IsTaggedAs("HP") || m_entityList[i]->IsTaggedAs("Team"))
+					returnList.push_back(m_entityList[i]);
+			}
 		}
 	}
 

@@ -36,10 +36,20 @@ ErrorCode Game::init(int screenW, int screenH, const char* title)
 void Game::update(float deltaTime)
 {
 	EntitiesSystem::GetInstance()->UpdateQuadtree();
-	std::vector<Entity*> entitiesList = EntitiesSystem::GetInstance()->m_entitiesList;
-	for(int i = 0; i < entitiesList.size(); i++)
+	std::vector<Entity*>* entitiesList = &EntitiesSystem::GetInstance()->m_entitiesList;
+	for(int i = 0; i < entitiesList->size(); i++)
 	{
-		entitiesList[i]->Update();
+		if(entitiesList->at(i))
+			entitiesList->at(i)->Update();
+	}
+
+	for(int i = 0; i < entitiesList->size(); i++)
+	{
+		if(!entitiesList->at(i))
+		{
+			entitiesList->at(i) = entitiesList->back();
+			entitiesList->pop_back();
+		}
 	}
 
 	/////////////////////////////////////////////////
@@ -56,7 +66,10 @@ void Game::render(Graphics* g)
 
 	std::vector<Entity*> entitiesList = EntitiesSystem::GetInstance()->m_entitiesList;
 	for(int i = 0; i < entitiesList.size(); i++)
-		entitiesList[i]->Draw(g);
+	{
+		if(entitiesList[i])
+			entitiesList[i]->Draw(g);
+	}
 
 	Map::GetInstance()->Draw(g);
 }
@@ -64,9 +77,9 @@ void Game::render(Graphics* g)
 void Game::exit()
 {
 	Factory::GetInstance()->Release();
-	Map::GetInstance()->Release();
 	EntitiesSystem::GetInstance()->Release();
 	ResourcesManager::GetInstance()->Release();
+	Map::GetInstance()->Release();
 }
 
 void Game::onKeyProc(KeyCode key, KeyState state)

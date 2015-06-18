@@ -23,10 +23,6 @@ Entity::~Entity()
 
 void Entity::Release()
 {
-	m_transform = NULL;
-	m_renderer = NULL;
-	m_rigidbody2d = NULL;
-
 	while(!m_componentList.empty())
 	{
 		m_componentList.back()->Release();
@@ -34,6 +30,10 @@ void Entity::Release()
 
 		m_componentList.pop_back();
 	}
+
+	m_transform = NULL;
+	m_renderer = NULL;
+	m_rigidbody2d = NULL;
 }
 
 void Entity::AddComponent(Component* _component)

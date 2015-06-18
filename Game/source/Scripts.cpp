@@ -75,7 +75,7 @@ void TankController::Update()
 		for(int i = 0; i < collider2dList.size(); i++)
 		{
 			entity = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
-			if(entity && entity->IsTaggedAs("Tank"))
+			if(entity && (entity->IsTaggedAs("Tank") || entity->IsTaggedAs("MapPart")))
 				break;
 		}
 
@@ -304,22 +304,18 @@ void HealthControl::Update()
 
 	for(int i = 0; i < collider2dList.size(); i++)
 	{
-		Entity* x = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
-		if(x && x->IsTaggedAs("Bullet"))
+		Entity* bullet = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
+		if(bullet && bullet->IsTaggedAs("Bullet"))
 		{
-			bullet = x;
+			BulletController* bulletController = static_cast<BulletController*>(bullet->GetComponent(CompType::COMP_BULLETCONTROLLER));
+
+			if(static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team != bulletController->m_team)
+			{
+				m_health -= (bulletController->m_damage - m_defense);
+				EntitiesSystem::GetInstance()->Remove(bullet);
+			}
+
 			break;
-		}
-	}
-
-	if(bullet)
-	{
-		BulletController* bulletController = static_cast<BulletController*>(bullet->GetComponent(CompType::COMP_BULLETCONTROLLER));
-
-		if(static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team != bulletController->m_team)
-		{
-			m_health -= (bulletController->m_damage - m_defense);
-			EntitiesSystem::GetInstance()->Remove(bullet);
 		}
 	}
 
@@ -365,19 +361,23 @@ void BrickControl::Update()
 		}
 	}
 
-	if(m_health <= 75.0f)
+	if(m_health >= 75.0f)
 	{
 		
 	}
-	else if(m_health <= 50.0f)
+	else if(m_health >= 50.0f)
 	{
 
 	}
-	else if(m_health <= 25.0f)
+	else if(m_health >= 25.0f)
 	{
 
 	}
-	else if(m_health <= 0.0f)
+	else if(m_health >= 0.0f)
+	{
+		
+	}
+	else
 	{
 		Map::GetInstance()->m_map[(int)m_position.x][(int)m_position.y] = 0;
 		EntitiesSystem::GetInstance()->Remove(m_baseEntity);

@@ -125,6 +125,8 @@ Entity* Factory::CreateCollider(Rect _bound, bool _isBreakable, Vec2 _position)
 	Entity* mapPart = new Entity();
 	mapPart->SetTag("MapPart");
 
+	mapPart->m_transform->m_position = Vec3(_bound.x + _bound.width / 2, _bound.y + _bound.height / 2, 0);
+
 	Collider2D* colider2d = new Collider2D(_bound);
 	mapPart->AddComponent(colider2d);
 
