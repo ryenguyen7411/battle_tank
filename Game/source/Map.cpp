@@ -130,8 +130,8 @@ void Map::CreateCollider()
 		{
 			if(m_map[i][j] == 4)
 			{
-				Rect rect = Rect(j * m_tileWidth + m_offset.x, i * m_tileHeight + m_offset.y, m_tileWidth, m_tileHeight);
-				Factory::GetInstance()->CreateCollider(rect, true, Vec2(i, j));
+				Rect rect = Rect(j * m_tileWidth + m_offset.x, i * m_tileHeight + m_offset.y, m_tileWidth - 1, m_tileHeight - 1);
+				Factory::GetInstance()->CreateCollider("Brick", rect, true, Vec2(i, j));
 			}
 		}
 	}

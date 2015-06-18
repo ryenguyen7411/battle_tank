@@ -8,7 +8,10 @@ class ResourcesManager : public Singleton<ResourcesManager>
 {
 public:
 	Image*		m_tank1[4];
-	Image*		m_bullet;
+	Image*		m_tank2[4];
+	Image*		m_tank3[4];
+	Image*		m_bulletNormal;
+	Image*		m_bulletExplode[4];
 
 	Image*		m_fontBlack;
 	Image*		m_fontRed;

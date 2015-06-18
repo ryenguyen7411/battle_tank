@@ -95,7 +95,6 @@ void TankController::Update()
 
 			m_baseEntity->m_animator->m_currentFrame = 0;
 			m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
-			m_baseEntity->m_renderer->UpdateBound();
 		}
 		else if(GetAsyncKeyState(VK_DOWN))
 		{
@@ -113,7 +112,6 @@ void TankController::Update()
 
 			m_baseEntity->m_animator->m_currentFrame = 1;
 			m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
-			m_baseEntity->m_renderer->UpdateBound();
 		}
 		else if(GetAsyncKeyState(VK_LEFT))
 		{
@@ -131,7 +129,6 @@ void TankController::Update()
 
 			m_baseEntity->m_animator->m_currentFrame = 2;
 			m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
-			m_baseEntity->m_renderer->UpdateBound();
 		}
 		else if(GetAsyncKeyState(VK_RIGHT))
 		{
@@ -149,7 +146,6 @@ void TankController::Update()
 
 			m_baseEntity->m_animator->m_currentFrame = 3;
 			m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
-			m_baseEntity->m_renderer->UpdateBound();
 		}
 
 		if(GetAsyncKeyState(VK_SPACE))
@@ -199,54 +195,69 @@ void BulletController::Update()
 	if(m_direction == Direction::DIR_UP)
 	{
 		m_baseEntity->m_transform->m_position.y -= m_speed;
-
 		if(m_savePosition.y - m_baseEntity->m_transform->m_position.y >= m_range)
+		{
 			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+			return;
+		}
 	}
 	else if(m_direction == Direction::DIR_DOWN)
 	{
 		m_baseEntity->m_transform->m_position.y += m_speed;
-
 		if(m_baseEntity->m_transform->m_position.y - m_savePosition.y >= m_range)
+		{
 			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+			return;
+		}
 	}
 	else if(m_direction == Direction::DIR_LEFT)
 	{
 		m_baseEntity->m_transform->m_position.x -= m_speed;
-
 		if(m_savePosition.x - m_baseEntity->m_transform->m_position.x >= m_range)
+		{
 			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+			return;
+		}
 	}
 	else if(m_direction == Direction::DIR_RIGHT)
 	{
 		m_baseEntity->m_transform->m_position.x += m_speed;
-
 		if(m_baseEntity->m_transform->m_position.x - m_savePosition.x >= m_range)
+		{
 			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+			return;
+		}
 	}
-}
-#pragma endregion
 
+	Collider2D* collider = m_baseEntity->m_firstCollider;
+	if(collider->m_collisionObject)
+	{
+		if(collider->m_collisionObject->IsTaggedAs("Tank"))
+		{
+			if(m_team != static_cast<TankController*>(collider->m_collisionObject->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team)
+			{
+				HealthControl* healthControl = static_cast<HealthControl*>(collider->m_collisionObject->GetComponent(CompType::COMP_HEALTHCONTROL));
+				healthControl->m_health -= (m_damage - healthControl->m_defense);
 
-#pragma region CheckCollideWithBullet
-CheckCollideWithBullet::CheckCollideWithBullet()
-{
-	m_type = CompType::COMP_CHECKCOLLIDEWITHBULET;
-}
+				EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+			}
+		}
+		else if(collider->m_collisionObject->IsTaggedAs("Brick"))
+		{
+			BrickControl* brickControl = static_cast<BrickControl*>(collider->m_collisionObject->GetComponent(CompType::COMP_BRICKCONTROL));
+			brickControl->m_health -= m_damage;
 
-CheckCollideWithBullet:: ~CheckCollideWithBullet()
-{
+			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+		}
+		else if(collider->m_collisionObject->IsTaggedAs("Rock"))
+		{
 
-}
+		}
+		else if(collider->m_collisionObject->IsTaggedAs("ScreenCollider"))
+		{
 
-void CheckCollideWithBullet::Release()
-{
-
-}
-
-void CheckCollideWithBullet::Update()
-{
-
+		}
+	}
 }
 #pragma endregion
 
@@ -299,26 +310,6 @@ void HealthControl::Update()
 		}
 	}
 
-	std::vector<Component*> collider2dList = m_baseEntity->GetComponents(CompType::COMP_COLLIDER2D);
-	Entity* bullet = NULL;
-
-	for(int i = 0; i < collider2dList.size(); i++)
-	{
-		Entity* bullet = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
-		if(bullet && bullet->IsTaggedAs("Bullet"))
-		{
-			BulletController* bulletController = static_cast<BulletController*>(bullet->GetComponent(CompType::COMP_BULLETCONTROLLER));
-
-			if(static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team != bulletController->m_team)
-			{
-				m_health -= (bulletController->m_damage - m_defense);
-				EntitiesSystem::GetInstance()->Remove(bullet);
-			}
-
-			break;
-		}
-	}
-
 	if(m_health <= 0)
 		EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 }
@@ -344,23 +335,6 @@ void BrickControl::Release()
 
 void BrickControl::Update()
 {
-	std::vector<Component*> collider2dList = m_baseEntity->GetComponents(CompType::COMP_COLLIDER2D);
-	Entity* bullet = NULL;
-
-	for(int i = 0; i < collider2dList.size(); i++)
-	{
-		Entity* x = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
-		if(x && x->IsTaggedAs("Bullet"))
-		{
-			bullet = x;
-			BulletController* bulletController = static_cast<BulletController*>(bullet->GetComponent(CompType::COMP_BULLETCONTROLLER));
-			m_health -= (bulletController->m_damage);
-			EntitiesSystem::GetInstance()->Remove(bullet);
-
-			break;
-		}
-	}
-
 	if(m_health >= 75.0f)
 	{
 		

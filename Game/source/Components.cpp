@@ -27,14 +27,14 @@ Component::~Component()
 // Transform
 Transform::Transform(Vec3 _position, Vec3 _rotation, Vec3 _scale)
 {
+	m_type = CompType::COMP_TRANSFORM;
+
 	m_position = _position;
 	m_rotation = _rotation;
 	m_scale = _scale;
 
 	m_parent = NULL;
 	m_childCount = 0;
-
-	m_type = CompType::COMP_TRANSFORM;
 }
 
 Transform::~Transform()
@@ -83,10 +83,9 @@ void Transform::SetParent(Transform* _parent)
 // Renderer
 Renderer::Renderer(Image* _sprite)
 {
-	m_sprite = _sprite;
-	m_bound = Rect(0, 0, m_sprite->getWidth(), m_sprite->getHeight());
-
 	m_type = CompType::COMP_RENDERER;
+
+	m_sprite = _sprite;
 }
 
 Renderer::~Renderer()
@@ -102,11 +101,6 @@ void Renderer::Release()
 void Renderer::Update()
 {
 
-}
-
-void Renderer::UpdateBound()
-{
-	m_bound = Rect(0, 0, m_sprite->getWidth(), m_sprite->getHeight());
 }
 ///////////////////////////////////////////
 
@@ -160,31 +154,23 @@ void Collider2D::Update()
 	m_bound.x = m_baseEntity->m_transform->m_position.x - m_bound.width / 2;
 	m_bound.y = m_baseEntity->m_transform->m_position.y - m_bound.height / 2;
 
-	std::vector<Entity*> detectEntityList = EntitiesSystem::GetInstance()->m_quadtree->Retrieve(m_baseEntity);
+	if(!m_baseEntity->IsTaggedAs("Bullet") && !m_baseEntity->IsTaggedAs("Tank"))
+		return;
 
+	std::vector<Entity*> detectEntityList = EntitiesSystem::GetInstance()->m_quadtree->Retrieve(m_baseEntity);
 	for(int i = 0; i < detectEntityList.size(); i++)
 	{
 		std::vector<Component*> collider2dList = detectEntityList[i]->GetComponents(CompType::COMP_COLLIDER2D);
-
 		for(int j = 0; j < collider2dList.size(); j++)
 		{
 			if(CheckAABB(static_cast<Collider2D*>(collider2dList[j])))
 			{
-				if(m_baseEntity->IsTaggedAs("MapPart") && collider2dList[j]->m_baseEntity->IsTaggedAs("MapPart"))
-					break;
-
-				//if(m_baseEntity->IsTaggedAs("Tank"))
-				//{
-				//	
-				//}
-
 				m_collisionObject = detectEntityList[i];
 				
-				if(m_collisionObject->IsTaggedAs("Tank") || m_collisionObject->IsTaggedAs("MapPart"))
+				if(m_baseEntity->IsTaggedAs("Tank") && (m_collisionObject->IsTaggedAs("Tank") || m_collisionObject->IsTaggedAs("Brick")))
 				{
 					TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
-					if(tankController)
-						tankController->m_lockDirection = tankController->m_direction;
+					tankController->m_lockDirection = tankController->m_direction;
 				}
 
 				detectEntityList.clear();

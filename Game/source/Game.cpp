@@ -1,11 +1,12 @@
 #include "stdafx.h"
 
 #include "ResourcesManager.h"
-#include "Factory.h"
-#include "Entity.h"
-#include "EntitiesSystem.h"
-#include "Components.h"
 #include "Map.h"
+#include "Factory.h"
+#include "EntitiesSystem.h"
+
+#include "Entity.h"
+#include "Components.h"
 
 #include "Game.h"
 
@@ -33,6 +34,8 @@ ErrorCode Game::init(int screenW, int screenH, const char* title)
 }
 
 
+// EntitiesList will update size after all entities updated
+// NULL entity will be remove
 void Game::update(float deltaTime)
 {
 	EntitiesSystem::GetInstance()->UpdateQuadtree();
@@ -71,7 +74,7 @@ void Game::render(Graphics* g)
 			entitiesList[i]->Draw(g);
 	}
 
-	Map::GetInstance()->Draw(g);
+	Map::GetInstance()->Draw(g);	// Bullet will be behind map - Fix later
 }
 
 void Game::exit()

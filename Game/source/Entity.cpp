@@ -9,11 +9,13 @@ Entity::Entity()
 	strcpy(m_tag, "Untagged");
 
 	m_transform = new Transform();
-	m_componentList.push_back(static_cast<Component*>(m_transform));
 	m_transform->m_baseEntity = this;
+	m_componentList.push_back(static_cast<Component*>(m_transform));
 
 	m_renderer = NULL;
 	m_rigidbody2d = NULL;
+	m_animator = NULL;
+	m_firstCollider = NULL;
 }
 
 Entity::~Entity()
@@ -34,6 +36,8 @@ void Entity::Release()
 	m_transform = NULL;
 	m_renderer = NULL;
 	m_rigidbody2d = NULL;
+	m_animator = NULL;
+	m_firstCollider = NULL;
 }
 
 void Entity::AddComponent(Component* _component)
@@ -141,8 +145,8 @@ void Entity::Draw(Graphics* g)
 	if(m_renderer)
 	{
 		Rect rect;
-		rect.width = m_renderer->m_bound.width;
-		rect.height = m_renderer->m_bound.height;
+		rect.width = m_renderer->m_sprite->getWidth();
+		rect.height = m_renderer->m_sprite->getHeight();
 		rect.x = m_transform->m_position.x - rect.width / 2;
 		rect.y = m_transform->m_position.y - rect.height / 2;
 
@@ -201,11 +205,4 @@ void Entity::Draw(Graphics* g)
 			drawPosition.x += fontChar.m_xAdvance * uiText->m_fontSize;
 		}
 	}
-
-	//g->setColor(BLACK);
-	//std::vector<Component*> colliders = GetComponents(CompType::COMP_COLLIDER2D);
-	//for(int i = 0; i < colliders.size(); i++)
-	//{
-	//	g->drawRect(static_cast<Collider2D*>(colliders[i])->m_bound);
-	//}
 }

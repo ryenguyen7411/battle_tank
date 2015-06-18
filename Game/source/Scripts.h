@@ -13,7 +13,6 @@ public:
 
 	float		m_speed;
 	float		m_damage;
-
 	float		m_shootSpeed;
 	float		m_shootRange;
 
@@ -33,7 +32,6 @@ public:
 	~TankController();
 
 	virtual void	Release();
-
 	virtual void	Update();
 };
 #pragma endregion
@@ -57,22 +55,7 @@ public:
 	virtual ~BulletController();
 
 	virtual void	Release();
-
-	virtual void		Update();
-};
-#pragma endregion
-
-
-#pragma region CheckCollideWithBullet
-class CheckCollideWithBullet : public Component
-{
-public:
-	CheckCollideWithBullet();
-	virtual ~CheckCollideWithBullet();
-
-	virtual void	Release();
-
-	virtual void		Update();
+	virtual void	Update();
 };
 #pragma endregion
 
@@ -88,7 +71,6 @@ public:
 	virtual ~HealthControl();
 
 	virtual void		Release();
-
 	virtual void		Update();
 };
 #pragma endregion
@@ -105,7 +87,6 @@ public:
 	virtual ~BrickControl();
 
 	virtual void		Release();
-
 	virtual void		Update();
 };
 #pragma endregion

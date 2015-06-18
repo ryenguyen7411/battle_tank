@@ -22,7 +22,6 @@ public:
 	virtual ~Component();
 
 	virtual void	Release() = 0;
-
 	virtual void	Update() = 0;
 };
 
@@ -42,7 +41,6 @@ public:
 	virtual ~Transform();
 
 	virtual void	Release();
-
 	virtual void	Update();
 
 	void			SetParent(Transform* _parent);
@@ -53,15 +51,12 @@ class Renderer : public Component
 {
 public:
 	Image*			m_sprite;
-	Rect			m_bound;
 
 	Renderer(Image* _sprite = NULL);
 	virtual ~Renderer();
 
 	virtual void	Release();
-
 	virtual void	Update();
-	void			UpdateBound();
 };
 
 
@@ -76,7 +71,6 @@ public:
 	virtual ~Rigidbody2D();
 
 	virtual void	Release();
-
 	virtual void	Update();
 };
 
@@ -90,11 +84,10 @@ public:
 	Collider2D(Rect _bound = Rect());
 	virtual ~Collider2D();
 
+	virtual void	Release();
 	virtual void	Update();
 
-	virtual void	Release();
-
-	bool		CheckAABB(Collider2D* _collider2d);
+	bool			CheckAABB(Collider2D* _collider2d);
 };
 
 
@@ -111,7 +104,6 @@ public:
 	virtual ~Animator();
 
 	virtual void	Release();
-
 	virtual void	Update();
 
 	void			SetFrameList(int _count, ...);
@@ -122,16 +114,15 @@ class UIText : public Component
 {
 public:
 	char		m_text[256];
-	float		m_fontSize;
 	Anchor		m_anchor;
 
 	Image*		m_font;
+	float		m_fontSize;
 
 	UIText();
 	virtual ~UIText();
 
 	virtual void	Release();
-
 	virtual void	Update();
 };
 

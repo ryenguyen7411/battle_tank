@@ -22,8 +22,38 @@ void ResourcesManager::LoadResources()
 	m_tank1[3] = new Image(SPR_TANK_1_RIGHT);
 	m_tank1[3]->loadImage();
 
-	m_bullet = new Image(SPR_BULLET_NORMAL);
-	m_bullet->loadImage();
+
+	m_tank2[0] = new Image(SPR_TANK_2_UP);
+	m_tank2[0]->loadImage();
+	m_tank2[1] = new Image(SPR_TANK_2_DOWN);
+	m_tank2[1]->loadImage();
+	m_tank2[2] = new Image(SPR_TANK_2_LEFT);
+	m_tank2[2]->loadImage();
+	m_tank2[3] = new Image(SPR_TANK_2_RIGHT);
+	m_tank2[3]->loadImage();
+
+
+	m_tank3[0] = new Image(SPR_TANK_3_UP);
+	m_tank3[0]->loadImage();
+	m_tank3[1] = new Image(SPR_TANK_3_DOWN);
+	m_tank3[1]->loadImage();
+	m_tank3[2] = new Image(SPR_TANK_3_LEFT);
+	m_tank3[2]->loadImage();
+	m_tank3[3] = new Image(SPR_TANK_3_RIGHT);
+	m_tank3[3]->loadImage();
+
+
+	m_bulletNormal = new Image(SPR_BULLET_NORMAL);
+	m_bulletNormal->loadImage();
+	m_bulletExplode[0] = new Image(SPR_BULLET_EXPLODE_UP);
+	m_bulletExplode[0]->loadImage();
+	m_bulletExplode[1] = new Image(SPR_BULLET_EXPLODE_DOWN);
+	m_bulletExplode[1]->loadImage();
+	m_bulletExplode[2] = new Image(SPR_BULLET_EXPLODE_LEFT);
+	m_bulletExplode[2]->loadImage();
+	m_bulletExplode[3] = new Image(SPR_BULLET_EXPLODE_RIGHT);
+	m_bulletExplode[3]->loadImage();
+
 
 	m_mapPart[0] = new Image(SPR_GRASS);
 	m_mapPart[1] = new Image(SPR_WATER);
@@ -44,11 +74,20 @@ void ResourcesManager::Release()
 	for(int i = 0; i < 4; i++)
 	{
 		m_tank1[i]->unloadImage();
-		delete m_tank1[i];
+		SAFE_DEL(m_tank1[i]);
+		m_tank2[i]->unloadImage();
+		SAFE_DEL(m_tank2[i]);
+		m_tank3[i]->unloadImage();
+		SAFE_DEL(m_tank2[i]);
+
+		m_bulletExplode[i]->unloadImage();
+		SAFE_DEL(m_bulletExplode[i]);
 	}
 
-	m_bullet->unloadImage();
-	delete m_bullet;
+
+	m_bulletNormal->unloadImage();
+	SAFE_DEL(m_bulletNormal);
+
 
 	m_fontBlack->unloadImage();
 	SAFE_DEL(m_fontBlack);
@@ -63,7 +102,7 @@ void ResourcesManager::Release()
 		SAFE_DEL(m_mapPart[i]);
 	}
 
-	delete s_instance;
+	SAFE_DEL(s_instance);
 }
 
 ErrorCode ResourcesManager::LoadFont(const char* _path)

@@ -1,8 +1,9 @@
 #include "stdafx.h"
 
 #include "ResourcesManager.h"
-#include "Entity.h"
 #include "EntitiesSystem.h"
+#include "Entity.h"
+
 #include "Components.h"
 #include "Scripts.h"
 
@@ -29,7 +30,6 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 {
 	Entity* tank = new Entity();
 	tank->SetTag("Tank");
-	
 	tank->m_transform->m_position = _position;
 
 	Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[0]);
@@ -40,7 +40,9 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 		ResourcesManager::GetInstance()->m_tank1[2], ResourcesManager::GetInstance()->m_tank1[3]);
 	tank->AddComponent(animator);
 
-	Collider2D* collider2d = new Collider2D(renderer->m_bound);
+	Rect bound = Rect(_position.x - renderer->m_sprite->getWidth() / 2, _position.y - renderer->m_sprite->getHeight() / 2,
+		renderer->m_sprite->getWidth(), renderer->m_sprite->getHeight());
+	Collider2D* collider2d = new Collider2D(bound);
 	tank->AddComponent(collider2d);
 
 	TankController* tankController = new TankController(_tankType);
@@ -97,13 +99,14 @@ Entity* Factory::CreateBullet(Team _team, Vec3 _position, Direction _direction, 
 {
 	Entity* bullet = new Entity();
 	bullet->SetTag("Bullet");
-
 	bullet->m_transform->m_position = _position;
 
 	Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_bullet);
 	bullet->AddComponent(renderer);
 
-	Collider2D* collider2d = new Collider2D(renderer->m_bound);
+	Rect bound = Rect(_position.x - renderer->m_sprite->getWidth() / 2, _position.y - renderer->m_sprite->getHeight() / 2,
+		renderer->m_sprite->getWidth(), renderer->m_sprite->getHeight());
+	Collider2D* collider2d = new Collider2D(bound);
 	bullet->AddComponent(collider2d);
 
 	BulletController* bulletController = new BulletController();
@@ -120,10 +123,10 @@ Entity* Factory::CreateBullet(Team _team, Vec3 _position, Direction _direction, 
 	return bullet;
 }
 
-Entity* Factory::CreateCollider(Rect _bound, bool _isBreakable, Vec2 _position)
+Entity* Factory::CreateCollider(const char* _tag, Rect _bound, bool _isBreakable, Vec2 _position)
 {
 	Entity* mapPart = new Entity();
-	mapPart->SetTag("MapPart");
+	mapPart->SetTag(_tag);
 
 	mapPart->m_transform->m_position = Vec3(_bound.x + _bound.width / 2, _bound.y + _bound.height / 2, 0);
 
