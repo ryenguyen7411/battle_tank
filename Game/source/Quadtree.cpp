@@ -117,7 +117,8 @@ std::vector<Entity*> Quadtree::Retrieve(Entity* _entity)
 		{
 			if(m_entityList[i] != _entity)
 			{
-				if(m_entityList[i]->IsTaggedAs("Tank") || m_entityList[i]->IsTaggedAs("Bullet") || m_entityList[i]->IsTaggedAs("Brick"))
+				if(m_entityList[i]->IsTaggedAs("Tank") || m_entityList[i]->IsTaggedAs("Bullet") || m_entityList[i]->IsTaggedAs("Brick")
+					|| m_entityList[i]->IsTaggedAs("Rock") || m_entityList[i]->IsTaggedAs("Ocean"))
 					returnList.push_back(m_entityList[i]);
 			}
 		}

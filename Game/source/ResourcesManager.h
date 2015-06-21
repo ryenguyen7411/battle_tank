@@ -19,6 +19,7 @@ public:
 	FontChar	m_fontChar[128];
 
 	Image*		m_mapPart[7];
+	Image*		m_item[5];
 
 	ResourcesManager();
 	virtual ~ResourcesManager();

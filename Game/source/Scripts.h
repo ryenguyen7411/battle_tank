@@ -25,6 +25,7 @@ public:
 
 	Tank		m_tank;
 	Bullet		m_bullet;
+	int			m_bulletLevel;
 
 	StateMachine	m_stateMachine;
 
@@ -88,6 +89,43 @@ public:
 
 	virtual void		Release();
 	virtual void		Update();
+};
+#pragma endregion
+
+
+#pragma region Manager
+class Manager : public Component
+{
+public:
+	Team			m_team;
+
+	Entity*			m_teamRed[4];
+	Entity*			m_teamBlue[4];
+
+	int				m_teamRedCount[3];
+	int				m_teamBlueCount[3];
+
+	Entity*			m_player;
+
+	Manager();
+	virtual ~Manager();
+
+	virtual void	Release();
+	virtual void	Update();
+};
+#pragma endregion
+
+
+#pragma region Item
+class Item : public Component
+{
+public:
+
+	Item();
+	virtual ~Item();
+
+	virtual void	Release();
+	virtual void	Update();
 };
 #pragma endregion
 

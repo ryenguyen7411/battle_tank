@@ -1,11 +1,14 @@
 #include "stdafx.h"
 
 #include "ResourcesManager.h"
+#include "Map.h"
 #include "EntitiesSystem.h"
 #include "Entity.h"
 
 #include "Components.h"
 #include "Scripts.h"
+#include "State.h"
+#include "TankAI.h"
 
 #include "Factory.h"
 
@@ -23,22 +26,26 @@ Factory::~Factory()
 
 void Factory::Release()
 {
-	SAFE_DEL(s_instance);
+	
 }
 
 Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _tankType)
 {
 	Entity* tank = new Entity();
-	tank->SetTag("Tank");
-	tank->m_transform->m_position = _position;
+	tank->SetTag(TAG_TANK);
+
+	if(_team == Team::TEAM_RED)
+		tank->m_transform->m_position = Map::GetInstance()->m_redDefaultLocation[rand() % 4];
+	else if(_team == Team::TEAM_BLUE)
+		tank->m_transform->m_position = Map::GetInstance()->m_blueDefaultLocation[rand() % 4];
 
 	Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[0]);
 	tank->AddComponent(renderer);
 
 	Animator* animator = new Animator();
+	tank->AddComponent(animator);
 	animator->SetFrameList(4, ResourcesManager::GetInstance()->m_tank1[0], ResourcesManager::GetInstance()->m_tank1[1],
 		ResourcesManager::GetInstance()->m_tank1[2], ResourcesManager::GetInstance()->m_tank1[3]);
-	tank->AddComponent(animator);
 
 	Rect bound = Rect(_position.x - renderer->m_sprite->getWidth() / 2, _position.y - renderer->m_sprite->getHeight() / 2,
 		renderer->m_sprite->getWidth(), renderer->m_sprite->getHeight());
@@ -46,46 +53,30 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	tank->AddComponent(collider2d);
 
 	TankController* tankController = new TankController(_tankType);
+	tank->AddComponent(tankController);
 	tankController->m_team = _team;
 	tankController->m_control = _control;
-	tank->AddComponent(tankController);
+	if(_control == Control::CTRL_AUTO)
+	{
+		//tankController->m_stateMachine = StateMachine(tankController->m_baseEntity);
+		//tankController->m_stateMachine.ChangeState(new Roaming());
+	}
 
 	HealthControl* healthControl = new HealthControl(_tankType);
 	tank->AddComponent(healthControl);
 
 
-	Entity* team = new Entity();
-	team->SetTag("Team");
-	team->m_transform->m_position = Vec3(0, -30, 0);
-	UIText* uiText = new UIText();
-	uiText->m_fontSize = FNT_SIZE_SMALL;
-	uiText->m_anchor = Anchor::ANCHOR_CENTER;
-	if(_team == Team::TEAM_RED)
-	{
-		strcpy(uiText->m_text, "Team Red");
-		uiText->m_font = ResourcesManager::GetInstance()->m_fontRed;
-	}
-	else
-	{
-		strcpy(uiText->m_text, "Team Blue");
-		uiText->m_font = ResourcesManager::GetInstance()->m_fontBlue;
-	}
-	team->AddComponent(uiText);
-	team->m_transform->SetParent(tank->m_transform);
-	EntitiesSystem::GetInstance()->m_entitiesList.push_back(team);
-
-
 	Entity* hp = new Entity();
-	hp->SetTag("HP");
-	hp->m_transform->m_position = Vec3(0, -45, 0);
-	UIText* uiText2 = new UIText();
-	uiText2->m_fontSize = FNT_SIZE_SMALL;
-	uiText2->m_anchor = Anchor::ANCHOR_CENTER;
+	hp->SetTag(TAG_HP);
+	hp->m_transform->m_position = Vec3(0, -25, 0);
+	UIText* hpText = new UIText();
+	hp->AddComponent(hpText);
+	hpText->m_fontSize = FNT_SIZE_SMALL;
+	hpText->m_anchor = Anchor::ANCHOR_CENTER;
 	if(_team == Team::TEAM_RED)
-		uiText2->m_font = ResourcesManager::GetInstance()->m_fontRed;
+		hpText->m_font = ResourcesManager::GetInstance()->m_fontRed;
 	else
-		uiText2->m_font = ResourcesManager::GetInstance()->m_fontBlue;
-	hp->AddComponent(uiText2);
+		hpText->m_font = ResourcesManager::GetInstance()->m_fontBlue;
 	hp->m_transform->SetParent(tank->m_transform);
 	EntitiesSystem::GetInstance()->m_entitiesList.push_back(hp);
 
@@ -98,10 +89,10 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 Entity* Factory::CreateBullet(Team _team, Vec3 _position, Direction _direction, Bullet _type, float _speed, float _range, float _damage)
 {
 	Entity* bullet = new Entity();
-	bullet->SetTag("Bullet");
+	bullet->SetTag(TAG_BULLET);
 	bullet->m_transform->m_position = _position;
 
-	Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_bullet);
+	Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_bulletNormal);
 	bullet->AddComponent(renderer);
 
 	Rect bound = Rect(_position.x - renderer->m_sprite->getWidth() / 2, _position.y - renderer->m_sprite->getHeight() / 2,
@@ -136,12 +127,81 @@ Entity* Factory::CreateCollider(const char* _tag, Rect _bound, bool _isBreakable
 	if(_isBreakable)
 	{
 		BrickControl* brickControl = new BrickControl();
+		mapPart->AddComponent(brickControl);
 		brickControl->m_health = 100.0f;
 		brickControl->m_position = _position;
-		mapPart->AddComponent(brickControl);
 	}
 
 	EntitiesSystem::GetInstance()->m_entitiesList.push_back(mapPart);
 
 	return mapPart;
+}
+
+Entity* Factory::CreateManager(Team _team)
+{
+	Entity* teamManager = new Entity();
+	teamManager->SetTag(TAG_TEAM_MANAGER);
+	if(_team == Team::TEAM_RED)
+		teamManager->m_transform->m_position = Vec3(700, 450, 0);
+	else if(_team == Team::TEAM_BLUE)
+		teamManager->m_transform->m_position = Vec3(700, 150, 0);
+
+	Manager* manager = new Manager();
+	teamManager->AddComponent(manager);
+	manager->m_team = _team;
+
+	Entity* tank1 = new Entity();
+	tank1->SetTag(TAG_UITEXT);
+	tank1->m_transform->m_position = Vec3(-50, 0, 0);
+	UIText* uiText1 = new UIText();
+	tank1->AddComponent(uiText1);
+	uiText1->m_fontSize = FNT_SIZE_BIG;
+	uiText1->m_anchor = Anchor::ANCHOR_CENTER;
+	tank1->m_transform->SetParent(teamManager->m_transform);
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank1);
+
+
+	Entity* tank2 = new Entity();
+	tank2->SetTag(TAG_UITEXT);
+	tank2->m_transform->m_position = Vec3(0, 0, 0);
+	UIText* uiText2 = new UIText();
+	tank2->AddComponent(uiText2);
+	uiText2->m_fontSize = FNT_SIZE_BIG;
+	uiText2->m_anchor = Anchor::ANCHOR_CENTER;
+	tank2->m_transform->SetParent(teamManager->m_transform);
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank2);
+
+
+	Entity* tank3 = new Entity();
+	tank3->SetTag(TAG_UITEXT);
+	tank3->m_transform->m_position = Vec3(50, 0, 0);
+	UIText* uiText3 = new UIText();
+	tank3->AddComponent(uiText3);
+	uiText3->m_fontSize = FNT_SIZE_BIG;
+	uiText3->m_anchor = Anchor::ANCHOR_CENTER;
+	tank3->m_transform->SetParent(teamManager->m_transform);
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank3);
+
+
+	if(_team == Team::TEAM_RED)
+	{
+		uiText1->m_font = ResourcesManager::GetInstance()->m_fontRed;
+		uiText2->m_font = ResourcesManager::GetInstance()->m_fontRed;
+		uiText3->m_font = ResourcesManager::GetInstance()->m_fontRed;
+	}
+	else
+	{
+		uiText1->m_font = ResourcesManager::GetInstance()->m_fontBlue;
+		uiText2->m_font = ResourcesManager::GetInstance()->m_fontBlue;
+		uiText3->m_font = ResourcesManager::GetInstance()->m_fontBlue;
+	}
+
+
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(teamManager);
+	if(_team == Team::TEAM_RED)
+		EntitiesSystem::GetInstance()->m_teamRedManager = teamManager;
+	else
+		EntitiesSystem::GetInstance()->m_teamBlueManager = teamManager;
+
+	return teamManager;
 }

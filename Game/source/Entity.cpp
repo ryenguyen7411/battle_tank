@@ -15,7 +15,7 @@ Entity::Entity()
 	m_renderer = NULL;
 	m_rigidbody2d = NULL;
 	m_animator = NULL;
-	m_firstCollider = NULL;
+	m_collider2d = NULL;
 }
 
 Entity::~Entity()
@@ -37,7 +37,7 @@ void Entity::Release()
 	m_renderer = NULL;
 	m_rigidbody2d = NULL;
 	m_animator = NULL;
-	m_firstCollider = NULL;
+	m_collider2d = NULL;
 }
 
 void Entity::AddComponent(Component* _component)
@@ -79,8 +79,8 @@ void Entity::AddComponent(Component* _component)
 	}
 	else if(_component->m_type == CompType::COMP_COLLIDER2D)
 	{
-		if(!m_firstCollider)
-			m_firstCollider = dynamic_cast<Collider2D*>(_component);
+		if(!m_collider2d)
+			m_collider2d = dynamic_cast<Collider2D*>(_component);
 	}
 
 	m_componentList.push_back(_component);

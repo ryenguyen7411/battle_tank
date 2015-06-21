@@ -53,7 +53,7 @@ void Transform::Release()
 				if(m_childList.back()->m_baseEntity == EntitiesSystem::GetInstance()->m_entitiesList[i])
 				{
 					m_childList.back()->m_baseEntity->Release();
-					EntitiesSystem::GetInstance()->m_entitiesList[i] = NULL;
+					SAFE_DEL(EntitiesSystem::GetInstance()->m_entitiesList[i]);
 
 					break;
 				}
@@ -167,10 +167,33 @@ void Collider2D::Update()
 			{
 				m_collisionObject = detectEntityList[i];
 				
-				if(m_baseEntity->IsTaggedAs("Tank") && (m_collisionObject->IsTaggedAs("Tank") || m_collisionObject->IsTaggedAs("Brick")))
+				if(m_baseEntity->IsTaggedAs("Tank") && 
+					(m_collisionObject->IsTaggedAs("Brick") || m_collisionObject->IsTaggedAs("Rock") || 
+					m_collisionObject->IsTaggedAs("Ocean") || m_collisionObject->IsTaggedAs("ScreenCollider")))
 				{
 					TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 					tankController->m_lockDirection = tankController->m_direction;
+
+					if(tankController->m_direction == Direction::DIR_UP)
+					{
+						m_baseEntity->m_transform->m_position.y = m_collisionObject->m_transform->m_position.y
+							+ m_collisionObject->m_collider2d->m_bound.height / 2 + m_baseEntity->m_collider2d->m_bound.height / 2;
+					}
+					else if(tankController->m_direction == Direction::DIR_DOWN)
+					{
+						m_baseEntity->m_transform->m_position.y = m_collisionObject->m_transform->m_position.y
+							- m_collisionObject->m_collider2d->m_bound.height / 2 - m_baseEntity->m_collider2d->m_bound.height / 2;
+					}
+					else if(tankController->m_direction == Direction::DIR_LEFT)
+					{
+						m_baseEntity->m_transform->m_position.x = m_collisionObject->m_transform->m_position.x
+							+ m_collisionObject->m_collider2d->m_bound.width / 2 + m_baseEntity->m_collider2d->m_bound.width / 2;
+					}
+					else if(tankController->m_direction == Direction::DIR_RIGHT)
+					{
+						m_baseEntity->m_transform->m_position.x = m_collisionObject->m_transform->m_position.x
+							- m_collisionObject->m_collider2d->m_bound.width / 2 - m_baseEntity->m_collider2d->m_bound.width / 2;
+					}
 				}
 
 				detectEntityList.clear();

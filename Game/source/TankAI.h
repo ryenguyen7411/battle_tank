@@ -1,6 +1,7 @@
 #ifndef __TANK_AI_H__
 #define __TANK_AI_H__
 
+class State;
 class Roaming : public State, public Singleton<Roaming>
 {
 public:

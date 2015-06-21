@@ -66,6 +66,16 @@ void ResourcesManager::LoadResources()
 		m_mapPart[i]->loadImage();
 
 
+	m_item[0] = new Image(SPR_ITEM_SPEED);
+	m_item[1] = new Image(SPR_ITEM_HP);
+	m_item[2] = new Image(SPR_ITEM_INVI);
+	m_item[3] = new Image(SPR_ITEM_PLUS);
+	m_item[4] = new Image(SPR_ITEM_UP);
+	for(int i = 0; i < 5; i++)
+	{
+		m_item[i]->loadImage();
+	}
+
 	LoadFont(FNT_DEFINE);
 }
 
@@ -78,7 +88,7 @@ void ResourcesManager::Release()
 		m_tank2[i]->unloadImage();
 		SAFE_DEL(m_tank2[i]);
 		m_tank3[i]->unloadImage();
-		SAFE_DEL(m_tank2[i]);
+		SAFE_DEL(m_tank3[i]);
 
 		m_bulletExplode[i]->unloadImage();
 		SAFE_DEL(m_bulletExplode[i]);
@@ -101,8 +111,11 @@ void ResourcesManager::Release()
 		m_mapPart[i]->unloadImage();
 		SAFE_DEL(m_mapPart[i]);
 	}
-
-	SAFE_DEL(s_instance);
+	for(int i = 0; i < 5; i++)
+	{
+		m_item[i]->unloadImage();
+		SAFE_DEL(m_item[i]);
+	}
 }
 
 ErrorCode ResourcesManager::LoadFont(const char* _path)

@@ -1,4 +1,7 @@
 #include "stdafx.h"
+#include "EntitiesSystem.h"
+#include "Entity.h"
+
 #include "Map.h"
 
 Map::Map()
@@ -14,7 +17,7 @@ Map::~Map()
 
 void Map::Release()
 {
-	SAFE_DEL(s_instance);
+
 }
 
 void Map::ChangeMap(const char* _path)
@@ -45,25 +48,27 @@ ErrorCode Map::LoadMap()
 
 	char* temp = buffer;
 	
-	char* mapWidth = strstr(temp, "width=");
-	mapWidth += strlen("width=");
-	m_mapWidth = GetNumber(mapWidth);
+	// Map Info
+	char* mapInfo = strstr(temp, "[MapInfo]");
+	mapInfo = strstr(temp, "width=");
+	mapInfo += strlen("width=");
+	m_mapWidth = GetNumber(mapInfo);
 
-	char* mapHeight = strstr(temp, "height=");
-	mapHeight += strlen("height=");
-	m_mapHeight = GetNumber(mapHeight);
+	mapInfo = strstr(temp, "height=");
+	mapInfo += strlen("height=");
+	m_mapHeight = GetNumber(mapInfo);
 
-	char* tileWidth = strstr(temp, "tilewidth=");
-	tileWidth += strlen("tilewidth=");
-	m_tileWidth = GetNumber(tileWidth);
+	mapInfo = strstr(temp, "tilewidth=");
+	mapInfo += strlen("tilewidth=");
+	m_tileWidth = GetNumber(mapInfo);
 
-	char* tileHeight = strstr(temp, "tileheight=");
-	tileHeight += strlen("tileheight=");
-	m_tileHeight = GetNumber(tileHeight);
+	mapInfo = strstr(temp, "tileheight=");
+	mapInfo += strlen("tileheight=");
+	m_tileHeight = GetNumber(mapInfo);
 
-	char* map = strstr(temp, "map=");
-	map += strlen("map=") + 2;
-
+	// Map
+	char* map = strstr(temp, "[Map]");
+	map += strlen("[Map]") + 2;
 	for(int i = 0; i < m_mapHeight; i++)
 	{
 		for(int j = 0; j < m_mapWidth; j++)
@@ -71,10 +76,10 @@ ErrorCode Map::LoadMap()
 			m_map[i][j] = GetNumber(map);
 			map += 2;
 		}
-
 		map += 2;
 	}
 
+	// Team Red
 	char* teamRed = strstr(temp, "[TeamRed]");
 	teamRed = strstr(teamRed, "tanktype_1=");
 	teamRed += strlen("tanktype_1=");
@@ -87,6 +92,7 @@ ErrorCode Map::LoadMap()
 	m_teamRed[2] = GetNumber(teamRed);
 
 
+	// Team Blue
 	char* teamBlue = strstr(temp, "[TeamBlue]");
 	teamBlue = strstr(teamBlue, "tanktype_1=");
 	teamBlue += strlen("tanktype_1=");
@@ -97,6 +103,56 @@ ErrorCode Map::LoadMap()
 	teamBlue = strstr(teamBlue, "tanktype_3=");
 	teamBlue += strlen("tanktype_3=");
 	m_teamBlue[2] = GetNumber(teamBlue);
+
+
+	// Collider
+	char* collider = strstr(temp, "[Collider]");
+	while(collider = strstr(collider, "collider="))
+	{
+		collider += strlen("collider=");
+
+		Rect bound;
+		bound.x = GetNumber(collider) * m_tileWidth + m_offset.x;
+		while(*collider++ != ',');
+		bound.y = GetNumber(collider) * m_tileHeight + m_offset.y;
+		while(*collider++ != ',');
+		bound.width = GetNumber(collider) * m_tileWidth - 1;
+		while(*collider++ != ',');
+		bound.height = GetNumber(collider) * m_tileHeight - 1;
+		while(*collider++ != ',');
+
+		int type = GetNumber(collider);
+
+		char tag[256];
+		if(type == 2)
+			strcpy(tag, TAG_OCEAN);
+		else if(type == 3)
+			strcpy(tag, TAG_ROCK);
+
+		m_mapPartList.push_back(Factory::GetInstance()->CreateCollider(tag, bound));
+	}
+
+
+	// Default Location
+	char* defaultLocation = strstr(temp, "[DefaultLocation]");
+	for(int i = 0; i < 4; i++)
+	{
+		defaultLocation = strstr(defaultLocation, "location=");
+		defaultLocation += strlen("location=");
+
+		m_redDefaultLocation[i].x = (GetNumber(defaultLocation) + 0.5f) * m_tileWidth + m_offset.x;
+		while(*defaultLocation++ != ',');
+		m_redDefaultLocation[i].y = (GetNumber(defaultLocation) + 0.5f) * m_tileHeight + m_offset.y;
+	}
+	for(int i = 0; i < 4; i++)
+	{
+		defaultLocation = strstr(defaultLocation, "location=");
+		defaultLocation += strlen("location=");
+
+		m_blueDefaultLocation[i].x = (GetNumber(defaultLocation) + 0.5f) * m_tileWidth + m_offset.x;
+		while(*defaultLocation++ != ',');
+		m_blueDefaultLocation[i].y = (GetNumber(defaultLocation) + 0.5f) * m_tileHeight + m_offset.y;
+	}
 
 	SAFE_DEL_ARR(buffer);
 
@@ -120,6 +176,12 @@ void Map::UnloadMap()
 	m_teamBlue[0] = 0;
 	m_teamBlue[1] = 0;
 	m_teamBlue[2] = 0;
+
+	while(!m_mapPartList.empty())
+	{
+		EntitiesSystem::GetInstance()->Remove(m_mapPartList.back());
+		m_mapPartList.pop_back();
+	}
 }
 
 void Map::CreateCollider()
@@ -131,7 +193,7 @@ void Map::CreateCollider()
 			if(m_map[i][j] == 4)
 			{
 				Rect rect = Rect(j * m_tileWidth + m_offset.x, i * m_tileHeight + m_offset.y, m_tileWidth - 1, m_tileHeight - 1);
-				Factory::GetInstance()->CreateCollider("Brick", rect, true, Vec2(i, j));
+				m_mapPartList.push_back(Factory::GetInstance()->CreateCollider(TAG_BRICK, rect, true, Vec2(i, j)));
 			}
 		}
 	}

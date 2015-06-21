@@ -30,8 +30,11 @@ void StateMachine::Update()
 
 void StateMachine::ChangeState(State* _state)
 {
-	m_previousState = m_currentState;
-	m_currentState->Exit(m_owner);
+	if(m_currentState)
+	{
+		m_previousState = m_currentState;
+		m_currentState->Exit(m_owner);
+	}
 
 	m_currentState = _state;
 	m_currentState->Enter(m_owner);

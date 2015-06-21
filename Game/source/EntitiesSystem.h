@@ -12,6 +12,9 @@ public:
 	std::vector<Entity*>		m_entitiesList;
 	Quadtree*					m_quadtree;
 
+	Entity*			m_teamRedManager;
+	Entity*			m_teamBlueManager;
+
 	EntitiesSystem();
 	virtual ~EntitiesSystem();
 

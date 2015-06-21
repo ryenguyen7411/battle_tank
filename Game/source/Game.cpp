@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include <ctime>
+
 #include "ResourcesManager.h"
 #include "Map.h"
 #include "Factory.h"
@@ -24,11 +26,14 @@ ErrorCode Game::init(int screenW, int screenH, const char* title)
 {
 	ErrorCode errCode = Application::init(screenW, screenH, title);
 
+	srand((unsigned)time(NULL));
 	ResourcesManager::GetInstance()->LoadResources();
 	Map::GetInstance()->ChangeMap(MAP_1);
 
-	Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(200, 200, 1), Control::CTRL_ARROW);
-	Factory::GetInstance()->CreateTank(Team::TEAM_BLUE, Vec3(100, 100, 1), Control::CTRL_WSAD);
+	Factory::GetInstance()->CreateManager(Team::TEAM_RED);
+	Factory::GetInstance()->CreateManager(Team::TEAM_BLUE);
+
+	m_state = GameState::STATE_PLAY;
 	
 	return errCode;
 }
@@ -38,22 +43,34 @@ ErrorCode Game::init(int screenW, int screenH, const char* title)
 // NULL entity will be remove
 void Game::update(float deltaTime)
 {
-	EntitiesSystem::GetInstance()->UpdateQuadtree();
-	std::vector<Entity*>* entitiesList = &EntitiesSystem::GetInstance()->m_entitiesList;
-	for(int i = 0; i < entitiesList->size(); i++)
+	switch(m_state)
 	{
-		if(entitiesList->at(i))
-			entitiesList->at(i)->Update();
-	}
-
-	for(int i = 0; i < entitiesList->size(); i++)
-	{
-		if(!entitiesList->at(i))
+		case GameState::STATE_PLAY:
 		{
-			entitiesList->at(i) = entitiesList->back();
-			entitiesList->pop_back();
+			EntitiesSystem::GetInstance()->UpdateQuadtree();
+			std::vector<Entity*>* entitiesList = &EntitiesSystem::GetInstance()->m_entitiesList;
+			for(int i = 0; i < entitiesList->size(); i++)
+			{
+				if(entitiesList->at(i))
+					entitiesList->at(i)->Update();
+			}
+
+			for(int i = 0; i < entitiesList->size(); i++)
+			{
+				if(!entitiesList->at(i))
+				{
+					entitiesList->at(i) = entitiesList->back();
+					entitiesList->pop_back();
+				}
+			}
 		}
+			break;
+		case GameState::STATE_WIN:
+			break;
+		case GameState::STATE_GAME_OVER:
+			break;
 	}
+	
 
 	/////////////////////////////////////////////////
 	//Coder: Rye
@@ -80,9 +97,16 @@ void Game::render(Graphics* g)
 void Game::exit()
 {
 	Factory::GetInstance()->Release();
+	Factory::ReleaseInstance();
+
 	EntitiesSystem::GetInstance()->Release();
+	EntitiesSystem::ReleaseInstance();
+
 	ResourcesManager::GetInstance()->Release();
+	ResourcesManager::ReleaseInstance();
+
 	Map::GetInstance()->Release();
+	Map::ReleaseInstance();
 }
 
 void Game::onKeyProc(KeyCode key, KeyState state)

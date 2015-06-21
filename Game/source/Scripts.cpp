@@ -1,11 +1,13 @@
 #include "stdafx.h"
+#include <ctime>
+
 #include "Factory.h"
 #include "Map.h"
-
 #include "Entity.h"
 #include "EntitiesSystem.h"
 
-#include <ctime>
+#include "State.h"
+#include "TankAI.h"
 #include "Scripts.h"
 
 #pragma region TankController
@@ -15,6 +17,7 @@ TankController::TankController(Tank _tankType)
 
 	m_tank = _tankType;
 	m_bullet = Bullet::BULLET_NORMAL;
+	m_bulletLevel = 1;
 
 	switch(m_tank)
 	{
@@ -47,12 +50,6 @@ TankController::TankController(Tank _tankType)
 	m_previousTime = clock();
 	m_canShoot = true;
 	m_lockDirection = Direction::DIR_NONE;
-
-	if(m_control == Control::CTRL_AUTO)
-	{
-		m_stateMachine = StateMachine(m_baseEntity);
-		//m_stateMachine.ChangeState()
-	}
 }
 
 TankController::~TankController()
@@ -75,7 +72,7 @@ void TankController::Update()
 		for(int i = 0; i < collider2dList.size(); i++)
 		{
 			entity = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
-			if(entity && (entity->IsTaggedAs("Tank") || entity->IsTaggedAs("MapPart")))
+			if(entity && (entity->IsTaggedAs("Tank") || entity->IsTaggedAs("Brick") || entity->IsTaggedAs("Rock") || entity->IsTaggedAs("Ocean")))
 				break;
 		}
 
@@ -84,9 +81,11 @@ void TankController::Update()
 			if(m_lockDirection != Direction::DIR_UP)
 			{
 				if(m_lockDirection == Direction::DIR_LEFT)
-					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + 33;
+					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + entity->m_collider2d->m_bound.width / 2
+					+ m_baseEntity->m_collider2d->m_bound.width / 2 + 1;
 				if(m_lockDirection == Direction::DIR_RIGHT)
-					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - 33;
+					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - entity->m_collider2d->m_bound.width / 2
+					- m_baseEntity->m_collider2d->m_bound.width / 2 - 1;
 
 				m_baseEntity->m_transform->m_position.y -= m_speed;
 			}
@@ -101,9 +100,11 @@ void TankController::Update()
 			if(m_lockDirection != Direction::DIR_DOWN)
 			{
 				if(m_lockDirection == Direction::DIR_LEFT)
-					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + 33;
+					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + entity->m_collider2d->m_bound.width / 2
+					+ m_baseEntity->m_collider2d->m_bound.width / 2 + 1;
 				if(m_lockDirection == Direction::DIR_RIGHT)
-					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - 33;
+					m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - entity->m_collider2d->m_bound.width / 2
+					- m_baseEntity->m_collider2d->m_bound.width / 2 - 1;
 
 				m_baseEntity->m_transform->m_position.y += m_speed;
 			}
@@ -118,9 +119,11 @@ void TankController::Update()
 			if(m_lockDirection != Direction::DIR_LEFT)
 			{
 				if(m_lockDirection == Direction::DIR_UP)
-					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + 33;
+					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + entity->m_collider2d->m_bound.height / 2 
+					+ m_baseEntity->m_collider2d->m_bound.height / 2 + 1;
 				if(m_lockDirection == Direction::DIR_DOWN)
-					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - 33;
+					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - entity->m_collider2d->m_bound.height / 2
+					- m_baseEntity->m_collider2d->m_bound.height / 2 - 1;
 
 				m_baseEntity->m_transform->m_position.x -= m_speed;
 			}
@@ -135,9 +138,11 @@ void TankController::Update()
 			if(m_lockDirection != Direction::DIR_RIGHT)
 			{
 				if(m_lockDirection == Direction::DIR_UP)
-					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + 33;
+					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + entity->m_collider2d->m_bound.height / 2
+					+ m_baseEntity->m_collider2d->m_bound.height / 2 + 1;
 				if(m_lockDirection == Direction::DIR_DOWN)
-					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - 33;
+					m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - entity->m_collider2d->m_bound.height / 2
+					- m_baseEntity->m_collider2d->m_bound.height / 2 - 1;
 
 				m_baseEntity->m_transform->m_position.x += m_speed;
 			}
@@ -165,7 +170,7 @@ void TankController::Update()
 	}
 	else if(m_control == Control::CTRL_AUTO)
 	{
-		m_stateMachine.Update();
+		//m_stateMachine.Update();
 	}
 
 	if(1000.0f * (clock() - m_previousTime) / CLOCKS_PER_SEC > m_shootDelay)
@@ -229,7 +234,7 @@ void BulletController::Update()
 		}
 	}
 
-	Collider2D* collider = m_baseEntity->m_firstCollider;
+	Collider2D* collider = m_baseEntity->m_collider2d;
 	if(collider->m_collisionObject)
 	{
 		if(collider->m_collisionObject->IsTaggedAs("Tank"))
@@ -251,7 +256,7 @@ void BulletController::Update()
 		}
 		else if(collider->m_collisionObject->IsTaggedAs("Rock"))
 		{
-
+			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 		}
 		else if(collider->m_collisionObject->IsTaggedAs("ScreenCollider"))
 		{
@@ -296,19 +301,10 @@ void HealthControl::Release()
 
 void HealthControl::Update()
 {
-	std::vector<Transform*> childList = m_baseEntity->m_transform->m_childList;
-	for(int i = 0; i < childList.size(); i++)
-	{
-		if(childList[i]->m_baseEntity->IsTaggedAs("HP"))
-		{
-			char* uiText = static_cast<UIText*>(childList[i]->m_baseEntity->GetComponent(CompType::COMP_UITEXT))->m_text;
-			uiText[0] = '\0';
-			strcat(uiText, "HP = ");
-			strcat(uiText, convertToString(m_health));
-
-			break;
-		}
-	}
+	char* uiText = static_cast<UIText*>(m_baseEntity->m_transform->m_childList[0]->m_baseEntity->GetComponent(CompType::COMP_UITEXT))->m_text;
+	uiText[0] = '\0';
+	strcat(uiText, "HP = ");
+	strcat(uiText, convertToString(m_health));
 
 	if(m_health <= 0)
 		EntitiesSystem::GetInstance()->Remove(m_baseEntity);
@@ -355,6 +351,92 @@ void BrickControl::Update()
 	{
 		Map::GetInstance()->m_map[(int)m_position.x][(int)m_position.y] = 0;
 		EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+	}
+}
+#pragma endregion
+
+
+#pragma region Manager
+Manager::Manager()
+{
+	m_type = CompType::COMP_MANAGER;
+
+	for(int i = 0; i < 3; i++)
+	{
+		m_teamRedCount[i] = Map::GetInstance()->m_teamRed[i];
+		m_teamBlueCount[i] = Map::GetInstance()->m_teamBlue[i];
+	}
+}
+
+Manager::~Manager()
+{
+	
+}
+
+void Manager::Release()
+{
+
+}
+
+void Manager::Update()
+{
+	std::vector<Transform*> childList = m_baseEntity->m_transform->m_childList;
+	char* tank1 = static_cast<UIText*>(childList[0]->m_baseEntity->GetComponent(CompType::COMP_UITEXT))->m_text;
+	tank1[0] = '\0';
+
+	char* tank2 = static_cast<UIText*>(childList[1]->m_baseEntity->GetComponent(CompType::COMP_UITEXT))->m_text;
+	tank2[0] = '\0';
+
+	char* tank3 = static_cast<UIText*>(childList[2]->m_baseEntity->GetComponent(CompType::COMP_UITEXT))->m_text;
+	tank3[0] = '\0';
+
+	if(m_team == Team::TEAM_RED)
+	{
+		strcat(tank1, convertToString(Map::GetInstance()->m_teamRed[0]));
+		strcat(tank2, convertToString(Map::GetInstance()->m_teamRed[1]));
+		strcat(tank3, convertToString(Map::GetInstance()->m_teamRed[2]));
+	}
+	else
+	{
+		strcat(tank1, convertToString(Map::GetInstance()->m_teamBlue[0]));
+		strcat(tank2, convertToString(Map::GetInstance()->m_teamBlue[1]));
+		strcat(tank3, convertToString(Map::GetInstance()->m_teamBlue[2]));
+	}
+
+	for(int i = 0; i < 4; i++)
+	{
+		if(m_team == Team::TEAM_RED)
+		{
+			if(!m_teamRed[i])
+			{
+				if(Map::GetInstance()->m_teamRed[0])
+				{
+					if(m_player)
+					{
+						m_teamRed[i] = Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(), Control::CTRL_AUTO, Tank::TANK_NORMAL);
+						Map::GetInstance()->m_teamRed[0]--;
+					}
+					else
+					{
+						m_teamRed[i] = Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(), Control::CTRL_ARROW, Tank::TANK_NORMAL);
+						m_player = m_teamRed[i];
+						Map::GetInstance()->m_teamRed[0]--;
+					}
+				}
+			}
+		}
+
+		if(m_team == Team::TEAM_BLUE)
+		{
+			if(!m_teamBlue[i])
+			{
+				if(Map::GetInstance()->m_teamBlue[0])
+				{
+					m_teamBlue[i] = Factory::GetInstance()->CreateTank(Team::TEAM_BLUE, Vec3(), CTRL_AUTO, Tank::TANK_NORMAL);	// Choose type later
+					Map::GetInstance()->m_teamBlue[0]--;
+				}
+			}
+		}
 	}
 }
 #pragma endregion

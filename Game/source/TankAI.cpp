@@ -15,7 +15,7 @@ Roaming::Roaming()
 
 Roaming::~Roaming()
 {
-	delete s_instance;
+	
 }
 
 void Roaming::Enter(Entity* _entity)
@@ -26,7 +26,7 @@ void Roaming::Enter(Entity* _entity)
 void Roaming::Execute(Entity* _entity)
 {
 	//if(...)
-		static_cast<TankController*>(_entity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_stateMachine.ChangeState(Fighting::GetInstance());
+		static_cast<TankController*>(_entity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_stateMachine.ChangeState(new Fighting());
 }
 
 void Roaming::Exit(Entity* _entity)
@@ -45,7 +45,7 @@ Fighting::Fighting()
 
 Fighting::~Fighting()
 {
-	delete s_instance;
+	
 }
 
 void Fighting::Enter(Entity* _entity)
@@ -74,7 +74,7 @@ Chasing::Chasing()
 
 Chasing::~Chasing()
 {
-	delete s_instance;
+	
 }
 
 void Chasing::Enter(Entity* _entity)
@@ -103,7 +103,7 @@ Fleeing::Fleeing()
 
 Fleeing::~Fleeing()
 {
-	delete s_instance;
+	
 }
 
 void Fleeing::Enter(Entity* _entity)

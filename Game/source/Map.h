@@ -21,6 +21,11 @@ public:
 
 	int			m_teamRed[3];
 	int			m_teamBlue[3];
+
+	Vec3		m_redDefaultLocation[4];
+	Vec3		m_blueDefaultLocation[4];
+
+	std::vector<Entity*>	m_mapPartList;
 public:
 	Map();
 	virtual ~Map();

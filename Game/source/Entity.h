@@ -19,7 +19,7 @@ public:
 	Renderer*		m_renderer;
 	Rigidbody2D*	m_rigidbody2d;
 	Animator*		m_animator;
-	Collider2D*		m_firstCollider;
+	Collider2D*		m_collider2d;
 
 	std::vector<Component*>		m_componentList;
 

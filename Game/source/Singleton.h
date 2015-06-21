@@ -16,8 +16,12 @@ public:
 			s_instance = new T();
 		return s_instance;
 	}
-};
 
+	static void		ReleaseInstance()
+	{
+		delete s_instance;
+	}
+};
 template <class T>
 T* Singleton<T>::s_instance = NULL;
 

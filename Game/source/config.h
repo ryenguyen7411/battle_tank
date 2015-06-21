@@ -68,4 +68,25 @@ static const char*	SPR_BRICK_3		= "image//spr_brick_3.png";
 static const char*	SPR_BRICK_4		= "image//spr_brick_4.png";
 
 
+// ITEM
+static const char*	SPR_ITEM_INVI	= "image//spr_item_invisible.png";
+static const char*	SPR_ITEM_HP		= "image//spr_item_hp.png";
+static const char*	SPR_ITEM_UP		= "image//spr_item_upgrade_bullet.png";
+static const char*	SPR_ITEM_PLUS	= "image//spr_item_plus.png";
+static const char*	SPR_ITEM_SPEED	= "image//spr_item_speed.png";
+
+
+// TAG
+static const char*	TAG_TANK			= "Tank";
+static const char*	TAG_BULLET			= "Bullet";
+static const char*	TAG_TEAM			= "Team";
+static const char*	TAG_HP				= "HP";
+static const char*	TAG_BRICK			= "Brick";
+static const char*	TAG_ROCK			= "Rock";
+static const char*	TAG_OCEAN			= "Ocean";
+static const char*	TAG_SCREENCOLLIDER	= "ScreenCollider";
+static const char*	TAG_TEAM_MANAGER = "TeamManager";
+static const char*	TAG_UITEXT = "UiText";
+
+
 #endif

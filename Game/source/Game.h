@@ -5,6 +5,7 @@ using namespace stdio_fw;
 class Game : public Application
 {
 private:
+	GameState			m_state;
 public:
 	Game();
 	virtual ~Game();
