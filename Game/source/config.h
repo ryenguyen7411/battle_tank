@@ -17,6 +17,13 @@
 
 #define ITEM_TIME		20.0f
 
+#define MAX_HP				100.0f
+#define MAX_SPEED			10.0f
+#define MAX_DAMAGE			40.0f
+#define MAX_SHOOT_PER_SEC	10
+#define MAX_TANK			4
+
+
 // TANK
 static const char*	SPR_TANK_1_UP		= "image//spr_tank1_up.png";
 static const char*	SPR_TANK_1_DOWN		= "image//spr_tank1_down.png";

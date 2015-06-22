@@ -28,7 +28,7 @@ TankController::TankController(Tank _tankType)
 
 			m_shootSpeed = 10.0f;
 			m_shootRange = 400.0f;
-			m_shootDelay = 1.0f;
+			m_shootPerSec = 2;
 			break;
 		case Tank::TANK_DEFENSE:
 			m_speed = 2.0f;
@@ -36,7 +36,7 @@ TankController::TankController(Tank _tankType)
 
 			m_shootSpeed = 10.0f;
 			m_shootRange = 200.0f;
-			m_shootDelay = 4.0f;
+			m_shootPerSec = 1;
 			break;
 		case Tank::TANK_BOLT:
 			m_speed = 8.0f;
@@ -44,7 +44,7 @@ TankController::TankController(Tank _tankType)
 
 			m_shootSpeed = 20.0f;
 			m_shootRange = 300.0f;
-			m_shootDelay = 0.5f;
+			m_shootPerSec = 4;
 			break;
 	}
 
@@ -171,7 +171,7 @@ void TankController::Update()
 	}
 	else if(m_control == Control::CTRL_AUTO)
 	{
-		//m_stateMachine.Update();
+		m_stateMachine.Update();
 	}
 
 	if(m_invisible)
@@ -180,8 +180,18 @@ void TankController::Update()
 			m_invisible = false;
 	}
 
-	if(1000.0f * (clock() - m_previousTime) / CLOCKS_PER_SEC > m_shootDelay)
+	if(1.0f * (clock() - m_previousTime) / CLOCKS_PER_SEC >= 1.0f / m_shootPerSec)
 		m_canShoot = true;
+}
+
+void TankController::CalculateHeuristic()
+{
+	int hp = static_cast<HealthControl*>(m_baseEntity->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health;
+
+	m_heuristicValue = hp / MAX_HP * 100 + m_speed / MAX_SPEED * 100 
+		+ m_damage / MAX_DAMAGE * 100.0f + m_shootSpeed / MAX_SHOOT_PER_SEC * 100.0f;
+	if(m_invisible)
+		m_heuristicValue += 100.0f;
 }
 #pragma endregion
 
@@ -314,7 +324,12 @@ void HealthControl::Update()
 	strcat(uiText, convertToString(m_health));
 
 	if(m_health <= 0)
+	{
+		FindEnemy* findEnemy = static_cast<FindEnemy*>(m_baseEntity->GetComponent(CompType::COMP_FINDENEMY));
+		if(findEnemy->m_encounterEnemy)
+			static_cast<FindEnemy*>(findEnemy->m_encounterEnemy->GetComponent(CompType::COMP_FINDENEMY))->m_targetEnemy = NULL;
 		EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+	}
 }
 #pragma endregion
 
@@ -453,6 +468,7 @@ ItemManager::ItemManager(Item _type)
 	m_plusSpeed = 0.0f;
 	m_plusDamage = 0.0f;
 	m_plusTank = false;
+	m_plusBullet = false;
 	m_invisible = false;
 	m_expTime = 0.0f;
 
@@ -474,6 +490,9 @@ ItemManager::ItemManager(Item _type)
 			m_invisible = true;
 			m_expTime = 15.0f;
 			break;
+		case Item::ITEM_BULLET:
+			m_plusBullet = true;
+			break;
 	}
 }
 
@@ -490,5 +509,45 @@ void ItemManager::Release()
 void ItemManager::Update()
 {
 
+}
+#pragma endregion
+
+
+#pragma region FindEnemy
+FindEnemy::FindEnemy()
+{
+	m_type = CompType::COMP_FINDENEMY;
+
+	m_targetEnemy = NULL;
+	m_encounterEnemy = NULL;
+}
+
+FindEnemy::~FindEnemy()
+{
+
+}
+
+void FindEnemy::Release()
+{
+
+}
+
+void FindEnemy::Update()
+{
+	std::vector<Entity*> enemyList;
+	if(static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team == Team::TEAM_RED)
+		enemyList = EntitiesSystem::GetInstance()->GetBlues();
+	else
+		enemyList = EntitiesSystem::GetInstance()->GetReds();
+
+
+	if(!m_targetEnemy)
+	{
+		// Find weakest enemy
+	}
+
+	//Enemy is out of retrive list
+	//m_targetEnemy->m_encounter = NULL;
+	//m_targetEnemy = NULL;
 }
 #pragma endregion

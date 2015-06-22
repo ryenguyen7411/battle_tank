@@ -16,7 +16,7 @@ public:
 	float		m_shootSpeed;
 	float		m_shootRange;
 
-	float		m_shootDelay;
+	int			m_shootPerSec;
 	bool		m_canShoot;
 	long		m_previousTime;
 
@@ -30,6 +30,7 @@ public:
 	Tank		m_tank;
 	Bullet		m_bullet;
 
+	float			m_heuristicValue;
 	StateMachine	m_stateMachine;
 
 	TankController(Tank _tankType = Tank::TANK_NORMAL);
@@ -37,6 +38,8 @@ public:
 
 	virtual void	Release();
 	virtual void	Update();
+
+	void			CalculateHeuristic();
 };
 #pragma endregion
 
@@ -123,6 +126,7 @@ public:
 	float		m_plusSpeed;
 	float		m_plusDamage;
 	bool		m_plusTank;
+	bool		m_plusBullet;
 	bool		m_invisible;
 	float		m_expTime;
 
@@ -130,6 +134,22 @@ public:
 
 	ItemManager(Item _type = Item::ITEM_NONE);
 	virtual ~ItemManager();
+
+	virtual void	Release();
+	virtual void	Update();
+};
+#pragma endregion
+
+
+#pragma region FindEnemy
+class FindEnemy : public Component
+{
+public:
+	Entity*		m_targetEnemy;
+	Entity*		m_encounterEnemy;
+
+	FindEnemy();
+	virtual ~FindEnemy();
 
 	virtual void	Release();
 	virtual void	Update();

@@ -44,6 +44,7 @@ public:
 	virtual void	Update();
 
 	void			SetParent(Transform* _parent);
+	float			CalculateDistance(Transform* _enemy);
 };
 
 

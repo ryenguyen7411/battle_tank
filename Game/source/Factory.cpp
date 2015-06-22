@@ -58,12 +58,17 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	tankController->m_control = _control;
 	if(_control == Control::CTRL_AUTO)
 	{
-		//tankController->m_stateMachine = StateMachine(tankController->m_baseEntity);
-		//tankController->m_stateMachine.ChangeState(new Roaming());
+		tankController->m_stateMachine = StateMachine(tankController->m_baseEntity);
+		tankController->m_stateMachine.ChangeState(Roaming::GetInstance());
 	}
 
 	HealthControl* healthControl = new HealthControl(_tankType);
 	tank->AddComponent(healthControl);
+	tankController->CalculateHeuristic();
+
+
+	FindEnemy* findEnemy = new FindEnemy();
+	tank->AddComponent(findEnemy);
 
 
 	Entity* hp = new Entity();

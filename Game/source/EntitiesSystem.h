@@ -19,13 +19,14 @@ public:
 	virtual ~EntitiesSystem();
 
 	void			Release();
-
-	//std::vector<Entity*>		GetReds();
-	//std::vector<Entity*>		GetBlue();
-
 	void			Remove(Entity* _entity);
 
 	Quadtree*		UpdateQuadtree();
+
+	std::vector<Entity*>		GetReds();
+	std::vector<Entity*>		GetBlues();
+
+	std::vector<Entity*>		Retrieve(Rect rect);
 };
 
 #endif

@@ -77,6 +77,12 @@ void Transform::SetParent(Transform* _parent)
 	m_parent->m_childCount++;
 	m_parent->m_childList.push_back(this);
 }
+
+float Transform::CalculateDistance(Transform* _enemy)
+{
+
+	return 0.0f;
+}
 ///////////////////////////////////////////
 
 
@@ -215,16 +221,20 @@ void Collider2D::Update()
 						{
 							TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 							if(tankController->m_team == Team::TEAM_RED)
-								Map::GetInstance()->m_teamRed[tankController->m_type]++;
+								Map::GetInstance()->m_teamRed[tankController->m_tank]++;
 							else
-								Map::GetInstance()->m_teamBlue[tankController->m_type]++;
+								Map::GetInstance()->m_teamBlue[tankController->m_tank]++;
 						}
 							break;
 						case Item::ITEM_INVISIBLE:
 							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_invisible = true;
 							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_timer = clock();
 							break;
+						case Item::ITEM_BULLET:
+							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_shootPerSec += 2;
+							break;
 					}
+					static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->CalculateHeuristic();
 
 					EntitiesSystem::GetInstance()->Remove(m_collisionObject);
 					m_collisionObject = NULL;

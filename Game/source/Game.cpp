@@ -10,6 +10,9 @@
 #include "Entity.h"
 #include "Components.h"
 
+#include "State.h"
+#include "TankAI.h"
+
 #include "Game.h"
 
 Game::Game()
@@ -67,7 +70,7 @@ void Game::update(float deltaTime)
 
 			if(1.0f * (clock() - m_itemTimer) / CLOCKS_PER_SEC >= ITEM_TIME)
 			{
-				Factory::GetInstance()->CreateItem(Item(rand() % 5));
+				Factory::GetInstance()->CreateItem(Item(rand() % Item::ITEM_COUNT));
 				m_itemTimer = clock();
 			}
 		}
@@ -123,6 +126,11 @@ void Game::exit()
 
 	Map::GetInstance()->Release();
 	Map::ReleaseInstance();
+
+	Roaming::ReleaseInstance();
+	Fighting::ReleaseInstance();
+	Chasing::ReleaseInstance();
+	Fleeing::ReleaseInstance();
 }
 
 void Game::onKeyProc(KeyCode key, KeyState state)

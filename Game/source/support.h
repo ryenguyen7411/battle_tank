@@ -23,6 +23,7 @@ enum CompType
 	COMP_BRICKCONTROL = 13,
 	COMP_MANAGER = 14,
 	COMP_ITEMMANAGER = 15,
+	COMP_FINDENEMY = 16,
 };
 
 enum Team
@@ -84,6 +85,8 @@ enum Item
 	ITEM_DAMAGE = 2,
 	ITEM_TANK = 3,
 	ITEM_INVISIBLE = 4,
+	ITEM_BULLET = 5,
+	ITEM_COUNT,
 };
 
 struct MecanimKey
