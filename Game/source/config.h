@@ -15,6 +15,8 @@
 #define WHITE		0xFFFFFFFF
 #define BLACK		0x000000FF
 
+#define ITEM_TIME		20.0f
+
 // TANK
 static const char*	SPR_TANK_1_UP		= "image//spr_tank1_up.png";
 static const char*	SPR_TANK_1_DOWN		= "image//spr_tank1_down.png";
@@ -71,7 +73,7 @@ static const char*	SPR_BRICK_4		= "image//spr_brick_4.png";
 // ITEM
 static const char*	SPR_ITEM_INVI	= "image//spr_item_invisible.png";
 static const char*	SPR_ITEM_HP		= "image//spr_item_hp.png";
-static const char*	SPR_ITEM_UP		= "image//spr_item_upgrade_bullet.png";
+static const char*	SPR_ITEM_DAMAGE = "image//spr_item_damage.png";
 static const char*	SPR_ITEM_PLUS	= "image//spr_item_plus.png";
 static const char*	SPR_ITEM_SPEED	= "image//spr_item_speed.png";
 
@@ -87,6 +89,7 @@ static const char*	TAG_OCEAN			= "Ocean";
 static const char*	TAG_SCREENCOLLIDER	= "ScreenCollider";
 static const char*	TAG_TEAM_MANAGER = "TeamManager";
 static const char*	TAG_UITEXT = "UiText";
+static const char*	TAG_ITEM = "Item";
 
 
 #endif

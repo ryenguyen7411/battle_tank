@@ -50,7 +50,7 @@ void EntitiesSystem::Release()
 
 void EntitiesSystem::Remove(Entity* _entity)
 {
-	if(_entity->IsTaggedAs("Tank"))
+	if(_entity->IsTaggedAs(TAG_TANK))
 	{
 		TankController* tank = static_cast<TankController*>(_entity->GetComponent(CompType::COMP_TANKCONTROLLER));
 		if(tank->m_team == Team::TEAM_RED)

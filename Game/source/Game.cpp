@@ -34,6 +34,7 @@ ErrorCode Game::init(int screenW, int screenH, const char* title)
 	Factory::GetInstance()->CreateManager(Team::TEAM_BLUE);
 
 	m_state = GameState::STATE_PLAY;
+	m_itemTimer = clock();
 	
 	return errCode;
 }
@@ -63,9 +64,16 @@ void Game::update(float deltaTime)
 					entitiesList->pop_back();
 				}
 			}
+
+			if(1.0f * (clock() - m_itemTimer) / CLOCKS_PER_SEC >= ITEM_TIME)
+			{
+				Factory::GetInstance()->CreateItem(Item(rand() % 5));
+				m_itemTimer = clock();
+			}
 		}
 			break;
 		case GameState::STATE_WIN:
+
 			break;
 		case GameState::STATE_GAME_OVER:
 			break;
@@ -92,6 +100,14 @@ void Game::render(Graphics* g)
 	}
 
 	Map::GetInstance()->Draw(g);	// Bullet will be behind map - Fix later
+
+	switch(m_state)
+	{
+		case GameState::STATE_WIN:
+			break;
+		case GameState::STATE_GAME_OVER:
+			break;
+	}
 }
 
 void Game::exit()

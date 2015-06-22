@@ -137,6 +137,43 @@ Entity* Factory::CreateCollider(const char* _tag, Rect _bound, bool _isBreakable
 	return mapPart;
 }
 
+
+Entity*	Factory::CreateItem(Item _type)
+{
+	Entity* item = new Entity();
+	item->SetTag(TAG_ITEM);
+	while(true)
+	{
+		int x = rand() % Map::GetInstance()->m_mapWidth;
+		int y = rand() % Map::GetInstance()->m_mapHeight;
+
+		if(Map::GetInstance()->m_map[y][x] == 0)
+		{
+			item->m_transform->m_position = Vec3((x + 0.5f) * Map::GetInstance()->m_tileWidth + Map::GetInstance()->m_offset.x,
+												(y + 0.5f) * Map::GetInstance()->m_tileHeight + Map::GetInstance()->m_offset.y,
+												0);
+			break;
+		}
+	}
+
+	Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_item[_type]);
+	item->AddComponent(renderer);
+
+	Rect bound = Rect(item->m_transform->m_position.x - Map::GetInstance()->m_tileWidth / 2,
+						item->m_transform->m_position.y - Map::GetInstance()->m_tileHeight / 2,
+						Map::GetInstance()->m_tileWidth,
+						Map::GetInstance()->m_tileHeight);
+	Collider2D* collider2d = new Collider2D(bound);
+	item->AddComponent(collider2d);
+
+	ItemManager* itemManager = new ItemManager(_type);
+	item->AddComponent(itemManager);
+
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(item);
+
+	return item;
+}
+
 Entity* Factory::CreateManager(Team _team)
 {
 	Entity* teamManager = new Entity();

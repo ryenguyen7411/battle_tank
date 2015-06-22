@@ -22,6 +22,7 @@ enum CompType
 	COMP_HEALTHCONTROL = 12,
 	COMP_BRICKCONTROL = 13,
 	COMP_MANAGER = 14,
+	COMP_ITEMMANAGER = 15,
 };
 
 enum Team
@@ -73,6 +74,16 @@ enum Anchor
 	ANCHOR_CENTER = 0,
 	ANCHOR_LEFT = 1,
 	ANCHOR_RIGHT = 2
+};
+
+enum Item
+{
+	ITEM_NONE = -1,
+	ITEM_HP = 0,
+	ITEM_SPEED = 1,
+	ITEM_DAMAGE = 2,
+	ITEM_TANK = 3,
+	ITEM_INVISIBLE = 4,
 };
 
 struct MecanimKey

@@ -66,11 +66,11 @@ void ResourcesManager::LoadResources()
 		m_mapPart[i]->loadImage();
 
 
-	m_item[0] = new Image(SPR_ITEM_SPEED);
-	m_item[1] = new Image(SPR_ITEM_HP);
-	m_item[2] = new Image(SPR_ITEM_INVI);
+	m_item[0] = new Image(SPR_ITEM_HP);
+	m_item[1] = new Image(SPR_ITEM_SPEED);
+	m_item[2] = new Image(SPR_ITEM_DAMAGE);
 	m_item[3] = new Image(SPR_ITEM_PLUS);
-	m_item[4] = new Image(SPR_ITEM_UP);
+	m_item[4] = new Image(SPR_ITEM_INVI);
 	for(int i = 0; i < 5; i++)
 	{
 		m_item[i]->loadImage();

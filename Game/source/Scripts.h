@@ -23,9 +23,12 @@ public:
 	Direction	m_direction;
 	int			m_lockDirection;
 
+	bool		m_invisible;
+	long		m_timer;
+	float		m_expTime;
+
 	Tank		m_tank;
 	Bullet		m_bullet;
-	int			m_bulletLevel;
 
 	StateMachine	m_stateMachine;
 
@@ -66,7 +69,6 @@ class HealthControl : public Component
 {
 public:
 	float		m_health;
-	float		m_defense;
 
 	HealthControl(Tank _type = Tank::TANK_NORMAL);
 	virtual ~HealthControl();
@@ -102,9 +104,6 @@ public:
 	Entity*			m_teamRed[4];
 	Entity*			m_teamBlue[4];
 
-	int				m_teamRedCount[3];
-	int				m_teamBlueCount[3];
-
 	Entity*			m_player;
 
 	Manager();
@@ -116,13 +115,21 @@ public:
 #pragma endregion
 
 
-#pragma region Item
-class Item : public Component
+#pragma region ItemManager
+class ItemManager : public Component
 {
 public:
+	float		m_plusHP;
+	float		m_plusSpeed;
+	float		m_plusDamage;
+	bool		m_plusTank;
+	bool		m_invisible;
+	float		m_expTime;
 
-	Item();
-	virtual ~Item();
+	Item		m_item;
+
+	ItemManager(Item _type = Item::ITEM_NONE);
+	virtual ~ItemManager();
 
 	virtual void	Release();
 	virtual void	Update();

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Map.h"
 #include "Entity.h"
 #include "EntitiesSystem.h"
 #include "Quadtree.h"
@@ -154,7 +155,7 @@ void Collider2D::Update()
 	m_bound.x = m_baseEntity->m_transform->m_position.x - m_bound.width / 2;
 	m_bound.y = m_baseEntity->m_transform->m_position.y - m_bound.height / 2;
 
-	if(!m_baseEntity->IsTaggedAs("Bullet") && !m_baseEntity->IsTaggedAs("Tank"))
+	if(!m_baseEntity->IsTaggedAs(TAG_BULLET) && !m_baseEntity->IsTaggedAs(TAG_TANK))
 		return;
 
 	std::vector<Entity*> detectEntityList = EntitiesSystem::GetInstance()->m_quadtree->Retrieve(m_baseEntity);
@@ -167,9 +168,9 @@ void Collider2D::Update()
 			{
 				m_collisionObject = detectEntityList[i];
 				
-				if(m_baseEntity->IsTaggedAs("Tank") && 
-					(m_collisionObject->IsTaggedAs("Brick") || m_collisionObject->IsTaggedAs("Rock") || 
-					m_collisionObject->IsTaggedAs("Ocean") || m_collisionObject->IsTaggedAs("ScreenCollider")))
+				if(m_baseEntity->IsTaggedAs(TAG_TANK) && 
+					(m_collisionObject->IsTaggedAs(TAG_BRICK) || m_collisionObject->IsTaggedAs(TAG_ROCK) || 
+					m_collisionObject->IsTaggedAs(TAG_OCEAN) || m_collisionObject->IsTaggedAs(TAG_SCREENCOLLIDER)))
 				{
 					TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 					tankController->m_lockDirection = tankController->m_direction;
@@ -194,6 +195,39 @@ void Collider2D::Update()
 						m_baseEntity->m_transform->m_position.x = m_collisionObject->m_transform->m_position.x
 							- m_collisionObject->m_collider2d->m_bound.width / 2 - m_baseEntity->m_collider2d->m_bound.width / 2;
 					}
+				}
+
+				if(m_baseEntity->IsTaggedAs(TAG_TANK) && m_collisionObject->IsTaggedAs(TAG_ITEM))
+				{
+					ItemManager* itemManager = static_cast<ItemManager*>(m_collisionObject->GetComponent(CompType::COMP_ITEMMANAGER));
+					switch(itemManager->m_item)
+					{
+						case Item::ITEM_HP:
+							static_cast<HealthControl*>(m_baseEntity->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health += itemManager->m_plusHP;
+							break;
+						case Item::ITEM_SPEED:
+							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_speed += itemManager->m_plusSpeed;
+							break;
+						case Item::ITEM_DAMAGE:
+							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_damage += itemManager->m_plusDamage;
+							break;
+						case Item::ITEM_TANK:
+						{
+							TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
+							if(tankController->m_team == Team::TEAM_RED)
+								Map::GetInstance()->m_teamRed[tankController->m_type]++;
+							else
+								Map::GetInstance()->m_teamBlue[tankController->m_type]++;
+						}
+							break;
+						case Item::ITEM_INVISIBLE:
+							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_invisible = true;
+							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_timer = clock();
+							break;
+					}
+
+					EntitiesSystem::GetInstance()->Remove(m_collisionObject);
+					m_collisionObject = NULL;
 				}
 
 				detectEntityList.clear();

@@ -17,7 +17,8 @@ TankController::TankController(Tank _tankType)
 
 	m_tank = _tankType;
 	m_bullet = Bullet::BULLET_NORMAL;
-	m_bulletLevel = 1;
+
+	m_timer = 0.0f;
 
 	switch(m_tank)
 	{
@@ -72,7 +73,7 @@ void TankController::Update()
 		for(int i = 0; i < collider2dList.size(); i++)
 		{
 			entity = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
-			if(entity && (entity->IsTaggedAs("Tank") || entity->IsTaggedAs("Brick") || entity->IsTaggedAs("Rock") || entity->IsTaggedAs("Ocean")))
+			if(entity && (entity->IsTaggedAs(TAG_TANK) || entity->IsTaggedAs(TAG_BRICK) || entity->IsTaggedAs(TAG_ROCK) || entity->IsTaggedAs(TAG_OCEAN)))
 				break;
 		}
 
@@ -173,6 +174,12 @@ void TankController::Update()
 		//m_stateMachine.Update();
 	}
 
+	if(m_invisible)
+	{
+		if(1.0f * (clock() - m_timer) / CLOCKS_PER_SEC >= m_expTime)
+			m_invisible = false;
+	}
+
 	if(1000.0f * (clock() - m_previousTime) / CLOCKS_PER_SEC > m_shootDelay)
 		m_canShoot = true;
 }
@@ -237,28 +244,31 @@ void BulletController::Update()
 	Collider2D* collider = m_baseEntity->m_collider2d;
 	if(collider->m_collisionObject)
 	{
-		if(collider->m_collisionObject->IsTaggedAs("Tank"))
+		if(collider->m_collisionObject->IsTaggedAs(TAG_TANK))
 		{
-			if(m_team != static_cast<TankController*>(collider->m_collisionObject->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team)
+			if(!static_cast<TankController*>(collider->m_collisionObject->GetComponent(CompType::COMP_TANKCONTROLLER))->m_invisible)
 			{
-				HealthControl* healthControl = static_cast<HealthControl*>(collider->m_collisionObject->GetComponent(CompType::COMP_HEALTHCONTROL));
-				healthControl->m_health -= (m_damage - healthControl->m_defense);
+				if(m_team != static_cast<TankController*>(collider->m_collisionObject->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team)
+				{
+					HealthControl* healthControl = static_cast<HealthControl*>(collider->m_collisionObject->GetComponent(CompType::COMP_HEALTHCONTROL));
+					healthControl->m_health -= m_damage;
 
-				EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+					EntitiesSystem::GetInstance()->Remove(m_baseEntity);
+				}
 			}
 		}
-		else if(collider->m_collisionObject->IsTaggedAs("Brick"))
+		else if(collider->m_collisionObject->IsTaggedAs(TAG_BRICK))
 		{
 			BrickControl* brickControl = static_cast<BrickControl*>(collider->m_collisionObject->GetComponent(CompType::COMP_BRICKCONTROL));
 			brickControl->m_health -= m_damage;
 
 			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 		}
-		else if(collider->m_collisionObject->IsTaggedAs("Rock"))
+		else if(collider->m_collisionObject->IsTaggedAs(TAG_ROCK))
 		{
 			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 		}
-		else if(collider->m_collisionObject->IsTaggedAs("ScreenCollider"))
+		else if(collider->m_collisionObject->IsTaggedAs(TAG_SCREENCOLLIDER))
 		{
 
 		}
@@ -276,15 +286,12 @@ HealthControl::HealthControl(Tank _type)
 	{
 		case Tank::TANK_NORMAL:
 			m_health = 100.0f;
-			m_defense = 10.0f;
 			break;
 		case Tank::TANK_DEFENSE:
 			m_health = 60.0f;
-			m_defense = 15.0f;
 			break;
 		case Tank::TANK_BOLT:
 			m_health = 80.0f;
-			m_defense = 5.0f;
 			break;
 	}
 }
@@ -360,12 +367,6 @@ void BrickControl::Update()
 Manager::Manager()
 {
 	m_type = CompType::COMP_MANAGER;
-
-	for(int i = 0; i < 3; i++)
-	{
-		m_teamRedCount[i] = Map::GetInstance()->m_teamRed[i];
-		m_teamBlueCount[i] = Map::GetInstance()->m_teamBlue[i];
-	}
 }
 
 Manager::~Manager()
@@ -438,5 +439,56 @@ void Manager::Update()
 			}
 		}
 	}
+}
+#pragma endregion
+
+
+#pragma region ItemManager
+ItemManager::ItemManager(Item _type)
+{
+	m_type = CompType::COMP_ITEMMANAGER;
+	m_item = _type;
+
+	m_plusHP = 0.0f;
+	m_plusSpeed = 0.0f;
+	m_plusDamage = 0.0f;
+	m_plusTank = false;
+	m_invisible = false;
+	m_expTime = 0.0f;
+
+	switch(m_item)
+	{
+		case Item::ITEM_HP:
+			m_plusHP = 50.0f;
+			break;
+		case Item::ITEM_SPEED:
+			m_plusSpeed = 3.0f;
+			break;
+		case Item::ITEM_DAMAGE:
+			m_plusDamage = 10.0f;
+			break;
+		case Item::ITEM_TANK:
+			m_plusTank = true;
+			break;
+		case Item::ITEM_INVISIBLE:
+			m_invisible = true;
+			m_expTime = 15.0f;
+			break;
+	}
+}
+
+ItemManager::~ItemManager()
+{
+
+}
+
+void ItemManager::Release()
+{
+
+}
+
+void ItemManager::Update()
+{
+
 }
 #pragma endregion
