@@ -188,8 +188,8 @@ void TankController::CalculateHeuristic()
 {
 	int hp = static_cast<HealthControl*>(m_baseEntity->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health;
 
-	m_heuristicValue = hp / MAX_HP * 100 + m_speed / MAX_SPEED * 100 
-		+ m_damage / MAX_DAMAGE * 100.0f + m_shootSpeed / MAX_SHOOT_PER_SEC * 100.0f;
+	m_heuristicValue = hp / MAX_HP * 100.0f + m_speed / MAX_SPEED * 100 
+		+ m_damage / MAX_DAMAGE * 100.0f + m_shootPerSec / MAX_SHOOT_PER_SEC * 100.0f;
 	if(m_invisible)
 		m_heuristicValue += 100.0f;
 }

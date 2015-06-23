@@ -69,9 +69,10 @@ void ResourcesManager::LoadResources()
 	m_item[0] = new Image(SPR_ITEM_HP);
 	m_item[1] = new Image(SPR_ITEM_SPEED);
 	m_item[2] = new Image(SPR_ITEM_DAMAGE);
-	m_item[3] = new Image(SPR_ITEM_PLUS);
+	m_item[3] = new Image(SPR_ITEM_TANK);
 	m_item[4] = new Image(SPR_ITEM_INVI);
-	for(int i = 0; i < 5; i++)
+	m_item[5] = new Image(SPR_ITEM_BULLET);
+	for(int i = 0; i < Item::ITEM_COUNT; i++)
 	{
 		m_item[i]->loadImage();
 	}
@@ -111,7 +112,7 @@ void ResourcesManager::Release()
 		m_mapPart[i]->unloadImage();
 		SAFE_DEL(m_mapPart[i]);
 	}
-	for(int i = 0; i < 5; i++)
+	for(int i = 0; i < Item::ITEM_COUNT; i++)
 	{
 		m_item[i]->unloadImage();
 		SAFE_DEL(m_item[i]);

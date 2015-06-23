@@ -78,11 +78,12 @@ static const char*	SPR_BRICK_4		= "image//spr_brick_4.png";
 
 
 // ITEM
-static const char*	SPR_ITEM_INVI	= "image//spr_item_invisible.png";
-static const char*	SPR_ITEM_HP		= "image//spr_item_hp.png";
-static const char*	SPR_ITEM_DAMAGE = "image//spr_item_damage.png";
-static const char*	SPR_ITEM_PLUS	= "image//spr_item_plus.png";
-static const char*	SPR_ITEM_SPEED	= "image//spr_item_speed.png";
+static const char*	SPR_ITEM_HP			= "image//spr_item_hp.png";
+static const char*	SPR_ITEM_SPEED		= "image//spr_item_speed.png";
+static const char*	SPR_ITEM_DAMAGE		= "image//spr_item_damage.png";
+static const char*	SPR_ITEM_TANK		= "image//spr_item_tank.png";
+static const char*	SPR_ITEM_INVI		= "image//spr_item_invisible.png";
+static const char*	SPR_ITEM_BULLET		= "image//spr_item_bullet.png";
 
 
 // TAG
