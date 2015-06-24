@@ -48,8 +48,8 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	animator->SetFrameList(4, ResourcesManager::GetInstance()->m_tank1[0], ResourcesManager::GetInstance()->m_tank1[1],
 		ResourcesManager::GetInstance()->m_tank1[2], ResourcesManager::GetInstance()->m_tank1[3]);
 
-	Rect bound = Rect(_position.x - renderer->m_sprite->getWidth() / 2, _position.y - renderer->m_sprite->getHeight() / 2,
-		renderer->m_sprite->getWidth(), renderer->m_sprite->getHeight());
+	Rect bound = Rect(_position.x - renderer->m_sprite->getWidth() / 2 + 2, _position.y - renderer->m_sprite->getHeight() / 2 + 2,
+		renderer->m_sprite->getWidth() - 2, renderer->m_sprite->getHeight() - 2);
 	Collider2D* collider2d = new Collider2D(bound);
 	tank->AddComponent(collider2d);
 
