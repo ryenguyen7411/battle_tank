@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <ctime>
 
 #include "Map.h"
 #include "Entity.h"
@@ -95,6 +96,22 @@ void Fighting::Execute(Entity* _entity)
 	// Fighting
 	// Rapid shooting
 	// Move to enemy x/y position
+	if(detectEnemy->m_targetEnemy)
+	{
+		tankController->m_direction = autoTankManager->GetShootDirection(detectEnemy->m_targetEnemy->m_transform->m_position);
+		if(abs(detectEnemy->m_targetEnemy->m_transform->m_position.x - _entity->m_transform->m_position.x) <= 64
+			|| abs(detectEnemy->m_targetEnemy->m_transform->m_position.y - _entity->m_transform->m_position.y) <= 64)
+		{
+			if(tankController->m_canShoot)
+			{
+				Factory::GetInstance()->CreateBullet(tankController->m_team, _entity->m_transform->m_position, tankController->m_direction,
+					tankController->m_bullet, tankController->m_shootSpeed, tankController->m_shootRange, tankController->m_damage);
+
+				tankController->m_canShoot = false;
+				tankController->m_previousTime = clock();
+			}
+		}
+	}
 }
 
 void Fighting::Exit(Entity* _entity)

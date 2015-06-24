@@ -169,6 +169,8 @@ public:
 
 	void			Move(Direction _direction);
 	Direction		GetNextRandomirection(Direction _currentDirection);
+	
+	Direction		GetShootDirection(Vec3 _targetPosition);
 };
 #pragma endregion
 

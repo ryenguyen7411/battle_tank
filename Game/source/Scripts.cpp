@@ -560,8 +560,8 @@ void DetectEnemy::Update()
 					h += obstacleList[j]->m_collider2d->m_bound.width + obstacleList[j]->m_collider2d->m_bound.height;
 			}
 
-			h += abs(enemyList[i]->m_transform->m_position.x - m_baseEntity->m_transform->m_position.x) +
-					abs(enemyList[i]->m_transform->m_position.y - m_baseEntity->m_transform->m_position.y);
+			//h += abs(enemyList[i]->m_transform->m_position.x - m_baseEntity->m_transform->m_position.x) +
+			//		abs(enemyList[i]->m_transform->m_position.y - m_baseEntity->m_transform->m_position.y);
 
 			if(h * 0.75f <= static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_heuristicValue && h < minH)
 			{
@@ -707,5 +707,23 @@ Direction AutoTankManager::GetNextRandomirection(Direction _currentDirection)
 	}
 
 	return Direction::DIR_NONE;
+}
+
+Direction AutoTankManager::GetShootDirection(Vec3 _targetPosition)
+{
+	if(abs(m_baseEntity->m_transform->m_position.x - _targetPosition.x) > abs(m_baseEntity->m_transform->m_position.y - _targetPosition.y))
+	{
+		if(m_baseEntity->m_transform->m_position.x > _targetPosition.x)
+			return Direction::DIR_LEFT;
+		else
+			return Direction::DIR_RIGHT;
+	}
+	else
+	{
+		if(m_baseEntity->m_transform->m_position.y > _targetPosition.y)
+			return Direction::DIR_UP;
+		else 
+			return Direction::DIR_DOWN;
+	}
 }
 #pragma endregion
