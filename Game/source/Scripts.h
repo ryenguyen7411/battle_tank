@@ -169,8 +169,11 @@ public:
 
 	void			Move(Direction _direction);
 	Direction		GetNextRandomirection(Direction _currentDirection);
-	
 	Direction		GetShootDirection(Vec3 _targetPosition);
+	Direction		GetDirectionToEnemy(Vec3 _targetPosition);
+
+	bool			IsInShootRange(Vec3 _targetPosition);
+	bool			IsEnemyInShootRange(Vec3 _targetPosition);
 };
 #pragma endregion
 

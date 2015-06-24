@@ -88,21 +88,24 @@ void Fighting::Execute(Entity* _entity)
 	if(!detectEnemy->m_targetEnemy)
 		tankController->m_stateMachine.ChangeState(Roaming::GetInstance());
 	else if(healthControl->m_health <= 20.0f && healthControl->m_health <
-		0.6 * static_cast<HealthControl*>(detectEnemy->m_targetEnemy->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health)
+		0.6 * static_cast<HealthControl*>(detectEnemy->m_targetEnemy->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health &&
+		autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
 		tankController->m_stateMachine.ChangeState(Fleeing::GetInstance());
-	else if(_entity->m_transform->CalculateDistance(detectEnemy->m_targetEnemy->m_transform) /*> ...*/)
+	else if(!autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
 		tankController->m_stateMachine.ChangeState(Chasing::GetInstance());
 
 	// Fighting
-	// Rapid shooting
-	// Move to enemy x/y position
 	if(detectEnemy->m_targetEnemy)
 	{
 		tankController->m_direction = autoTankManager->GetShootDirection(detectEnemy->m_targetEnemy->m_transform->m_position);
+
+		_entity->m_animator->m_currentFrame = (int)tankController->m_direction;
+		_entity->m_renderer->m_sprite = _entity->m_animator->m_frameList[_entity->m_animator->m_currentFrame];
+
 		if(abs(detectEnemy->m_targetEnemy->m_transform->m_position.x - _entity->m_transform->m_position.x) <= 64
 			|| abs(detectEnemy->m_targetEnemy->m_transform->m_position.y - _entity->m_transform->m_position.y) <= 64)
 		{
-			if(tankController->m_canShoot)
+			if(tankController->m_canShoot && rand() % 100 < 50)
 			{
 				Factory::GetInstance()->CreateBullet(tankController->m_team, _entity->m_transform->m_position, tankController->m_direction,
 					tankController->m_bullet, tankController->m_shootSpeed, tankController->m_shootRange, tankController->m_damage);
@@ -147,7 +150,7 @@ void Chasing::Execute(Entity* _entity)
 
 	if(!detectEnemy->m_targetEnemy)
 		tankController->m_stateMachine.ChangeState(Roaming::GetInstance());
-	else if(_entity->m_transform->CalculateDistance(detectEnemy->m_targetEnemy->m_transform) /*< ...*/)
+	else if(autoTankManager->IsEnemyInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
 		tankController->m_stateMachine.ChangeState(Fighting::GetInstance());
 
 	// Chasing
@@ -186,7 +189,7 @@ void Fleeing::Execute(Entity* _entity)
 	AutoTankManager* autoTankManager = static_cast<AutoTankManager*>(_entity->GetComponent(CompType::COMP_AUTOTANKANAGER));
 
 	if(healthControl->m_health <= 20.0f && healthControl->m_health <
-		0.2 * static_cast<HealthControl*>(detectEnemy->m_targetEnemy->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health)
+		0.25 * static_cast<HealthControl*>(detectEnemy->m_targetEnemy->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health)
 		tankController->m_stateMachine.ChangeState(Fighting::GetInstance());
 
 	// Fleeing

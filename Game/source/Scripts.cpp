@@ -680,27 +680,27 @@ Direction AutoTankManager::GetNextRandomirection(Direction _currentDirection)
 {
 	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 	int x = rand() % 100;
-	if(x < 3)
+	if(x < 2)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_UP)
 			return Direction::DIR_UP;
 	}
-	else if(x < 6)
+	else if(x < 3)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_DOWN)
 			return Direction::DIR_DOWN;
 	}
-	else if(x < 9)
+	else if(x < 4)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_LEFT)
 			return Direction::DIR_LEFT;
 	}
-	else if(x < 12)
+	else if(x < 8)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_RIGHT)
 			return Direction::DIR_RIGHT;
 	}
-	else if(x < 80)
+	else if(x < 75)
 	{
 		if(tankController->m_lockDirection != _currentDirection)
 			return _currentDirection;
@@ -725,5 +725,20 @@ Direction AutoTankManager::GetShootDirection(Vec3 _targetPosition)
 		else 
 			return Direction::DIR_DOWN;
 	}
+}
+
+Direction AutoTankManager::GetDirectionToEnemy(Vec3 _targetPosition)
+{
+	return Direction::DIR_NONE;
+}
+
+bool AutoTankManager::IsInShootRange(Vec3 _targetPosition)
+{
+	return false;
+}
+
+bool AutoTankManager::IsEnemyInShootRange(Vec3 _targetPosition)
+{
+	return false;
 }
 #pragma endregion

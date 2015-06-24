@@ -80,12 +80,6 @@ void Transform::SetParent(Transform* _parent)
 	m_parent->m_childList.push_back(this);
 }
 
-float Transform::CalculateDistance(Transform* _enemy)
-{
-
-	return 0.0f;
-}
-
 bool Transform::IsMiddle(Transform* a, Transform* b)
 {
 	Vec3 posA = a->m_position;
