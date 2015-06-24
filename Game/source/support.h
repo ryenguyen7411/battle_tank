@@ -23,7 +23,8 @@ enum CompType
 	COMP_BRICKCONTROL = 13,
 	COMP_MANAGER = 14,
 	COMP_ITEMMANAGER = 15,
-	COMP_FINDENEMY = 16,
+	COMP_DETECTENEMY = 16,
+	COMP_AUTOTANKANAGER = 17,
 };
 
 enum Team
@@ -42,12 +43,13 @@ enum GameState
 
 enum Direction
 {
-	DIR_UNKNOWN = -1,
-	DIR_NONE = 0,
-	DIR_UP,
-	DIR_DOWN,
-	DIR_LEFT,
-	DIR_RIGHT,
+	DIR_UNKNOWN = -2,
+	DIR_NONE = -1,
+	DIR_UP = 0,
+	DIR_DOWN = 1,
+	DIR_LEFT = 2,
+	DIR_RIGHT = 3,
+	DIR_COUNT,
 };
 
 enum Control

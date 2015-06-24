@@ -1,8 +1,9 @@
 #include "stdafx.h"
-#include "Entity.h"
-#include "State.h"
-
 #include <typeinfo>
+
+#include "Entity.h"
+
+#include "State.h"
 
 #include "StateMachine.h"
 

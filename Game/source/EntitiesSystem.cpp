@@ -1,6 +1,8 @@
 #include "stdafx.h"
+
 #include "Quadtree.h"
 #include "Entity.h"
+
 #include "Components.h"
 #include "Scripts.h"
 
@@ -140,13 +142,42 @@ std::vector<Entity*> EntitiesSystem::GetBlues()
 	return blueTeam;
 }
 
-std::vector<Entity*> EntitiesSystem::Retrieve(Rect rect)
+std::vector<Entity*> EntitiesSystem::Retrieve(Rect _rect, Team _team)
 {
 	std::vector<Entity*> retrieveList;
 
 	for(int i = 0; i < m_entitiesList.size(); i++)
 	{
+		if(m_entitiesList[i])
+		{
+			if(m_entitiesList[i]->m_collider2d && _rect.checkAABB(m_entitiesList[i]->m_collider2d->m_bound))
+			{
+				if(m_entitiesList[i]->IsTaggedAs(TAG_TANK))
+				{
+					if(static_cast<TankController*>(m_entitiesList[i]->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team == _team)
+						retrieveList.push_back(m_entitiesList[i]);
+				}
+			}
+		}
+	}
 
+	return retrieveList;
+}
+
+std::vector<Entity*> EntitiesSystem::Retrieve(Rect _rect, const char* _tag)
+{
+	std::vector<Entity*> retrieveList;
+
+	for(int i = 0; i < m_entitiesList.size(); i++)
+	{
+		if(m_entitiesList[i])
+		{
+			if(m_entitiesList[i]->m_collider2d && _rect.checkAABB(m_entitiesList[i]->m_collider2d->m_bound))
+			{
+				if(m_entitiesList[i]->IsTaggedAs(_tag))
+					retrieveList.push_back(m_entitiesList[i]);
+			}
+		}
 	}
 
 	return retrieveList;

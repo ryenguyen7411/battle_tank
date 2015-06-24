@@ -8,6 +8,7 @@
 
 #include "State.h"
 #include "TankAI.h"
+
 #include "Scripts.h"
 
 #pragma region TankController
@@ -18,7 +19,7 @@ TankController::TankController(Tank _tankType)
 	m_tank = _tankType;
 	m_bullet = Bullet::BULLET_NORMAL;
 
-	m_timer = 0.0f;
+	m_timer = 0;
 
 	switch(m_tank)
 	{
@@ -325,9 +326,9 @@ void HealthControl::Update()
 
 	if(m_health <= 0)
 	{
-		FindEnemy* findEnemy = static_cast<FindEnemy*>(m_baseEntity->GetComponent(CompType::COMP_FINDENEMY));
-		if(findEnemy->m_encounterEnemy)
-			static_cast<FindEnemy*>(findEnemy->m_encounterEnemy->GetComponent(CompType::COMP_FINDENEMY))->m_targetEnemy = NULL;
+		DetectEnemy* detectEnemy = static_cast<DetectEnemy*>(m_baseEntity->GetComponent(CompType::COMP_DETECTENEMY));
+		if(detectEnemy->m_encounterEnemy)
+			static_cast<DetectEnemy*>(detectEnemy->m_encounterEnemy->GetComponent(CompType::COMP_DETECTENEMY))->m_targetEnemy = NULL;
 		EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 	}
 }
@@ -419,7 +420,7 @@ void Manager::Update()
 		strcat(tank3, convertToString(Map::GetInstance()->m_teamBlue[2]));
 	}
 
-	for(int i = 0; i < 4; i++)
+	for(int i = 0; i < 1/*4*/; i++)
 	{
 		if(m_team == Team::TEAM_RED)
 		{
@@ -513,41 +514,198 @@ void ItemManager::Update()
 #pragma endregion
 
 
-#pragma region FindEnemy
-FindEnemy::FindEnemy()
+#pragma region DetectEnemy
+DetectEnemy::DetectEnemy()
 {
-	m_type = CompType::COMP_FINDENEMY;
+	m_type = CompType::COMP_DETECTENEMY;
 
 	m_targetEnemy = NULL;
 	m_encounterEnemy = NULL;
 }
 
-FindEnemy::~FindEnemy()
+DetectEnemy::~DetectEnemy()
 {
 
 }
 
-void FindEnemy::Release()
+void DetectEnemy::Release()
 {
 
 }
 
-void FindEnemy::Update()
+void DetectEnemy::Update()
 {
 	std::vector<Entity*> enemyList;
+	Rect radar;
+	radar.width = radar.height = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_shootRange;
+	radar.x = m_baseEntity->m_transform->m_position.x - radar.width / 2;
+	radar.y = m_baseEntity->m_transform->m_position.y - radar.height / 2;
+
 	if(static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team == Team::TEAM_RED)
-		enemyList = EntitiesSystem::GetInstance()->GetBlues();
+		enemyList = EntitiesSystem::GetInstance()->Retrieve(radar, Team::TEAM_BLUE);
 	else
-		enemyList = EntitiesSystem::GetInstance()->GetReds();
+		enemyList = EntitiesSystem::GetInstance()->Retrieve(radar, Team::TEAM_RED);
 
+	std::vector<Entity*> obstacleList = EntitiesSystem::GetInstance()->Retrieve(radar, TAG_ROCK);
 
+	float minH = 10000.0f;
 	if(!m_targetEnemy)
 	{
-		// Find weakest enemy
+		for(int i = 0; i < enemyList.size(); i++)
+		{
+			float h = static_cast<TankController*>(enemyList[i]->GetComponent(CompType::COMP_TANKCONTROLLER))->m_heuristicValue;
+			for(int j = 0; j < obstacleList.size(); j++)
+			{
+				if(obstacleList[j]->m_transform->IsMiddle(m_baseEntity->m_transform, enemyList[i]->m_transform))
+					h += obstacleList[j]->m_collider2d->m_bound.width + obstacleList[j]->m_collider2d->m_bound.height;
+			}
+
+			h += abs(enemyList[i]->m_transform->m_position.x - m_baseEntity->m_transform->m_position.x) +
+					abs(enemyList[i]->m_transform->m_position.y - m_baseEntity->m_transform->m_position.y);
+
+			if(h * 0.75f <= static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_heuristicValue && h < minH)
+			{
+				minH = h;
+				m_targetEnemy = enemyList[i];
+				static_cast<DetectEnemy*>(m_baseEntity->GetComponent(CompType::COMP_DETECTENEMY))->m_encounterEnemy = m_baseEntity;
+			}
+		}
+	}
+	else if(!radar.checkAABB(m_targetEnemy->m_collider2d->m_bound))
+	{
+		static_cast<DetectEnemy*>(m_targetEnemy->GetComponent(CompType::COMP_DETECTENEMY))->m_encounterEnemy = NULL;
+		m_targetEnemy = NULL;
+	}
+}
+#pragma endregion
+
+
+#pragma region AutoTankManager
+AutoTankManager::AutoTankManager()
+{
+	m_type = CompType::COMP_AUTOTANKANAGER;
+}
+
+AutoTankManager::~AutoTankManager()
+{
+
+}
+
+void AutoTankManager::Release()
+{
+
+}
+
+void AutoTankManager::Update()
+{
+	
+}
+
+void AutoTankManager::Move(Direction _direction)
+{
+	std::vector<Component*> collider2dList = m_baseEntity->GetComponents(CompType::COMP_COLLIDER2D);
+	Entity* entity = NULL;
+
+	for(int i = 0; i < collider2dList.size(); i++)
+	{
+		entity = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
+		if(entity && (entity->IsTaggedAs(TAG_TANK) || entity->IsTaggedAs(TAG_BRICK) || entity->IsTaggedAs(TAG_ROCK) || entity->IsTaggedAs(TAG_OCEAN)))
+			break;
 	}
 
-	//Enemy is out of retrive list
-	//m_targetEnemy->m_encounter = NULL;
-	//m_targetEnemy = NULL;
+	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
+	if(_direction == Direction::DIR_UP)
+	{
+		if(tankController->m_lockDirection == Direction::DIR_LEFT)
+			m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + entity->m_collider2d->m_bound.width / 2
+			+ m_baseEntity->m_collider2d->m_bound.width / 2 + 1;
+		if(tankController->m_lockDirection == Direction::DIR_RIGHT)
+			m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - entity->m_collider2d->m_bound.width / 2
+			- m_baseEntity->m_collider2d->m_bound.width / 2 - 1;
+
+		m_baseEntity->m_transform->m_position.y -= tankController->m_speed;
+		tankController->m_lockDirection = Direction::DIR_NONE;
+
+		m_baseEntity->m_animator->m_currentFrame = 0;
+		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+	}
+	else if(_direction == Direction::DIR_DOWN)
+	{
+		if(tankController->m_lockDirection == Direction::DIR_LEFT)
+			m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + entity->m_collider2d->m_bound.width / 2
+			+ m_baseEntity->m_collider2d->m_bound.width / 2 + 1;
+		if(tankController->m_lockDirection == Direction::DIR_RIGHT)
+			m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - entity->m_collider2d->m_bound.width / 2
+			- m_baseEntity->m_collider2d->m_bound.width / 2 - 1;
+
+		m_baseEntity->m_transform->m_position.y += tankController->m_speed;
+		tankController->m_lockDirection = Direction::DIR_NONE;
+
+		m_baseEntity->m_animator->m_currentFrame = 1;
+		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+	}
+	else if(_direction == Direction::DIR_LEFT)
+	{
+		if(tankController->m_lockDirection == Direction::DIR_UP)
+			m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - entity->m_collider2d->m_bound.height / 2
+			- m_baseEntity->m_collider2d->m_bound.height / 2 - 1;
+		if(tankController->m_lockDirection == Direction::DIR_DOWN)
+			m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + entity->m_collider2d->m_bound.height / 2
+			+ m_baseEntity->m_collider2d->m_bound.height / 2 + 1;
+
+		m_baseEntity->m_transform->m_position.x -= tankController->m_speed;
+		tankController->m_lockDirection = Direction::DIR_NONE;
+
+		m_baseEntity->m_animator->m_currentFrame = 2;
+		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+	}
+	else if(_direction == Direction::DIR_RIGHT)
+	{
+		if(tankController->m_lockDirection == Direction::DIR_UP)
+			m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - entity->m_collider2d->m_bound.height / 2
+			- m_baseEntity->m_collider2d->m_bound.height / 2 - 1;
+		if(tankController->m_lockDirection == Direction::DIR_DOWN)
+			m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + entity->m_collider2d->m_bound.height / 2
+			+ m_baseEntity->m_collider2d->m_bound.height / 2 + 1;
+
+		m_baseEntity->m_transform->m_position.x += tankController->m_speed;
+		tankController->m_lockDirection = Direction::DIR_NONE;
+
+		m_baseEntity->m_animator->m_currentFrame = 3;
+		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+	}
+}
+
+Direction AutoTankManager::GetNextRandomirection(Direction _currentDirection)
+{
+	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
+	int x = rand() % 100;
+	if(x < 3)
+	{
+		if(tankController->m_lockDirection != Direction::DIR_UP)
+			return Direction::DIR_UP;
+	}
+	else if(x < 6)
+	{
+		if(tankController->m_lockDirection != Direction::DIR_DOWN)
+			return Direction::DIR_DOWN;
+	}
+	else if(x < 9)
+	{
+		if(tankController->m_lockDirection != Direction::DIR_LEFT)
+			return Direction::DIR_LEFT;
+	}
+	else if(x < 12)
+	{
+		if(tankController->m_lockDirection != Direction::DIR_RIGHT)
+			return Direction::DIR_RIGHT;
+	}
+	else if(x < 80)
+	{
+		if(tankController->m_lockDirection != _currentDirection)
+			return _currentDirection;
+	}
+
+	return Direction::DIR_NONE;
 }
 #pragma endregion

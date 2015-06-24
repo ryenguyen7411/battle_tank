@@ -7,7 +7,7 @@
 void main()
 {
 	Game g;
-	g.init(SCREEN_WIDTH, SCREEN_HEIGHT, "Battle City - Limited edition");
+	g.init(SCREEN_WIDTH, SCREEN_HEIGHT, "Battle City");
 
 	g.run();
 }

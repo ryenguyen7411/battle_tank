@@ -141,18 +141,34 @@ public:
 #pragma endregion
 
 
-#pragma region FindEnemy
-class FindEnemy : public Component
+#pragma region DetectEnemy
+class DetectEnemy : public Component
 {
 public:
 	Entity*		m_targetEnemy;
 	Entity*		m_encounterEnemy;
 
-	FindEnemy();
-	virtual ~FindEnemy();
+	DetectEnemy();
+	virtual ~DetectEnemy();
 
 	virtual void	Release();
 	virtual void	Update();
+};
+#pragma endregion
+
+
+#pragma region AutoTankManager
+class AutoTankManager : public Component
+{
+public:
+	AutoTankManager();
+	virtual ~AutoTankManager();
+
+	virtual void	Release();
+	virtual void	Update();
+
+	void			Move(Direction _direction);
+	Direction		GetNextRandomirection(Direction _currentDirection);
 };
 #pragma endregion
 

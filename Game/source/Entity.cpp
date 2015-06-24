@@ -1,6 +1,9 @@
 #include "stdafx.h"
-#include "Components.h"
+
 #include "ResourcesManager.h"
+
+#include "Components.h"
+#include "Scripts.h"
 
 #include "Entity.h"
 

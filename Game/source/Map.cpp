@@ -1,6 +1,10 @@
 #include "stdafx.h"
-#include "EntitiesSystem.h"
+
 #include "Entity.h"
+#include "EntitiesSystem.h"
+
+#include "Components.h"
+#include "Scripts.h"
 
 #include "Map.h"
 
@@ -197,6 +201,26 @@ void Map::CreateCollider()
 			}
 		}
 	}
+}
+
+Vec3 Map::GetMapPosition(Entity* _entity)
+{
+	Vec3 position;
+	position.x = (_entity->m_transform->m_position.x - m_offset.x) / m_tileWidth;
+	position.y = (_entity->m_transform->m_position.y - m_offset.y) / m_tileHeight;
+	position.z = 0;
+
+	return position;
+}
+
+Vec3 Map::GetMapRandomPosition()
+{
+	return Vec3(rand() % m_mapWidth, rand() % m_mapHeight, 0);
+}
+
+Vec3 Map::GetRealPosition(Vec3 _mapPosition)
+{
+	return Vec3(_mapPosition.x * m_mapWidth + m_offset.x, _mapPosition.y * m_mapHeight + m_offset.y, 0);
 }
 
 void Map::Update()

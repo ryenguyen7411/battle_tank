@@ -36,7 +36,12 @@ public:
 
 	ErrorCode		LoadMap();
 	void			UnloadMap();
+
 	void			CreateCollider();
+	Vec3			GetMapPosition(Entity* _entity);
+	Vec3			GetMapRandomPosition();
+
+	Vec3			GetRealPosition(Vec3 _mapPosition);
 
 	void			Update();
 	void			Draw(Graphics* g);

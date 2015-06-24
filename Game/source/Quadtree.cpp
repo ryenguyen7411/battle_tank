@@ -1,6 +1,9 @@
 #include "stdafx.h"
+
 #include "Entity.h"
+
 #include "Components.h"
+#include "Scripts.h"
 
 #include "Quadtree.h"
 

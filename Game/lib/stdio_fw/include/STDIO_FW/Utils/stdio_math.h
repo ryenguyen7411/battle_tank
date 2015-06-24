@@ -124,6 +124,8 @@ namespace stdio_fw
 		// Additional
 		bool	operator == (Rect b);
 		bool	operator != (Rect b);
+
+		bool	checkAABB(Rect b);
 	};
 }
 

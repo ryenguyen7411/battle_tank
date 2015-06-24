@@ -1,5 +1,4 @@
 #include "stdafx.h"
-
 #include <string>
 
 #include "support.h"

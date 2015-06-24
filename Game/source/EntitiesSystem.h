@@ -26,7 +26,8 @@ public:
 	std::vector<Entity*>		GetReds();
 	std::vector<Entity*>		GetBlues();
 
-	std::vector<Entity*>		Retrieve(Rect rect);
+	std::vector<Entity*>		Retrieve(Rect rect, Team _team);
+	std::vector<Entity*>		Retrieve(Rect _rect, const char* _tag);
 };
 
 #endif

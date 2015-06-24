@@ -1,9 +1,11 @@
 #include "stdafx.h"
+#include <ctime>
+
 #include "Map.h"
 #include "Entity.h"
 #include "EntitiesSystem.h"
+
 #include "Quadtree.h"
-#include <ctime>
 #include "Scripts.h"
 
 #include "Components.h"
@@ -82,6 +84,25 @@ float Transform::CalculateDistance(Transform* _enemy)
 {
 
 	return 0.0f;
+}
+
+bool Transform::IsMiddle(Transform* a, Transform* b)
+{
+	Vec3 posA = a->m_position;
+	Vec3 posB = b->m_position;
+	
+	if((posA.x < m_position.x && m_position.x < posB.x) || (posA.x > m_position.x && m_position.x > posB.x))
+	{
+		if(abs(posA.y - posB.y) <= 160 && abs(posA.y - m_position.y) <= 96 && abs(posB.y - m_position.y) <= 96)
+			return true;
+	}
+	if((posA.y < m_position.y && m_position.y < posB.y) || (posA.y > m_position.y && m_position.y > posB.y))
+	{
+		if(abs(posA.x - posB.x) <= 160 && abs(posA.x - m_position.x) <= 96 && abs(posB.x - m_position.x) <= 96)
+			return true;
+	}
+
+	return false;
 }
 ///////////////////////////////////////////
 

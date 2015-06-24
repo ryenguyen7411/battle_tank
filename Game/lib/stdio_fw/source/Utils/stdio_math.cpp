@@ -235,6 +235,11 @@ namespace stdio_fw
 	{
 		return x != b.x || y != b.y || width != b.width || height != b.height;
 	}
+
+	bool Rect::checkAABB(Rect b)
+	{
+		return !(x + width < b.x || y + height < b.y || x > b.x + b.width || y > b.y + b.height);
+	}
 	//////////////////////////////////////////////
 
 	// Mat3 3x3

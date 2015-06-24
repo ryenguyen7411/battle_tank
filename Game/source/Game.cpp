@@ -1,14 +1,14 @@
 #include "stdafx.h"
-
 #include <ctime>
 
 #include "ResourcesManager.h"
 #include "Map.h"
 #include "Factory.h"
+#include "Entity.h"
 #include "EntitiesSystem.h"
 
-#include "Entity.h"
 #include "Components.h"
+#include "Scripts.h"
 
 #include "State.h"
 #include "TankAI.h"

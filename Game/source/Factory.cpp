@@ -2,11 +2,12 @@
 
 #include "ResourcesManager.h"
 #include "Map.h"
-#include "EntitiesSystem.h"
 #include "Entity.h"
+#include "EntitiesSystem.h"
 
 #include "Components.h"
 #include "Scripts.h"
+
 #include "State.h"
 #include "TankAI.h"
 
@@ -60,6 +61,9 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	{
 		tankController->m_stateMachine = StateMachine(tankController->m_baseEntity);
 		tankController->m_stateMachine.ChangeState(Roaming::GetInstance());
+
+		AutoTankManager* autoTankManager = new AutoTankManager();
+		tank->AddComponent(autoTankManager);
 	}
 
 	HealthControl* healthControl = new HealthControl(_tankType);
@@ -67,8 +71,8 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	tankController->CalculateHeuristic();
 
 
-	FindEnemy* findEnemy = new FindEnemy();
-	tank->AddComponent(findEnemy);
+	DetectEnemy* detectEnemy = new DetectEnemy();
+	tank->AddComponent(detectEnemy);
 
 
 	Entity* hp = new Entity();

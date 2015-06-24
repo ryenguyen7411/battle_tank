@@ -81,9 +81,6 @@
     <ClCompile Include="..\source\Factory.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\Scripts.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\Quadtree.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
@@ -92,6 +89,9 @@
     </ClCompile>
     <ClCompile Include="..\source\TankAI.cpp">
       <Filter>StateMachine\AutoTank</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\Scripts.cpp">
+      <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
