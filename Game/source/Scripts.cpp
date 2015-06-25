@@ -283,6 +283,8 @@ void BulletController::Update()
 		{
 
 		}
+
+		// Explosion effect
 	}
 }
 #pragma endregion
@@ -677,27 +679,27 @@ Direction AutoTankManager::GetNextRandomDirection(Direction _currentDirection)
 {
 	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 	int x = rand() % 100;
-	if(x < 85)
+	if(x < 95)
 	{
 		if(tankController->m_lockDirection != _currentDirection)
 			return _currentDirection;
 	}
-	else if(x < 86)
+	else if(x < 96)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_UP)
 			return Direction::DIR_UP;
 	}
-	else if(x < 87)
+	else if(x < 97)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_DOWN)
 			return Direction::DIR_DOWN;
 	}
-	else if(x < 88)
+	else if(x < 98)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_LEFT)
 			return Direction::DIR_LEFT;
 	}
-	else if(x < 89)
+	else if(x < 99)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_RIGHT)
 			return Direction::DIR_RIGHT;

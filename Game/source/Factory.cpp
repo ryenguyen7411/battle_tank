@@ -194,7 +194,7 @@ Entity*	Factory::CreateItem(Item _type)
 Entity* Factory::CreateManager(Team _team)
 {
 	Entity* teamManager = new Entity();
-	teamManager->SetTag(TAG_TEAM_MANAGER);
+	teamManager->SetTag(TAG_TEAMMANAGER);
 	if(_team == Team::TEAM_RED)
 		teamManager->m_transform->m_position = Vec3(700, 450, 0);
 	else if(_team == Team::TEAM_BLUE)

@@ -50,8 +50,11 @@ void Roaming::Execute(Entity* _entity)
 	}
 	
 	// Roaming
-	tankController->m_direction = autoTankManager->GetNextRandomDirection(tankController->m_direction);
-	autoTankManager->Move(tankController->m_direction);
+	else
+	{
+		tankController->m_direction = autoTankManager->GetNextRandomDirection(tankController->m_direction);
+		autoTankManager->Move(tankController->m_direction);
+	}
 }
 
 void Roaming::Exit(Entity* _entity)
@@ -95,7 +98,7 @@ void Fighting::Execute(Entity* _entity)
 		tankController->m_stateMachine.ChangeState(Chasing::GetInstance());
 
 	// Fighting
-	if(detectEnemy->m_targetEnemy)
+	else
 	{
 		tankController->m_direction = autoTankManager->GetShootDirection(detectEnemy->m_targetEnemy->m_transform->m_position);
 
@@ -153,8 +156,11 @@ void Chasing::Execute(Entity* _entity)
 		tankController->m_stateMachine.ChangeState(Fighting::GetInstance());
 
 	// Chasing
-	tankController->m_direction = autoTankManager->GetDirectionToEnemy(detectEnemy->m_targetEnemy->m_transform->m_position);
-	autoTankManager->Move(tankController->m_direction);
+	else
+	{
+		tankController->m_direction = autoTankManager->GetDirectionToEnemy(detectEnemy->m_targetEnemy->m_transform->m_position);
+		autoTankManager->Move(tankController->m_direction);
+	}
 }
 
 void Chasing::Exit(Entity* _entity)
@@ -193,8 +199,11 @@ void Fleeing::Execute(Entity* _entity)
 		tankController->m_stateMachine.ChangeState(Fighting::GetInstance());
 
 	// Fleeing
-	tankController->m_direction = autoTankManager->GetDirectionAwayFromEnemy(detectEnemy->m_targetEnemy->m_transform->m_position);
-	autoTankManager->Move(tankController->m_direction);
+	else
+	{
+		tankController->m_direction = autoTankManager->GetDirectionAwayFromEnemy(detectEnemy->m_targetEnemy->m_transform->m_position);
+		autoTankManager->Move(tankController->m_direction);
+	}
 }
 
 void Fleeing::Exit(Entity* _entity)

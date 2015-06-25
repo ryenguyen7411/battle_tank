@@ -21,7 +21,7 @@
 #define MAX_SPEED			10.0f
 #define MAX_DAMAGE			40.0f
 #define MAX_SHOOT_PER_SEC	10
-#define MAX_TANK			1
+#define MAX_TANK			4
 
 
 // TANK
@@ -95,9 +95,9 @@ static const char*	TAG_BRICK			= "Brick";
 static const char*	TAG_ROCK			= "Rock";
 static const char*	TAG_OCEAN			= "Ocean";
 static const char*	TAG_SCREENCOLLIDER	= "ScreenCollider";
-static const char*	TAG_TEAM_MANAGER = "TeamManager";
-static const char*	TAG_UITEXT = "UiText";
-static const char*	TAG_ITEM = "Item";
+static const char*	TAG_TEAMMANAGER		= "TeamManager";
+static const char*	TAG_UITEXT			= "UiText";
+static const char*	TAG_ITEM			= "Item";
 
 
 #endif
