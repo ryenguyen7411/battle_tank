@@ -40,7 +40,11 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	else if(_team == Team::TEAM_BLUE)
 		tank->m_transform->m_position = Map::GetInstance()->m_blueDefaultLocation[rand() % 4];
 
-	Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[0]);
+	Renderer* renderer;
+	if(_team == Team::TEAM_RED)
+		renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[0]);
+	else
+		renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[1]);
 	tank->AddComponent(renderer);
 
 	Animator* animator = new Animator();
@@ -57,6 +61,10 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	tank->AddComponent(tankController);
 	tankController->m_team = _team;
 	tankController->m_control = _control;
+	if(_team == Team::TEAM_RED)
+		tankController->m_direction = Direction::DIR_UP;
+	else
+		tankController->m_direction = Direction::DIR_DOWN;
 	if(_control == Control::CTRL_AUTO)
 	{
 		tankController->m_stateMachine = StateMachine(tankController->m_baseEntity);

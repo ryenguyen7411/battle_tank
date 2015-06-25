@@ -36,9 +36,9 @@ void Roaming::Execute(Entity* _entity)
 	DetectEnemy* detectEnemy = static_cast<DetectEnemy*>(_entity->GetComponent(CompType::COMP_DETECTENEMY));
 	AutoTankManager* autoTankManager = static_cast<AutoTankManager*>(_entity->GetComponent(CompType::COMP_AUTOTANKANAGER));
 
-	if(healthControl->m_health <= 20.0f)
+	if(healthControl->m_health <= 20.0f && detectEnemy->m_targetEnemy)
 	{
-		if(detectEnemy->m_encounterEnemy)
+		if(autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
 		{
 			if(tankController->m_heuristicValue < 0.8 * static_cast<TankController*>(detectEnemy->m_encounterEnemy->GetComponent(CompType::COMP_TANKCONTROLLER))->m_heuristicValue)
 				tankController->m_stateMachine.ChangeState(Fleeing::GetInstance());
@@ -50,7 +50,7 @@ void Roaming::Execute(Entity* _entity)
 	}
 	
 	// Roaming
-	tankController->m_direction = autoTankManager->GetNextRandomirection(tankController->m_direction);
+	tankController->m_direction = autoTankManager->GetNextRandomDirection(tankController->m_direction);
 	autoTankManager->Move(tankController->m_direction);
 }
 
@@ -102,8 +102,7 @@ void Fighting::Execute(Entity* _entity)
 		_entity->m_animator->m_currentFrame = (int)tankController->m_direction;
 		_entity->m_renderer->m_sprite = _entity->m_animator->m_frameList[_entity->m_animator->m_currentFrame];
 
-		if(abs(detectEnemy->m_targetEnemy->m_transform->m_position.x - _entity->m_transform->m_position.x) <= 64
-			|| abs(detectEnemy->m_targetEnemy->m_transform->m_position.y - _entity->m_transform->m_position.y) <= 64)
+		if(autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
 		{
 			if(tankController->m_canShoot && rand() % 100 < 50)
 			{
@@ -150,11 +149,12 @@ void Chasing::Execute(Entity* _entity)
 
 	if(!detectEnemy->m_targetEnemy)
 		tankController->m_stateMachine.ChangeState(Roaming::GetInstance());
-	else if(autoTankManager->IsEnemyInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
+	else if(autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
 		tankController->m_stateMachine.ChangeState(Fighting::GetInstance());
 
 	// Chasing
-	// Move to enemy x/y position
+	tankController->m_direction = autoTankManager->GetDirectionToEnemy(detectEnemy->m_targetEnemy->m_transform->m_position);
+	autoTankManager->Move(tankController->m_direction);
 }
 
 void Chasing::Exit(Entity* _entity)
@@ -188,12 +188,13 @@ void Fleeing::Execute(Entity* _entity)
 	DetectEnemy* detectEnemy = static_cast<DetectEnemy*>(_entity->GetComponent(CompType::COMP_DETECTENEMY));
 	AutoTankManager* autoTankManager = static_cast<AutoTankManager*>(_entity->GetComponent(CompType::COMP_AUTOTANKANAGER));
 
-	if(healthControl->m_health <= 20.0f && healthControl->m_health <
+	if(detectEnemy->m_targetEnemy && healthControl->m_health <= 20.0f && healthControl->m_health <
 		0.25 * static_cast<HealthControl*>(detectEnemy->m_targetEnemy->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health)
 		tankController->m_stateMachine.ChangeState(Fighting::GetInstance());
 
 	// Fleeing
-	// Get suitable direction and move
+	tankController->m_direction = autoTankManager->GetDirectionAwayFromEnemy(detectEnemy->m_targetEnemy->m_transform->m_position);
+	autoTankManager->Move(tankController->m_direction);
 }
 
 void Fleeing::Exit(Entity* _entity)

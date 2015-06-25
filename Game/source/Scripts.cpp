@@ -356,7 +356,7 @@ void BrickControl::Update()
 {
 	if(m_health >= 75.0f)
 	{
-		
+		Map::GetInstance()->m_map[(int)m_position.x][(int)m_position.y] = 4;
 	}
 	else if(m_health >= 50.0f)
 	{
@@ -420,7 +420,7 @@ void Manager::Update()
 		strcat(tank3, convertToString(Map::GetInstance()->m_teamBlue[2]));
 	}
 
-	for(int i = 0; i < 1/*4*/; i++)
+	for(int i = 0; i < MAX_TANK; i++)
 	{
 		if(m_team == Team::TEAM_RED)
 		{
@@ -560,14 +560,11 @@ void DetectEnemy::Update()
 					h += obstacleList[j]->m_collider2d->m_bound.width + obstacleList[j]->m_collider2d->m_bound.height;
 			}
 
-			//h += abs(enemyList[i]->m_transform->m_position.x - m_baseEntity->m_transform->m_position.x) +
-			//		abs(enemyList[i]->m_transform->m_position.y - m_baseEntity->m_transform->m_position.y);
-
 			if(h * 0.75f <= static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_heuristicValue && h < minH)
 			{
 				minH = h;
 				m_targetEnemy = enemyList[i];
-				static_cast<DetectEnemy*>(m_baseEntity->GetComponent(CompType::COMP_DETECTENEMY))->m_encounterEnemy = m_baseEntity;
+				static_cast<DetectEnemy*>(m_targetEnemy->GetComponent(CompType::COMP_DETECTENEMY))->m_encounterEnemy = m_baseEntity;
 			}
 		}
 	}
@@ -676,34 +673,34 @@ void AutoTankManager::Move(Direction _direction)
 	}
 }
 
-Direction AutoTankManager::GetNextRandomirection(Direction _currentDirection)
+Direction AutoTankManager::GetNextRandomDirection(Direction _currentDirection)
 {
 	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 	int x = rand() % 100;
-	if(x < 2)
+	if(x < 85)
+	{
+		if(tankController->m_lockDirection != _currentDirection)
+			return _currentDirection;
+	}
+	else if(x < 86)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_UP)
 			return Direction::DIR_UP;
 	}
-	else if(x < 3)
+	else if(x < 87)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_DOWN)
 			return Direction::DIR_DOWN;
 	}
-	else if(x < 4)
+	else if(x < 88)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_LEFT)
 			return Direction::DIR_LEFT;
 	}
-	else if(x < 8)
+	else if(x < 89)
 	{
 		if(tankController->m_lockDirection != Direction::DIR_RIGHT)
 			return Direction::DIR_RIGHT;
-	}
-	else if(x < 75)
-	{
-		if(tankController->m_lockDirection != _currentDirection)
-			return _currentDirection;
 	}
 
 	return Direction::DIR_NONE;
@@ -732,13 +729,26 @@ Direction AutoTankManager::GetDirectionToEnemy(Vec3 _targetPosition)
 	return Direction::DIR_NONE;
 }
 
+Direction AutoTankManager::GetDirectionAwayFromEnemy(Vec3 _targetPosition)
+{
+	return Direction::DIR_NONE;
+}
+
 bool AutoTankManager::IsInShootRange(Vec3 _targetPosition)
 {
+	DetectEnemy* detectEnemy = static_cast<DetectEnemy*>(m_baseEntity->GetComponent(CompType::COMP_DETECTENEMY));
+	if(abs(detectEnemy->m_targetEnemy->m_transform->m_position.x - m_baseEntity->m_transform->m_position.x) <= 64
+		|| abs(detectEnemy->m_targetEnemy->m_transform->m_position.y - m_baseEntity->m_transform->m_position.y) <= 64)
+		return true;
 	return false;
 }
 
 bool AutoTankManager::IsEnemyInShootRange(Vec3 _targetPosition)
 {
+	DetectEnemy* detectEnemy = static_cast<DetectEnemy*>(m_baseEntity->GetComponent(CompType::COMP_DETECTENEMY));
+	if(abs(detectEnemy->m_targetEnemy->m_transform->m_position.x - m_baseEntity->m_transform->m_position.x) <= 64
+		|| abs(detectEnemy->m_targetEnemy->m_transform->m_position.y - m_baseEntity->m_transform->m_position.y) <= 64)
+		return true;
 	return false;
 }
 #pragma endregion

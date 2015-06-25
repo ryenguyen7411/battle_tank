@@ -168,9 +168,10 @@ public:
 	virtual void	Update();
 
 	void			Move(Direction _direction);
-	Direction		GetNextRandomirection(Direction _currentDirection);
+	Direction		GetNextRandomDirection(Direction _currentDirection);
 	Direction		GetShootDirection(Vec3 _targetPosition);
 	Direction		GetDirectionToEnemy(Vec3 _targetPosition);
+	Direction		GetDirectionAwayFromEnemy(Vec3 _targetPosition);
 
 	bool			IsInShootRange(Vec3 _targetPosition);
 	bool			IsEnemyInShootRange(Vec3 _targetPosition);

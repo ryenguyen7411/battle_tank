@@ -244,6 +244,7 @@ void Collider2D::Update()
 						case Item::ITEM_INVISIBLE:
 							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_invisible = true;
 							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_timer = clock();
+							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_expTime = 10.0f;
 							break;
 						case Item::ITEM_BULLET:
 							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_shootPerSec += 2;
