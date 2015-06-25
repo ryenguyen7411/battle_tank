@@ -728,12 +728,94 @@ Direction AutoTankManager::GetShootDirection(Vec3 _targetPosition)
 
 Direction AutoTankManager::GetDirectionToEnemy(Vec3 _targetPosition)
 {
-	return Direction::DIR_NONE;
+	Vec3 mapPosition = Map::GetInstance()->GetMapPosition(m_baseEntity->m_transform->m_position);
+	Vec3 targetMapPosition = Map::GetInstance()->GetMapPosition(_targetPosition);
+
+	if(mapPosition.x == targetMapPosition.x && mapPosition.y == targetMapPosition.y)
+		return Direction::DIR_NONE;
+	
+	int canMove[4] = {0};
+	int distance[4] = {0};
+
+	int optimalDirection = -1;
+
+	if(mapPosition.y > 0 && Map::GetInstance()->m_map[(int)mapPosition.x][(int)mapPosition.y - 1] < 2)
+	{
+		canMove[0] = 1;
+		distance[0] = Map::GetInstance()->MinCost(Vec3(mapPosition.x, mapPosition.y - 1, 0), targetMapPosition);
+	}
+	if(mapPosition.y < Map::GetInstance()->m_mapHeight - 1 && Map::GetInstance()->m_map[(int)mapPosition.x][(int)mapPosition.y + 1] < 2)
+	{
+		canMove[1] = 1;
+		distance[1] = Map::GetInstance()->MinCost(Vec3(mapPosition.x, mapPosition.y + 1, 0), targetMapPosition);
+	}
+	if(mapPosition.x > 0 && Map::GetInstance()->m_map[(int)mapPosition.x - 1][(int)mapPosition.y] < 2)
+	{
+		canMove[2] = 1;
+		distance[2] = Map::GetInstance()->MinCost(Vec3(mapPosition.x - 1, mapPosition.y, 0), targetMapPosition);
+	}
+	if(mapPosition.x < Map::GetInstance()->m_mapWidth - 1 && Map::GetInstance()->m_map[(int)mapPosition.x + 1][(int)mapPosition.y] < 2)
+	{
+		canMove[3] = 1;
+		distance[3] = Map::GetInstance()->MinCost(Vec3(mapPosition.x + 1, mapPosition.y, 0), targetMapPosition);
+	}
+
+	for(int i = 0; i < Direction::DIR_COUNT; i++)
+	{
+		if(canMove[i])
+		{
+			if((optimalDirection != -1 && distance[optimalDirection] > distance[i]) || optimalDirection == -1)
+				optimalDirection = i;
+		}
+	}
+
+	return (Direction)optimalDirection;
 }
 
 Direction AutoTankManager::GetDirectionAwayFromEnemy(Vec3 _targetPosition)
 {
-	return Direction::DIR_NONE;
+	Vec3 mapPosition = Map::GetInstance()->GetMapPosition(m_baseEntity->m_transform->m_position);
+	Vec3 targetMapPosition = Map::GetInstance()->GetMapPosition(_targetPosition);
+
+	if(mapPosition.x == targetMapPosition.x && mapPosition.y == targetMapPosition.y)
+		return Direction::DIR_NONE;
+
+	int canMove[4] = {0};
+	int distance[4] = {0};
+
+	int optimalDirection = -1;
+
+	if(mapPosition.y > 0 && Map::GetInstance()->m_map[(int)mapPosition.x][(int)mapPosition.y - 1] < 2)
+	{
+		canMove[0] = 1;
+		distance[0] = Map::GetInstance()->MinCost(Vec3(mapPosition.x, mapPosition.y - 1, 0), targetMapPosition);
+	}
+	if(mapPosition.y < Map::GetInstance()->m_mapHeight - 1 && Map::GetInstance()->m_map[(int)mapPosition.x][(int)mapPosition.y + 1] < 2)
+	{
+		canMove[1] = 1;
+		distance[1] = Map::GetInstance()->MinCost(Vec3(mapPosition.x, mapPosition.y + 1, 0), targetMapPosition);
+	}
+	if(mapPosition.x > 0 && Map::GetInstance()->m_map[(int)mapPosition.x - 1][(int)mapPosition.y] < 2)
+	{
+		canMove[2] = 1;
+		distance[2] = Map::GetInstance()->MinCost(Vec3(mapPosition.x - 1, mapPosition.y, 0), targetMapPosition);
+	}
+	if(mapPosition.x < Map::GetInstance()->m_mapWidth - 1 && Map::GetInstance()->m_map[(int)mapPosition.x + 1][(int)mapPosition.y] < 2)
+	{
+		canMove[3] = 1;
+		distance[3] = Map::GetInstance()->MinCost(Vec3(mapPosition.x + 1, mapPosition.y, 0), targetMapPosition);
+	}
+
+	for(int i = 0; i < Direction::DIR_COUNT; i++)
+	{
+		if(canMove[i])
+		{
+			if((optimalDirection != -1 && distance[optimalDirection] < distance[i]) || optimalDirection == -1)
+				optimalDirection = i;
+		}
+	}
+
+	return (Direction)optimalDirection;
 }
 
 bool AutoTankManager::IsInShootRange(Vec3 _targetPosition)
