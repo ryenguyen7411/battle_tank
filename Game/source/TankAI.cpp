@@ -199,7 +199,7 @@ void Fleeing::Execute(Entity* _entity)
 		tankController->m_stateMachine.ChangeState(Fighting::GetInstance());
 
 	// Fleeing
-	else
+	else if(detectEnemy->m_targetEnemy)
 	{
 		tankController->m_direction = autoTankManager->GetDirectionAwayFromEnemy(detectEnemy->m_targetEnemy->m_transform->m_position);
 		autoTankManager->Move(tankController->m_direction);
