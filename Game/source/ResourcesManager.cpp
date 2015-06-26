@@ -59,9 +59,9 @@ void ResourcesManager::LoadResources()
 	m_mapPart[1] = new Image(SPR_WATER);
 	m_mapPart[2] = new Image(SPR_ROCK);
 	m_mapPart[3] = new Image(SPR_BRICK_1);
-	m_mapPart[4] = new Image(SPR_BRICK_1);
-	m_mapPart[5] = new Image(SPR_BRICK_1);
-	m_mapPart[6] = new Image(SPR_BRICK_1);
+	m_mapPart[4] = new Image(SPR_BRICK_2);
+	m_mapPart[5] = new Image(SPR_BRICK_3);
+	m_mapPart[6] = new Image(SPR_BRICK_4);
 	for(int i = 0; i < 7; i++)
 		m_mapPart[i]->loadImage();
 

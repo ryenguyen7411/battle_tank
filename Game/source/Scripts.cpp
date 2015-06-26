@@ -356,21 +356,21 @@ void BrickControl::Release()
 
 void BrickControl::Update()
 {
-	if(m_health >= 75.0f)
+	if(m_health == 100.0f)
 	{
 		Map::GetInstance()->m_map[(int)m_position.x][(int)m_position.y] = 4;
 	}
+	else if(m_health >= 75.0f)
+	{
+		Map::GetInstance()->m_map[(int)m_position.x][(int)m_position.y] = 5;
+	}
 	else if(m_health >= 50.0f)
 	{
-
+		Map::GetInstance()->m_map[(int)m_position.x][(int)m_position.y] = 6;
 	}
 	else if(m_health >= 25.0f)
 	{
-
-	}
-	else if(m_health >= 0.0f)
-	{
-		
+		Map::GetInstance()->m_map[(int)m_position.x][(int)m_position.y] = 7;
 	}
 	else
 	{
