@@ -40,7 +40,11 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	else if(_team == Team::TEAM_BLUE)
 		tank->m_transform->m_position = Map::GetInstance()->m_blueDefaultLocation[rand() % 4];
 
-	Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[0]);
+	Renderer* renderer;
+	if(_team == Team::TEAM_RED)
+		renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[0]);
+	else
+		renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[1]);
 	tank->AddComponent(renderer);
 
 	Animator* animator = new Animator();
@@ -48,8 +52,8 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	animator->SetFrameList(4, ResourcesManager::GetInstance()->m_tank1[0], ResourcesManager::GetInstance()->m_tank1[1],
 		ResourcesManager::GetInstance()->m_tank1[2], ResourcesManager::GetInstance()->m_tank1[3]);
 
-	Rect bound = Rect(_position.x - renderer->m_sprite->getWidth() / 2, _position.y - renderer->m_sprite->getHeight() / 2,
-		renderer->m_sprite->getWidth(), renderer->m_sprite->getHeight());
+	Rect bound = Rect(_position.x - renderer->m_sprite->getWidth() / 2 + 2, _position.y - renderer->m_sprite->getHeight() / 2 + 2,
+		renderer->m_sprite->getWidth() - 2, renderer->m_sprite->getHeight() - 2);
 	Collider2D* collider2d = new Collider2D(bound);
 	tank->AddComponent(collider2d);
 
@@ -57,6 +61,10 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	tank->AddComponent(tankController);
 	tankController->m_team = _team;
 	tankController->m_control = _control;
+	if(_team == Team::TEAM_RED)
+		tankController->m_direction = Direction::DIR_UP;
+	else
+		tankController->m_direction = Direction::DIR_DOWN;
 	if(_control == Control::CTRL_AUTO)
 	{
 		tankController->m_stateMachine = StateMachine(tankController->m_baseEntity);
@@ -185,48 +193,75 @@ Entity*	Factory::CreateItem(Item _type)
 
 Entity* Factory::CreateManager(Team _team)
 {
-	Entity* teamManager = new Entity();
-	teamManager->SetTag(TAG_TEAM_MANAGER);
+	Entity* teamManager = new Entity(); //teamManager is an Entity
+	teamManager->SetTag(TAG_TEAMMANAGER);//in TEAMMANAGER TAG
 	if(_team == Team::TEAM_RED)
 		teamManager->m_transform->m_position = Vec3(700, 450, 0);
 	else if(_team == Team::TEAM_BLUE)
 		teamManager->m_transform->m_position = Vec3(700, 150, 0);
 
-	Manager* manager = new Manager();
-	teamManager->AddComponent(manager);
-	manager->m_team = _team;
+	Manager* manager = new Manager(); //Create component
+	teamManager->AddComponent(manager); //Add this component to Entity
+	manager->m_team = _team; //Set team to manager
 
-	Entity* tank1 = new Entity();
-	tank1->SetTag(TAG_UITEXT);
-	tank1->m_transform->m_position = Vec3(-50, 0, 0);
-	UIText* uiText1 = new UIText();
-	tank1->AddComponent(uiText1);
+	Entity* tank1Text = new Entity(); //Tank1 is an Entity	
+	tank1Text->SetTag(TAG_UITEXT); //Tag UITEXT
+	tank1Text->m_transform->m_position = Vec3(-50, 0, 0); //
+	UIText* uiText1 = new UIText(); //Create component for tank1
+	tank1Text->AddComponent(uiText1);// Add this to Tank1
 	uiText1->m_fontSize = FNT_SIZE_BIG;
 	uiText1->m_anchor = Anchor::ANCHOR_CENTER;
-	tank1->m_transform->SetParent(teamManager->m_transform);
-	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank1);
+	tank1Text->m_transform->SetParent(teamManager->m_transform);
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank1Text);
+
+	
 
 
-	Entity* tank2 = new Entity();
-	tank2->SetTag(TAG_UITEXT);
-	tank2->m_transform->m_position = Vec3(0, 0, 0);
+	Entity* tank2Text = new Entity();
+	tank2Text->SetTag(TAG_UITEXT);
+	tank2Text->m_transform->m_position = Vec3(0, 0, 0);
 	UIText* uiText2 = new UIText();
-	tank2->AddComponent(uiText2);
+	tank2Text->AddComponent(uiText2);
 	uiText2->m_fontSize = FNT_SIZE_BIG;
 	uiText2->m_anchor = Anchor::ANCHOR_CENTER;
-	tank2->m_transform->SetParent(teamManager->m_transform);
-	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank2);
+	tank2Text->m_transform->SetParent(teamManager->m_transform);
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank2Text);
 
 
-	Entity* tank3 = new Entity();
-	tank3->SetTag(TAG_UITEXT);
-	tank3->m_transform->m_position = Vec3(50, 0, 0);
+	Entity* tank3Text = new Entity();
+	tank3Text->SetTag(TAG_UITEXT);
+	tank3Text->m_transform->m_position = Vec3(50, 0, 0);
 	UIText* uiText3 = new UIText();
-	tank3->AddComponent(uiText3);
+	tank3Text->AddComponent(uiText3);
 	uiText3->m_fontSize = FNT_SIZE_BIG;
 	uiText3->m_anchor = Anchor::ANCHOR_CENTER;
-	tank3->m_transform->SetParent(teamManager->m_transform);
-	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank3);
+	tank3Text->m_transform->SetParent(teamManager->m_transform);
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank3Text);
+
+
+	Entity* tank1Image = new Entity();
+	tank1Image->m_transform->m_position = Vec3(-50, -10, 0);
+	Renderer* renderer1;
+	renderer1 = new Renderer(ResourcesManager::GetInstance()->m_tank1[0]);
+	tank1Image->AddComponent(renderer1);
+	tank1Image->m_transform->SetParent(teamManager->m_transform);
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank1Image);
+
+	Entity* tank2Image = new Entity();
+	tank2Image->m_transform->m_position = Vec3(0, -10, 0);
+	Renderer* renderer2;
+	renderer2 = new Renderer(ResourcesManager::GetInstance()->m_tank2[0]);
+	tank2Image->AddComponent(renderer2);
+	tank2Image->m_transform->SetParent(teamManager->m_transform);
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank2Image);
+
+	Entity* tank3Image = new Entity();
+	tank3Image->m_transform->m_position = Vec3(50, -10, 0);
+	Renderer* renderer3;
+	renderer3 = new Renderer(ResourcesManager::GetInstance()->m_tank3[0]);
+	tank3Image->AddComponent(renderer3);
+	tank3Image->m_transform->SetParent(teamManager->m_transform);
+	EntitiesSystem::GetInstance()->m_entitiesList.push_back(tank3Image);
 
 
 	if(_team == Team::TEAM_RED)

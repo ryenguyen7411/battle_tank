@@ -44,7 +44,6 @@ public:
 	virtual void	Update();
 
 	void			SetParent(Transform* _parent);
-	float			CalculateDistance(Transform* _enemy);
 	bool			IsMiddle(Transform* a, Transform* b);
 };
 

@@ -38,10 +38,14 @@ public:
 	void			UnloadMap();
 
 	void			CreateCollider();
-	Vec3			GetMapPosition(Entity* _entity);
-	Vec3			GetMapRandomPosition();
 
-	Vec3			GetRealPosition(Vec3 _mapPosition);
+	Vec3			GetMapPosition(Vec3 _position);
+	Vec3			GetMapNextPosition(Vec3 _currentPosition, int _speedX, int _speedY);
+	Vec3			GetMapRandomPosition();
+	Vec3			GetPosition(Vec3 _mapPosition);
+
+	int				GetMapValue(Vec3 _mapPosition);
+	int				MinCost(Vec3 _startPosition, Vec3 _endPosition);
 
 	void			Update();
 	void			Draw(Graphics* g);

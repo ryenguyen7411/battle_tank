@@ -116,13 +116,13 @@ ErrorCode Map::LoadMap()
 		collider += strlen("collider=");
 
 		Rect bound;
-		bound.x = GetNumber(collider) * m_tileWidth + m_offset.x;
+		bound.x = GetNumber(collider) * m_tileWidth + m_offset.x + 1;
 		while(*collider++ != ',');
-		bound.y = GetNumber(collider) * m_tileHeight + m_offset.y;
+		bound.y = GetNumber(collider) * m_tileHeight + m_offset.y + 1;
 		while(*collider++ != ',');
-		bound.width = GetNumber(collider) * m_tileWidth - 1;
+		bound.width = GetNumber(collider) * m_tileWidth - 2;
 		while(*collider++ != ',');
-		bound.height = GetNumber(collider) * m_tileHeight - 1;
+		bound.height = GetNumber(collider) * m_tileHeight - 2;
 		while(*collider++ != ',');
 
 		int type = GetNumber(collider);
@@ -196,7 +196,7 @@ void Map::CreateCollider()
 		{
 			if(m_map[i][j] == 4)
 			{
-				Rect rect = Rect(j * m_tileWidth + m_offset.x, i * m_tileHeight + m_offset.y, m_tileWidth - 1, m_tileHeight - 1);
+				Rect rect = Rect(j * m_tileWidth + m_offset.x + 1, i * m_tileHeight + m_offset.y + 1, m_tileWidth - 2, m_tileHeight - 2);
 				m_mapPartList.push_back(Factory::GetInstance()->CreateCollider(TAG_BRICK, rect, true, Vec2(i, j)));
 			}
 		}
@@ -211,14 +211,23 @@ void Map::CreateCollider()
 	m_mapPartList.push_back(Factory::GetInstance()->CreateCollider(TAG_SCREENCOLLIDER, bottomEdge, false));
 }
 
-Vec3 Map::GetMapPosition(Entity* _entity)
+Vec3 Map::GetMapPosition(Vec3 _position)
 {
 	Vec3 position;
-	position.x = (_entity->m_transform->m_position.x - m_offset.x) / m_tileWidth;
-	position.y = (_entity->m_transform->m_position.y - m_offset.y) / m_tileHeight;
+	position.x = (int)(_position.x - m_offset.x) / m_tileWidth;
+	position.y = (int)(_position.y - m_offset.y) / m_tileHeight;
 	position.z = 0;
 
 	return position;
+}
+
+Vec3 Map::GetMapNextPosition(Vec3 _position, int _speedX, int _speedY)
+{
+	if(_position.x + _speedX - m_mapWidth / 2 <= m_offset.x || _position.x + _speedX + m_mapWidth / 2 > m_mapWidth * m_tileWidth + m_offset.x ||
+		_position.y + _speedY - m_mapHeight / 2 <= m_offset.y || _position.y + _speedY + m_mapHeight / 2 > m_mapHeight * m_tileHeight + m_offset.y)
+		return Vec3(OUT_OF_MAP, OUT_OF_MAP, 0);
+	
+	return GetMapPosition(Vec3(_position.x + _speedX, _position.y + _speedY, 0));
 }
 
 Vec3 Map::GetMapRandomPosition()
@@ -226,9 +235,21 @@ Vec3 Map::GetMapRandomPosition()
 	return Vec3(rand() % m_mapWidth, rand() % m_mapHeight, 0);
 }
 
-Vec3 Map::GetRealPosition(Vec3 _mapPosition)
+Vec3 Map::GetPosition(Vec3 _mapPosition)
 {
 	return Vec3(_mapPosition.x * m_mapWidth + m_offset.x, _mapPosition.y * m_mapHeight + m_offset.y, 0);
+}
+
+int	Map::GetMapValue(Vec3 _mapPosition)
+{
+	if(_mapPosition.x >= 0 && _mapPosition.x < m_mapWidth && _mapPosition.y >= 0 && _mapPosition.y < m_mapHeight)
+		return m_map[(int)_mapPosition.y][(int)_mapPosition.x];
+	return OUT_OF_MAP;
+}
+
+int Map::MinCost(Vec3 _startPosition, Vec3 _endPosition)
+{
+	return abs(_startPosition.x - _endPosition.x) + abs(_startPosition.y - _endPosition.y);
 }
 
 void Map::Update()
