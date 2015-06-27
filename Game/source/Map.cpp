@@ -131,7 +131,7 @@ ErrorCode Map::LoadMap()
 		if(type == 2)
 			strcpy(tag, TAG_OCEAN);
 		else if(type == 3)
-			strcpy(tag, TAG_ROCK);
+			strcpy(tag, TAG_CONCRETE);
 
 		m_mapPartList.push_back(Factory::GetInstance()->CreateCollider(tag, bound));
 	}

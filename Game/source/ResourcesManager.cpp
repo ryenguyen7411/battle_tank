@@ -57,7 +57,7 @@ void ResourcesManager::LoadResources()
 
 	m_mapPart[0] = new Image(SPR_GRASS);
 	m_mapPart[1] = new Image(SPR_WATER);
-	m_mapPart[2] = new Image(SPR_ROCK);
+	m_mapPart[2] = new Image(SPR_CONCRETE);
 	m_mapPart[3] = new Image(SPR_BRICK_1);
 	m_mapPart[4] = new Image(SPR_BRICK_2);
 	m_mapPart[5] = new Image(SPR_BRICK_3);

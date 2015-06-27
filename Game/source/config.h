@@ -72,7 +72,7 @@ static const char*	MAP_3			= "map//map3.ranf";
 
 static const char*	SPR_GRASS		= "image//spr_grass.png";
 static const char*	SPR_WATER		= "image//spr_water.png";
-static const char*	SPR_ROCK		= "image//spr_rock.png";
+static const char*	SPR_CONCRETE	= "image//spr_concrete.png";
 static const char*	SPR_BRICK_1		= "image//spr_brick_1.png";
 static const char*	SPR_BRICK_2		= "image//spr_brick_2.png";
 static const char*	SPR_BRICK_3		= "image//spr_brick_3.png";
@@ -94,7 +94,7 @@ static const char*	TAG_BULLET			= "Bullet";
 static const char*	TAG_TEAM			= "Team";
 static const char*	TAG_HP				= "HP";
 static const char*	TAG_BRICK			= "Brick";
-static const char*	TAG_ROCK			= "Rock";
+static const char*	TAG_CONCRETE		= "Concrete";
 static const char*	TAG_OCEAN			= "Ocean";
 static const char*	TAG_SCREENCOLLIDER	= "ScreenCollider";
 static const char*	TAG_TEAMMANAGER		= "TeamManager";

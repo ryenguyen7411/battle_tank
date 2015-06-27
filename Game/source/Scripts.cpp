@@ -74,7 +74,7 @@ void TankController::Update()
 		for(int i = 0; i < collider2dList.size(); i++)
 		{
 			entity = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
-			if(entity && (entity->IsTaggedAs(TAG_TANK) || entity->IsTaggedAs(TAG_BRICK) || entity->IsTaggedAs(TAG_ROCK) || entity->IsTaggedAs(TAG_OCEAN)))
+			if(entity && (entity->IsTaggedAs(TAG_TANK) || entity->IsTaggedAs(TAG_BRICK) || entity->IsTaggedAs(TAG_CONCRETE) || entity->IsTaggedAs(TAG_OCEAN)))
 				break;
 		}
 
@@ -275,7 +275,7 @@ void BulletController::Update()
 
 			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 		}
-		else if(collider->m_collisionObject->IsTaggedAs(TAG_ROCK))
+		else if(collider->m_collisionObject->IsTaggedAs(TAG_CONCRETE))
 		{
 			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 		}
@@ -548,7 +548,7 @@ void DetectEnemy::Update()
 	else
 		enemyList = EntitiesSystem::GetInstance()->Retrieve(radar, Team::TEAM_RED);
 
-	std::vector<Entity*> obstacleList = EntitiesSystem::GetInstance()->Retrieve(radar, TAG_ROCK);
+	std::vector<Entity*> obstacleList = EntitiesSystem::GetInstance()->Retrieve(radar, TAG_CONCRETE);
 
 	float minH = 10000.0f;
 	if(!m_targetEnemy)
@@ -562,7 +562,7 @@ void DetectEnemy::Update()
 					h += obstacleList[j]->m_collider2d->m_bound.width + obstacleList[j]->m_collider2d->m_bound.height;
 			}
 
-			if(h * 0.75f <= static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_heuristicValue && h < minH)
+			if(h < minH)
 			{
 				minH = h;
 				m_targetEnemy = enemyList[i];
@@ -610,7 +610,7 @@ void AutoTankManager::Move()
 	for(int i = 0; i < collider2dList.size(); i++)
 	{
 		entity = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
-		if(entity && (entity->IsTaggedAs(TAG_TANK) || entity->IsTaggedAs(TAG_BRICK) || entity->IsTaggedAs(TAG_ROCK) || entity->IsTaggedAs(TAG_OCEAN)))
+		if(entity && (entity->IsTaggedAs(TAG_TANK) || entity->IsTaggedAs(TAG_BRICK) || entity->IsTaggedAs(TAG_CONCRETE) || entity->IsTaggedAs(TAG_OCEAN)))
 			break;
 	}
 

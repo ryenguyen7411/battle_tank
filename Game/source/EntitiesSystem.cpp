@@ -148,15 +148,12 @@ std::vector<Entity*> EntitiesSystem::Retrieve(Rect _rect, Team _team)
 
 	for(int i = 0; i < m_entitiesList.size(); i++)
 	{
-		if(m_entitiesList[i])
+		if(m_entitiesList[i] && m_entitiesList[i]->m_collider2d && _rect.checkAABB(m_entitiesList[i]->m_collider2d->m_bound))
 		{
-			if(m_entitiesList[i]->m_collider2d && _rect.checkAABB(m_entitiesList[i]->m_collider2d->m_bound))
+			if(m_entitiesList[i]->IsTaggedAs(TAG_TANK))
 			{
-				if(m_entitiesList[i]->IsTaggedAs(TAG_TANK))
-				{
-					if(static_cast<TankController*>(m_entitiesList[i]->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team == _team)
-						retrieveList.push_back(m_entitiesList[i]);
-				}
+				if(static_cast<TankController*>(m_entitiesList[i]->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team == _team)
+					retrieveList.push_back(m_entitiesList[i]);
 			}
 		}
 	}

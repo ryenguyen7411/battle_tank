@@ -187,7 +187,7 @@ void Collider2D::Update()
 			m_collisionObject = detectEntityList[i];
 
 			if(m_baseEntity->IsTaggedAs(TAG_TANK) &&
-				(m_collisionObject->IsTaggedAs(TAG_BRICK) || m_collisionObject->IsTaggedAs(TAG_ROCK) ||
+				(m_collisionObject->IsTaggedAs(TAG_BRICK) || m_collisionObject->IsTaggedAs(TAG_CONCRETE) ||
 				m_collisionObject->IsTaggedAs(TAG_OCEAN) || m_collisionObject->IsTaggedAs(TAG_SCREENCOLLIDER)))
 			{
 				TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));

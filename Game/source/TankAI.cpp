@@ -110,7 +110,7 @@ void Fighting::Execute(Entity* _entity)
 
 		if(autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
 		{
-			if(tankController->m_canShoot && rand() % 100 < 20)
+			if(tankController->m_canShoot && rand() % 100 < 10)
 			{
 				Factory::GetInstance()->CreateBullet(tankController->m_team, _entity->m_transform->m_position, tankController->m_direction,
 					tankController->m_bullet, tankController->m_shootSpeed, tankController->m_shootRange, tankController->m_damage);

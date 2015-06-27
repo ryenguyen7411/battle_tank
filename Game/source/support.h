@@ -91,10 +91,10 @@ enum Item
 	ITEM_COUNT,
 };
 
-struct MecanimKey
-{
-
-};
+//struct MecanimKey
+//{
+//
+//};
 
 struct FontChar
 {
