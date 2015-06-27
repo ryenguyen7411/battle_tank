@@ -121,7 +121,7 @@ std::vector<Entity*> Quadtree::Retrieve(Entity* _entity)
 			if(m_entityList[i] != _entity)
 			{
 				if(m_entityList[i]->IsTaggedAs(TAG_TANK) || m_entityList[i]->IsTaggedAs(TAG_BULLET) || m_entityList[i]->IsTaggedAs(TAG_BRICK)
-					|| m_entityList[i]->IsTaggedAs(TAG_ROCK) || m_entityList[i]->IsTaggedAs(TAG_OCEAN) || m_entityList[i]->IsTaggedAs(TAG_ITEM))
+					|| m_entityList[i]->IsTaggedAs(TAG_ROCK) || m_entityList[i]->IsTaggedAs(TAG_OCEAN) || m_entityList[i]->IsTaggedAs(TAG_ITEM) || m_entityList[i]->IsTaggedAs(TAG_SCREENCOLLIDER))
 					returnList.push_back(m_entityList[i]);
 			}
 		}
