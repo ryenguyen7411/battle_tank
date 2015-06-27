@@ -583,6 +583,8 @@ void DetectEnemy::Update()
 AutoTankManager::AutoTankManager()
 {
 	m_type = CompType::COMP_AUTOTANKANAGER;
+
+	m_virtualKey = KeyCode::KEY_UNKNOWN;
 }
 
 AutoTankManager::~AutoTankManager()
@@ -600,7 +602,7 @@ void AutoTankManager::Update()
 	
 }
 
-void AutoTankManager::Move(Direction _direction)
+void AutoTankManager::Move()
 {
 	std::vector<Component*> collider2dList = m_baseEntity->GetComponents(CompType::COMP_COLLIDER2D);
 	Entity* entity = NULL;
@@ -613,61 +615,77 @@ void AutoTankManager::Move(Direction _direction)
 	}
 
 	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
-	if(_direction == Direction::DIR_UP)
+	if(m_virtualKey == KeyCode::KEY_UP)
 	{
-		if(tankController->m_lockDirection == Direction::DIR_LEFT)
-			m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + entity->m_collider2d->m_bound.width / 2
-			+ m_baseEntity->m_collider2d->m_bound.width / 2 + 1;
-		if(tankController->m_lockDirection == Direction::DIR_RIGHT)
-			m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - entity->m_collider2d->m_bound.width / 2
-			- m_baseEntity->m_collider2d->m_bound.width / 2 - 1;
+		if(tankController->m_lockDirection != Direction::DIR_UP)
+		{
+			if(tankController->m_lockDirection == Direction::DIR_LEFT)
+				m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + entity->m_collider2d->m_bound.width / 2
+				+ m_baseEntity->m_collider2d->m_bound.width / 2 + 1;
+			if(tankController->m_lockDirection == Direction::DIR_RIGHT)
+				m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - entity->m_collider2d->m_bound.width / 2
+				- m_baseEntity->m_collider2d->m_bound.width / 2 - 1;
 
-		m_baseEntity->m_transform->m_position.y -= tankController->m_speed;
+			m_baseEntity->m_transform->m_position.y -= tankController->m_speed;
+		}
+		tankController->m_direction = Direction::DIR_UP;
 		tankController->m_lockDirection = Direction::DIR_NONE;
 
 		m_baseEntity->m_animator->m_currentFrame = 0;
 		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
 	}
-	else if(_direction == Direction::DIR_DOWN)
+	else if(m_virtualKey == KeyCode::KEY_DOWN)
 	{
-		if(tankController->m_lockDirection == Direction::DIR_LEFT)
-			m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + entity->m_collider2d->m_bound.width / 2
-			+ m_baseEntity->m_collider2d->m_bound.width / 2 + 1;
-		if(tankController->m_lockDirection == Direction::DIR_RIGHT)
-			m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - entity->m_collider2d->m_bound.width / 2
-			- m_baseEntity->m_collider2d->m_bound.width / 2 - 1;
+		if(tankController->m_lockDirection != Direction::DIR_DOWN)
+		{
+			if(tankController->m_lockDirection == Direction::DIR_LEFT)
+				m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + entity->m_collider2d->m_bound.width / 2
+				+ m_baseEntity->m_collider2d->m_bound.width / 2 + 1;
+			if(tankController->m_lockDirection == Direction::DIR_RIGHT)
+				m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - entity->m_collider2d->m_bound.width / 2
+				- m_baseEntity->m_collider2d->m_bound.width / 2 - 1;
 
-		m_baseEntity->m_transform->m_position.y += tankController->m_speed;
+			m_baseEntity->m_transform->m_position.y += tankController->m_speed;
+		}
+		tankController->m_direction = Direction::DIR_DOWN;
 		tankController->m_lockDirection = Direction::DIR_NONE;
 
 		m_baseEntity->m_animator->m_currentFrame = 1;
 		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
 	}
-	else if(_direction == Direction::DIR_LEFT)
+	else if(m_virtualKey == KeyCode::KEY_LEFT)
 	{
-		if(tankController->m_lockDirection == Direction::DIR_UP)
-			m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - entity->m_collider2d->m_bound.height / 2
-			- m_baseEntity->m_collider2d->m_bound.height / 2 - 1;
-		if(tankController->m_lockDirection == Direction::DIR_DOWN)
-			m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + entity->m_collider2d->m_bound.height / 2
-			+ m_baseEntity->m_collider2d->m_bound.height / 2 + 1;
+		if(tankController->m_lockDirection != Direction::DIR_LEFT)
+		{
+			if(tankController->m_lockDirection == Direction::DIR_UP)
+				m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + entity->m_collider2d->m_bound.height / 2
+				+ m_baseEntity->m_collider2d->m_bound.height / 2 + 1;
+			if(tankController->m_lockDirection == Direction::DIR_DOWN)
+				m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - entity->m_collider2d->m_bound.height / 2
+				- m_baseEntity->m_collider2d->m_bound.height / 2 - 1;
 
-		m_baseEntity->m_transform->m_position.x -= tankController->m_speed;
+			m_baseEntity->m_transform->m_position.x -= tankController->m_speed;
+		}
+		tankController->m_direction = Direction::DIR_LEFT;
 		tankController->m_lockDirection = Direction::DIR_NONE;
 
 		m_baseEntity->m_animator->m_currentFrame = 2;
 		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
 	}
-	else if(_direction == Direction::DIR_RIGHT)
+	else if(m_virtualKey == KeyCode::KEY_RIGHT)
 	{
-		if(tankController->m_lockDirection == Direction::DIR_UP)
-			m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - entity->m_collider2d->m_bound.height / 2
-			- m_baseEntity->m_collider2d->m_bound.height / 2 - 1;
-		if(tankController->m_lockDirection == Direction::DIR_DOWN)
-			m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + entity->m_collider2d->m_bound.height / 2
-			+ m_baseEntity->m_collider2d->m_bound.height / 2 + 1;
+		if(tankController->m_lockDirection != Direction::DIR_RIGHT)
+		{
+			if(tankController->m_lockDirection == Direction::DIR_UP)
+				m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + entity->m_collider2d->m_bound.height / 2
+				+ m_baseEntity->m_collider2d->m_bound.height / 2 + 1;
+			if(tankController->m_lockDirection == Direction::DIR_DOWN)
+				m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - entity->m_collider2d->m_bound.height / 2
+				- m_baseEntity->m_collider2d->m_bound.height / 2 - 1;
 
-		m_baseEntity->m_transform->m_position.x += tankController->m_speed;
+			m_baseEntity->m_transform->m_position.x += tankController->m_speed;
+		}
+		tankController->m_direction = Direction::DIR_RIGHT;
 		tankController->m_lockDirection = Direction::DIR_NONE;
 
 		m_baseEntity->m_animator->m_currentFrame = 3;
@@ -675,37 +693,32 @@ void AutoTankManager::Move(Direction _direction)
 	}
 }
 
-Direction AutoTankManager::GetNextRandomDirection(Direction _currentDirection)
+KeyCode AutoTankManager::GetNextRandomKey()
 {
-	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 	int x = rand() % 100;
 	if(x < 95)
 	{
-		if(tankController->m_lockDirection != _currentDirection)
-			return _currentDirection;
+		return m_virtualKey;
 	}
 	else if(x < 96)
 	{
-		if(tankController->m_lockDirection != Direction::DIR_UP)
-			return Direction::DIR_UP;
+		return KeyCode::KEY_UP;
 	}
 	else if(x < 97)
 	{
-		if(tankController->m_lockDirection != Direction::DIR_DOWN)
-			return Direction::DIR_DOWN;
+		
+		return KeyCode::KEY_DOWN;
 	}
 	else if(x < 98)
 	{
-		if(tankController->m_lockDirection != Direction::DIR_LEFT)
-			return Direction::DIR_LEFT;
+		return KeyCode::KEY_LEFT;
 	}
 	else if(x < 99)
 	{
-		if(tankController->m_lockDirection != Direction::DIR_RIGHT)
-			return Direction::DIR_RIGHT;
+		return KeyCode::KEY_RIGHT;
 	}
 
-	return Direction::DIR_NONE;
+	return KeyCode::KEY_UNKNOWN;
 }
 
 Direction AutoTankManager::GetShootDirection(Vec3 _targetPosition)
@@ -827,12 +840,17 @@ bool AutoTankManager::IsInShootRange(Vec3 _targetPosition)
 	return false;
 }
 
-bool AutoTankManager::IsEnemyInShootRange(Vec3 _targetPosition)
+void AutoTankManager::SetKeyForDirection(Direction _direction)
 {
-	DetectEnemy* detectEnemy = static_cast<DetectEnemy*>(m_baseEntity->GetComponent(CompType::COMP_DETECTENEMY));
-	if(abs(detectEnemy->m_targetEnemy->m_transform->m_position.x - m_baseEntity->m_transform->m_position.x) <= 64
-		|| abs(detectEnemy->m_targetEnemy->m_transform->m_position.y - m_baseEntity->m_transform->m_position.y) <= 64)
-		return true;
-	return false;
+	if(_direction == Direction::DIR_UP)
+		m_virtualKey = KeyCode::KEY_UP;
+	else if(_direction == Direction::DIR_DOWN)
+		m_virtualKey = KeyCode::KEY_DOWN;
+	else if(_direction == Direction::DIR_LEFT)
+		m_virtualKey = KeyCode::KEY_LEFT;
+	else if(_direction == Direction::DIR_RIGHT)
+		m_virtualKey = KeyCode::KEY_RIGHT;
+	else
+		m_virtualKey = KeyCode::KEY_UNKNOWN;
 }
 #pragma endregion

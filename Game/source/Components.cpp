@@ -84,7 +84,7 @@ bool Transform::IsMiddle(Transform* a, Transform* b)
 {
 	Vec3 posA = a->m_position;
 	Vec3 posB = b->m_position;
-	
+
 	if((posA.x < m_position.x && m_position.x < posB.x) || (posA.x > m_position.x && m_position.x > posB.x))
 	{
 		if(abs(posA.y - posB.y) <= 160 && abs(posA.y - m_position.y) <= 96 && abs(posB.y - m_position.y) <= 96)
@@ -112,7 +112,7 @@ Renderer::Renderer(Image* _sprite)
 
 Renderer::~Renderer()
 {
-	
+
 }
 
 void Renderer::Release()
@@ -172,7 +172,7 @@ void Collider2D::Release()
 }
 
 void Collider2D::Update()
-{ 
+{
 	m_bound.x = m_baseEntity->m_transform->m_position.x - m_bound.width / 2;
 	m_bound.y = m_baseEntity->m_transform->m_position.y - m_bound.height / 2;
 
@@ -182,87 +182,84 @@ void Collider2D::Update()
 	std::vector<Entity*> detectEntityList = EntitiesSystem::GetInstance()->m_quadtree->Retrieve(m_baseEntity);
 	for(int i = 0; i < detectEntityList.size(); i++)
 	{
-		std::vector<Component*> collider2dList = detectEntityList[i]->GetComponents(CompType::COMP_COLLIDER2D);
-		for(int j = 0; j < collider2dList.size(); j++)
+		if(CheckAABB(detectEntityList[i]->m_collider2d))
 		{
-			if(CheckAABB(static_cast<Collider2D*>(collider2dList[j])))
+			m_collisionObject = detectEntityList[i];
+
+			if(m_baseEntity->IsTaggedAs(TAG_TANK) &&
+				(m_collisionObject->IsTaggedAs(TAG_BRICK) || m_collisionObject->IsTaggedAs(TAG_ROCK) ||
+				m_collisionObject->IsTaggedAs(TAG_OCEAN) || m_collisionObject->IsTaggedAs(TAG_SCREENCOLLIDER)))
 			{
-				m_collisionObject = detectEntityList[i];
-				
-				if(m_baseEntity->IsTaggedAs(TAG_TANK) && 
-					(m_collisionObject->IsTaggedAs(TAG_BRICK) || m_collisionObject->IsTaggedAs(TAG_ROCK) || 
-					m_collisionObject->IsTaggedAs(TAG_OCEAN) || m_collisionObject->IsTaggedAs(TAG_SCREENCOLLIDER)))
-				{
-					TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
-					tankController->m_lockDirection = tankController->m_direction;
+				TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
+				tankController->m_lockDirection = tankController->m_direction;
 
-					if(tankController->m_direction == Direction::DIR_UP)
-					{
-						m_baseEntity->m_transform->m_position.y = m_collisionObject->m_transform->m_position.y
-							+ m_collisionObject->m_collider2d->m_bound.height / 2 + m_baseEntity->m_collider2d->m_bound.height / 2;
-					}
-					else if(tankController->m_direction == Direction::DIR_DOWN)
-					{
-						m_baseEntity->m_transform->m_position.y = m_collisionObject->m_transform->m_position.y
-							- m_collisionObject->m_collider2d->m_bound.height / 2 - m_baseEntity->m_collider2d->m_bound.height / 2;
-					}
-					else if(tankController->m_direction == Direction::DIR_LEFT)
-					{
-						m_baseEntity->m_transform->m_position.x = m_collisionObject->m_transform->m_position.x
-							+ m_collisionObject->m_collider2d->m_bound.width / 2 + m_baseEntity->m_collider2d->m_bound.width / 2;
-					}
-					else if(tankController->m_direction == Direction::DIR_RIGHT)
-					{
-						m_baseEntity->m_transform->m_position.x = m_collisionObject->m_transform->m_position.x
-							- m_collisionObject->m_collider2d->m_bound.width / 2 - m_baseEntity->m_collider2d->m_bound.width / 2;
-					}
+				if(tankController->m_direction == Direction::DIR_UP)
+				{
+					m_baseEntity->m_transform->m_position.y = m_collisionObject->m_transform->m_position.y 
+						+ m_collisionObject->m_collider2d->m_bound.height / 2 + m_baseEntity->m_collider2d->m_bound.height / 2;
+				}
+				else if(tankController->m_direction == Direction::DIR_DOWN)
+				{
+					m_baseEntity->m_transform->m_position.y = m_collisionObject->m_transform->m_position.y
+						- m_collisionObject->m_collider2d->m_bound.height / 2 - m_baseEntity->m_collider2d->m_bound.height / 2;
+				}
+				else if(tankController->m_direction == Direction::DIR_LEFT)
+				{
+					m_baseEntity->m_transform->m_position.x = m_collisionObject->m_transform->m_position.x
+						+ m_collisionObject->m_collider2d->m_bound.width / 2 + m_baseEntity->m_collider2d->m_bound.width / 2;
+				}
+				else if(tankController->m_direction == Direction::DIR_RIGHT)
+				{
+					m_baseEntity->m_transform->m_position.x = m_collisionObject->m_transform->m_position.x
+						- m_collisionObject->m_collider2d->m_bound.width / 2 - m_baseEntity->m_collider2d->m_bound.width / 2;
 				}
 
-				if(m_baseEntity->IsTaggedAs(TAG_TANK) && m_collisionObject->IsTaggedAs(TAG_ITEM))
-				{
-					ItemManager* itemManager = static_cast<ItemManager*>(m_collisionObject->GetComponent(CompType::COMP_ITEMMANAGER));
-					switch(itemManager->m_item)
-					{
-						case Item::ITEM_HP:
-							static_cast<HealthControl*>(m_baseEntity->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health += itemManager->m_plusHP;
-							break;
-						case Item::ITEM_SPEED:
-							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_speed += itemManager->m_plusSpeed;
-							break;
-						case Item::ITEM_DAMAGE:
-							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_damage += itemManager->m_plusDamage;
-							break;
-						case Item::ITEM_TANK:
-						{
-							TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
-							if(tankController->m_team == Team::TEAM_RED)
-								Map::GetInstance()->m_teamRed[tankController->m_tank]++;
-							else
-								Map::GetInstance()->m_teamBlue[tankController->m_tank]++;
-						}
-							break;
-						case Item::ITEM_INVISIBLE:
-							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_invisible = true;
-							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_timer = clock();
-							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_expTime = 10.0f;
-							break;
-						case Item::ITEM_BULLET:
-							static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_shootPerSec += 2;
-							break;
-					}
-					static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->CalculateHeuristic();
-
-					EntitiesSystem::GetInstance()->Remove(m_collisionObject);
-					m_collisionObject = NULL;
-				}
-
-				detectEntityList.clear();
-				return;
+				m_bound.x = m_baseEntity->m_transform->m_position.x - m_bound.width / 2;
+				m_bound.y = m_baseEntity->m_transform->m_position.y - m_bound.height / 2;
 			}
+
+			if(m_baseEntity->IsTaggedAs(TAG_TANK) && m_collisionObject->IsTaggedAs(TAG_ITEM))
+			{
+				ItemManager* itemManager = static_cast<ItemManager*>(m_collisionObject->GetComponent(CompType::COMP_ITEMMANAGER));
+				switch(itemManager->m_item)
+				{
+					case Item::ITEM_HP:
+						static_cast<HealthControl*>(m_baseEntity->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health += itemManager->m_plusHP;
+						break;
+					case Item::ITEM_SPEED:
+						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_speed += itemManager->m_plusSpeed;
+						break;
+					case Item::ITEM_DAMAGE:
+						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_damage += itemManager->m_plusDamage;
+						break;
+					case Item::ITEM_TANK:
+					{
+						TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
+						if(tankController->m_team == Team::TEAM_RED)
+							Map::GetInstance()->m_teamRed[tankController->m_tank]++;
+						else
+							Map::GetInstance()->m_teamBlue[tankController->m_tank]++;
+					}
+					break;
+					case Item::ITEM_INVISIBLE:
+						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_invisible = true;
+						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_timer = clock();
+						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_expTime = 10.0f;
+						break;
+					case Item::ITEM_BULLET:
+						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_shootPerSec += 2;
+						break;
+				}
+				static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->CalculateHeuristic();
+
+				EntitiesSystem::GetInstance()->Remove(m_collisionObject);
+				m_collisionObject = NULL;
+			}
+
+			detectEntityList.clear();
+			return;
 		}
 	}
-
-	detectEntityList.clear();
 }
 
 bool Collider2D::CheckAABB(Collider2D* _collider2d)
@@ -284,7 +281,7 @@ Animator::Animator()
 
 Animator::~Animator()
 {
-	
+
 }
 
 void Animator::Release()

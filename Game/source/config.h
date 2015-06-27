@@ -23,6 +23,8 @@
 #define MAX_SHOOT_PER_SEC	10
 #define MAX_TANK			1
 
+#define OUT_OF_MAP			10000
+
 
 // TANK
 static const char*	SPR_TANK_1_UP		= "image//spr_tank1_up.png";
