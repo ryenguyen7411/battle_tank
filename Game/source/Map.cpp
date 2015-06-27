@@ -201,6 +201,15 @@ void Map::CreateCollider()
 			}
 		}
 	}
+
+	Rect leftEdge = Rect(0, m_offset.y, m_offset.x, m_mapHeight * m_tileHeight);
+	m_mapPartList.push_back(Factory::GetInstance()->CreateCollider(TAG_SCREENCOLLIDER, leftEdge, false));
+	Rect rightEdge = Rect(m_offset.x + m_mapWidth* m_tileWidth, m_offset.y, m_offset.x, m_mapHeight * m_tileHeight);
+	m_mapPartList.push_back(Factory::GetInstance()->CreateCollider(TAG_SCREENCOLLIDER, rightEdge, false));
+	Rect topEdge = Rect(m_offset.x, 0, m_mapWidth * m_tileWidth, m_offset.y);
+	m_mapPartList.push_back(Factory::GetInstance()->CreateCollider(TAG_SCREENCOLLIDER, topEdge, false));
+	Rect bottomEdge = Rect(m_offset.x, m_offset.y + m_mapHeight* m_tileHeight, m_mapWidth * m_tileWidth, m_offset.y);
+	m_mapPartList.push_back(Factory::GetInstance()->CreateCollider(TAG_SCREENCOLLIDER, bottomEdge, false));
 }
 
 Vec3 Map::GetMapPosition(Vec3 _position)
