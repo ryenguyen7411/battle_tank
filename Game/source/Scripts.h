@@ -170,6 +170,8 @@ public:
 	virtual void	Update();
 
 	void			Move();
+	void			ChangeDirection();
+
 	KeyCode			GetNextRandomKey();
 	Direction		GetShootDirection(Vec3 _targetPosition);
 	Direction		GetDirectionToEnemy(Vec3 _targetPosition);

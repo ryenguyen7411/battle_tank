@@ -103,10 +103,8 @@ void Fighting::Execute(Entity* _entity)
 	// Fighting
 	else
 	{
-		tankController->m_direction = autoTankManager->GetShootDirection(detectEnemy->m_targetEnemy->m_transform->m_position);
-
-		_entity->m_animator->m_currentFrame = (int)tankController->m_direction;
-		_entity->m_renderer->m_sprite = _entity->m_animator->m_frameList[_entity->m_animator->m_currentFrame];
+		autoTankManager->SetKeyForDirection(autoTankManager->GetShootDirection(detectEnemy->m_targetEnemy->m_transform->m_position));
+		autoTankManager->ChangeDirection();
 
 		if(autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
 		{

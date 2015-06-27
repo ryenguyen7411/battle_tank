@@ -74,7 +74,11 @@ void TankController::Update()
 		for(int i = 0; i < collider2dList.size(); i++)
 		{
 			entity = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
-			if(entity && (entity->IsTaggedAs(TAG_TANK) || entity->IsTaggedAs(TAG_BRICK) || entity->IsTaggedAs(TAG_CONCRETE) || entity->IsTaggedAs(TAG_OCEAN)))
+			if(entity && (entity->IsTaggedAs(TAG_TANK) || 
+				entity->IsTaggedAs(TAG_BRICK) || 
+				entity->IsTaggedAs(TAG_CONCRETE) || 
+				entity->IsTaggedAs(TAG_OCEAN) ||
+				entity->IsTaggedAs(TAG_SCREENCOLLIDER)))
 				break;
 		}
 
@@ -281,7 +285,7 @@ void BulletController::Update()
 		}
 		else if(collider->m_collisionObject->IsTaggedAs(TAG_SCREENCOLLIDER))
 		{
-
+			EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 		}
 
 		// Explosion effect
@@ -610,7 +614,11 @@ void AutoTankManager::Move()
 	for(int i = 0; i < collider2dList.size(); i++)
 	{
 		entity = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
-		if(entity && (entity->IsTaggedAs(TAG_TANK) || entity->IsTaggedAs(TAG_BRICK) || entity->IsTaggedAs(TAG_CONCRETE) || entity->IsTaggedAs(TAG_OCEAN)))
+		if(entity && (entity->IsTaggedAs(TAG_TANK) || 
+			entity->IsTaggedAs(TAG_BRICK) || 
+			entity->IsTaggedAs(TAG_CONCRETE) || 
+			entity->IsTaggedAs(TAG_OCEAN) ||
+			entity->IsTaggedAs(TAG_SCREENCOLLIDER)))
 			break;
 	}
 
@@ -693,6 +701,93 @@ void AutoTankManager::Move()
 	}
 }
 
+void AutoTankManager::ChangeDirection()
+{
+	std::vector<Component*> collider2dList = m_baseEntity->GetComponents(CompType::COMP_COLLIDER2D);
+	Entity* entity = NULL;
+
+	for(int i = 0; i < collider2dList.size(); i++)
+	{
+		entity = static_cast<Collider2D*>(collider2dList[i])->m_collisionObject;
+		if(entity && (entity->IsTaggedAs(TAG_TANK) ||
+			entity->IsTaggedAs(TAG_BRICK) ||
+			entity->IsTaggedAs(TAG_CONCRETE) ||
+			entity->IsTaggedAs(TAG_OCEAN) ||
+			entity->IsTaggedAs(TAG_SCREENCOLLIDER)))
+			break;
+	}
+
+	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
+	if(m_virtualKey == KeyCode::KEY_UP)
+	{
+		if(tankController->m_lockDirection != Direction::DIR_UP)
+		{
+			if(tankController->m_lockDirection == Direction::DIR_LEFT)
+				m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + entity->m_collider2d->m_bound.width / 2
+				+ m_baseEntity->m_collider2d->m_bound.width / 2 + 1;
+			if(tankController->m_lockDirection == Direction::DIR_RIGHT)
+				m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - entity->m_collider2d->m_bound.width / 2
+				- m_baseEntity->m_collider2d->m_bound.width / 2 - 1;
+		}
+		tankController->m_direction = Direction::DIR_UP;
+		tankController->m_lockDirection = Direction::DIR_NONE;
+
+		m_baseEntity->m_animator->m_currentFrame = 0;
+		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+	}
+	else if(m_virtualKey == KeyCode::KEY_DOWN)
+	{
+		if(tankController->m_lockDirection != Direction::DIR_DOWN)
+		{
+			if(tankController->m_lockDirection == Direction::DIR_LEFT)
+				m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x + entity->m_collider2d->m_bound.width / 2
+				+ m_baseEntity->m_collider2d->m_bound.width / 2 + 1;
+			if(tankController->m_lockDirection == Direction::DIR_RIGHT)
+				m_baseEntity->m_transform->m_position.x = entity->m_transform->m_position.x - entity->m_collider2d->m_bound.width / 2
+				- m_baseEntity->m_collider2d->m_bound.width / 2 - 1;
+		}
+		tankController->m_direction = Direction::DIR_DOWN;
+		tankController->m_lockDirection = Direction::DIR_NONE;
+
+		m_baseEntity->m_animator->m_currentFrame = 1;
+		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+	}
+	else if(m_virtualKey == KeyCode::KEY_LEFT)
+	{
+		if(tankController->m_lockDirection != Direction::DIR_LEFT)
+		{
+			if(tankController->m_lockDirection == Direction::DIR_UP)
+				m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + entity->m_collider2d->m_bound.height / 2
+				+ m_baseEntity->m_collider2d->m_bound.height / 2 + 1;
+			if(tankController->m_lockDirection == Direction::DIR_DOWN)
+				m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - entity->m_collider2d->m_bound.height / 2
+				- m_baseEntity->m_collider2d->m_bound.height / 2 - 1;
+		}
+		tankController->m_direction = Direction::DIR_LEFT;
+		tankController->m_lockDirection = Direction::DIR_NONE;
+
+		m_baseEntity->m_animator->m_currentFrame = 2;
+		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+	}
+	else if(m_virtualKey == KeyCode::KEY_RIGHT)
+	{
+		if(tankController->m_lockDirection != Direction::DIR_RIGHT)
+		{
+			if(tankController->m_lockDirection == Direction::DIR_UP)
+				m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y + entity->m_collider2d->m_bound.height / 2
+				+ m_baseEntity->m_collider2d->m_bound.height / 2 + 1;
+			if(tankController->m_lockDirection == Direction::DIR_DOWN)
+				m_baseEntity->m_transform->m_position.y = entity->m_transform->m_position.y - entity->m_collider2d->m_bound.height / 2
+				- m_baseEntity->m_collider2d->m_bound.height / 2 - 1;
+		}
+		tankController->m_direction = Direction::DIR_RIGHT;
+		tankController->m_lockDirection = Direction::DIR_NONE;
+
+		m_baseEntity->m_animator->m_currentFrame = 3;
+		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+	}
+}
+
 KeyCode AutoTankManager::GetNextRandomKey()
 {
 	int x = rand() % 100;
@@ -706,7 +801,6 @@ KeyCode AutoTankManager::GetNextRandomKey()
 	}
 	else if(x < 97)
 	{
-		
 		return KeyCode::KEY_DOWN;
 	}
 	else if(x < 98)
