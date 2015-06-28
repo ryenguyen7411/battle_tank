@@ -40,7 +40,7 @@ void Roaming::Execute(Entity* _entity)
 	{
 		if(detectEnemy->m_targetEnemy && autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
 		{
-			if(tankController->m_heuristicValue < 0.5f * static_cast<TankController*>(detectEnemy->m_encounterEnemy->GetComponent(CompType::COMP_TANKCONTROLLER))->m_heuristicValue)
+			if(tankController->m_heuristicValue < 0.5f * static_cast<TankController*>(detectEnemy->m_targetEnemy->GetComponent(CompType::COMP_TANKCONTROLLER))->m_heuristicValue)
 				tankController->m_stateMachine.ChangeState(Fleeing::GetInstance());
 		}
 	}

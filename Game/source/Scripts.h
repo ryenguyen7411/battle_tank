@@ -104,8 +104,8 @@ class Manager : public Component
 public:
 	Team			m_team;
 
-	Entity*			m_teamRed[4];
-	Entity*			m_teamBlue[4];
+	Entity*			m_teamRed[MAX_TANK];
+	Entity*			m_teamBlue[MAX_TANK];
 
 	Entity*			m_player;
 
@@ -114,6 +114,8 @@ public:
 
 	virtual void	Release();
 	virtual void	Update();
+
+	Tank			RandomTank(int iTank);
 };
 #pragma endregion
 
@@ -146,7 +148,6 @@ class DetectEnemy : public Component
 {
 public:
 	Entity*		m_targetEnemy;
-	Entity*		m_encounterEnemy;
 
 	DetectEnemy();
 	virtual ~DetectEnemy();

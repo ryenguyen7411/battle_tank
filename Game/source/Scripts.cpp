@@ -25,7 +25,7 @@ TankController::TankController(Tank _tankType)
 			m_damage = 15.0f;
 
 			m_shootSpeed = 10.0f;
-			m_shootRange = 400.0f;
+			m_shootRange = 300.0f;
 			m_shootPerSec = 2;
 
 			m_bullet = Bullet::BULLET_NORMAL;
@@ -35,17 +35,17 @@ TankController::TankController(Tank _tankType)
 			m_damage = 40.0f;
 
 			m_shootSpeed = 10.0f;
-			m_shootRange = 200.0f;
+			m_shootRange = 150.0f;
 			m_shootPerSec = 1;
 
 			m_bullet = Bullet::BULLET_EXPLODE;
 			break;
 		case Tank::TANK_BOLT:
-			m_speed = 7.0f;
+			m_speed = 6.0f;
 			m_damage = 10.0f;
 
 			m_shootSpeed = 20.0f;
-			m_shootRange = 300.0f;
+			m_shootRange = 200.0f;
 			m_shootPerSec = 4;
 
 			m_bullet = Bullet::BULLET_NORMAL;
@@ -309,7 +309,7 @@ HealthControl::HealthControl(Tank _type)
 			m_health = 100.0f;
 			break;
 		case Tank::TANK_DEFENSE:
-			m_health = 60.0f;
+			m_health = 150.0f;
 			break;
 		case Tank::TANK_BOLT:
 			m_health = 80.0f;
@@ -336,9 +336,10 @@ void HealthControl::Update()
 
 	if(m_health <= 0)
 	{
-		DetectEnemy* detectEnemy = static_cast<DetectEnemy*>(m_baseEntity->GetComponent(CompType::COMP_DETECTENEMY));
-		if(detectEnemy->m_encounterEnemy)
-			static_cast<DetectEnemy*>(detectEnemy->m_encounterEnemy->GetComponent(CompType::COMP_DETECTENEMY))->m_targetEnemy = NULL;
+		//DetectEnemy* detectEnemy = static_cast<DetectEnemy*>(m_baseEntity->GetComponent(CompType::COMP_DETECTENEMY));
+		//if(detectEnemy->m_targetEnemy)
+		//	static_cast<DetectEnemy*>(detectEnemy->m_targetEnemy->GetComponent(CompType::COMP_DETECTENEMY))->m_targetEnemy = NULL;
+		
 		EntitiesSystem::GetInstance()->Remove(m_baseEntity);
 	}
 }
@@ -430,41 +431,74 @@ void Manager::Update()
 		strcat(tank3, convertToString(Map::GetInstance()->m_teamBlue[2]));
 	}
 
+
 	for(int i = 0; i < MAX_TANK; i++)
 	{
 		if(m_team == Team::TEAM_RED)
 		{
+			if(!Map::GetInstance()->m_teamRed[0] && !Map::GetInstance()->m_teamRed[1] && !Map::GetInstance()->m_teamRed[2])
+			{
+				Map::GetInstance()->m_gameState = GameState::STATE_BLUE_WIN;
+				return;
+			}
+
 			if(!m_teamRed[i])
 			{
-				if(Map::GetInstance()->m_teamRed[0])
+				while(true)
 				{
-					if(m_player)
+					int iTeamRed = rand() % 3;
+					if(Map::GetInstance()->m_teamRed[iTeamRed])
 					{
-						m_teamRed[i] = Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(), Control::CTRL_AUTO, Tank::TANK_NORMAL);
-						Map::GetInstance()->m_teamRed[0]--;
-					}
-					else
-					{
-						m_teamRed[i] = Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(), Control::CTRL_ARROW, Tank::TANK_NORMAL);
-						m_player = m_teamRed[i];
-						Map::GetInstance()->m_teamRed[0]--;
+						if(!m_player)
+						{
+							m_teamRed[i] = Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(), CTRL_ARROW, RandomTank(iTeamRed));
+							m_player = m_teamRed[i];
+							Map::GetInstance()->m_teamRed[iTeamRed]--;
+						}
+						else
+						{
+							m_teamRed[i] = Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(), CTRL_AUTO, RandomTank(iTeamRed));
+							Map::GetInstance()->m_teamRed[iTeamRed]--;
+						}
+
+						break;
 					}
 				}
 			}
 		}
-
-		if(m_team == Team::TEAM_BLUE)
+		else
 		{
+			if(!Map::GetInstance()->m_teamBlue[0] && !Map::GetInstance()->m_teamBlue[1] && !Map::GetInstance()->m_teamBlue[2])
+			{
+				Map::GetInstance()->m_gameState = GameState::STATE_RED_WIN;
+				return;
+			}
+
 			if(!m_teamBlue[i])
 			{
-				if(Map::GetInstance()->m_teamBlue[0])
+				while (true)
 				{
-					m_teamBlue[i] = Factory::GetInstance()->CreateTank(Team::TEAM_BLUE, Vec3(), CTRL_AUTO, Tank::TANK_NORMAL);	// Choose type later
-					Map::GetInstance()->m_teamBlue[0]--;
+					int iTeamBlue = rand() % 3;
+					if(Map::GetInstance()->m_teamBlue[iTeamBlue])
+					{
+						m_teamBlue[i] = Factory::GetInstance()->CreateTank(Team::TEAM_BLUE, Vec3(), CTRL_AUTO, RandomTank(iTeamBlue));
+						Map::GetInstance()->m_teamBlue[iTeamBlue]--;
+						break;
+					}
 				}
 			}
 		}
 	}
+}
+
+Tank Manager::RandomTank(int iTank)
+{
+	if(iTank == 0)
+		return TANK_NORMAL;
+	else if(iTank == 1)
+		return TANK_DEFENSE;
+	else
+		return TANK_BOLT;
 }
 #pragma endregion
 
@@ -530,7 +564,6 @@ DetectEnemy::DetectEnemy()
 	m_type = CompType::COMP_DETECTENEMY;
 
 	m_targetEnemy = NULL;
-	m_encounterEnemy = NULL;
 }
 
 DetectEnemy::~DetectEnemy()
@@ -547,7 +580,7 @@ void DetectEnemy::Update()
 {
 	std::vector<Entity*> enemyList;
 	Rect radar;
-	radar.width = radar.height = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_shootRange;
+	radar.width = radar.height = 2 * static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_shootRange;
 	radar.x = m_baseEntity->m_transform->m_position.x - radar.width / 2;
 	radar.y = m_baseEntity->m_transform->m_position.y - radar.height / 2;
 
@@ -576,15 +609,18 @@ void DetectEnemy::Update()
 			{
 				minH = h;
 				m_targetEnemy = enemyList[i];
-				static_cast<DetectEnemy*>(m_targetEnemy->GetComponent(CompType::COMP_DETECTENEMY))->m_encounterEnemy = m_baseEntity;
 			}
 		}
 	}
+	else if(!m_targetEnemy->IsTaggedAs(TAG_TANK))
+		m_targetEnemy = NULL;
 	else if(!radar.checkAABB(m_targetEnemy->m_collider2d->m_bound))
 	{
-		static_cast<DetectEnemy*>(m_targetEnemy->GetComponent(CompType::COMP_DETECTENEMY))->m_encounterEnemy = NULL;
 		m_targetEnemy = NULL;
 	}
+
+	if(m_targetEnemy && !m_targetEnemy->IsTaggedAs(TAG_TANK))
+		m_targetEnemy = NULL;
 }
 #pragma endregion
 

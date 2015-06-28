@@ -79,6 +79,21 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	Collider2D* collider2d = new Collider2D(bound);
 	tank->AddComponent(collider2d);
 
+
+	HealthControl* healthControl = new HealthControl(_tankType);
+	tank->AddComponent(healthControl);
+	
+
+	DetectEnemy* detectEnemy = new DetectEnemy();
+	tank->AddComponent(detectEnemy);
+
+	if(_control == Control::CTRL_AUTO)
+	{
+		AutoTankManager* autoTankManager = new AutoTankManager();
+		tank->AddComponent(autoTankManager);
+	}
+
+
 	TankController* tankController = new TankController(_tankType);
 	tank->AddComponent(tankController);
 	tankController->m_team = _team;
@@ -91,18 +106,8 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	{
 		tankController->m_stateMachine = StateMachine(tankController->m_baseEntity);
 		tankController->m_stateMachine.ChangeState(Roaming::GetInstance());
-
-		AutoTankManager* autoTankManager = new AutoTankManager();
-		tank->AddComponent(autoTankManager);
 	}
-
-	HealthControl* healthControl = new HealthControl(_tankType);
-	tank->AddComponent(healthControl);
 	tankController->CalculateHeuristic();
-
-
-	DetectEnemy* detectEnemy = new DetectEnemy();
-	tank->AddComponent(detectEnemy);
 
 
 	Entity* hp = new Entity();
