@@ -17,9 +17,9 @@
 
 #define ITEM_TIME		20.0f
 
-#define MAX_HP				100.0f
-#define MAX_SPEED			10.0f
-#define MAX_DAMAGE			40.0f
+#define MAX_HP				300.0f
+#define MAX_SPEED			15.0f
+#define MAX_DAMAGE			80.0f
 #define MAX_SHOOT_PER_SEC	10
 #define MAX_TANK			4
 

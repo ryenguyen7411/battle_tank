@@ -24,8 +24,8 @@ TankController::TankController(Tank _tankType)
 	switch(m_tank)
 	{
 		case Tank::TANK_NORMAL:
-			m_speed = 5.0f;
-			m_damage = 20.0f;
+			m_speed = 4.0f;
+			m_damage = 15.0f;
 
 			m_shootSpeed = 10.0f;
 			m_shootRange = 400.0f;
@@ -33,15 +33,15 @@ TankController::TankController(Tank _tankType)
 			break;
 		case Tank::TANK_DEFENSE:
 			m_speed = 2.0f;
-			m_damage = 80.0f;
+			m_damage = 40.0f;
 
 			m_shootSpeed = 10.0f;
 			m_shootRange = 200.0f;
 			m_shootPerSec = 1;
 			break;
 		case Tank::TANK_BOLT:
-			m_speed = 8.0f;
-			m_damage = 20.0f;
+			m_speed = 7.0f;
+			m_damage = 10.0f;
 
 			m_shootSpeed = 20.0f;
 			m_shootRange = 300.0f;

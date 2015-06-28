@@ -179,6 +179,9 @@ void Collider2D::Update()
 	if(!m_baseEntity->IsTaggedAs(TAG_BULLET) && !m_baseEntity->IsTaggedAs(TAG_TANK))
 		return;
 
+	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
+	HealthControl* healthControl = static_cast<HealthControl*>(m_baseEntity->GetComponent(CompType::COMP_HEALTHCONTROL));
+
 	std::vector<Entity*> detectEntityList = EntitiesSystem::GetInstance()->m_quadtree->Retrieve(m_baseEntity);
 	for(int i = 0; i < detectEntityList.size(); i++)
 	{
@@ -190,7 +193,7 @@ void Collider2D::Update()
 				(m_collisionObject->IsTaggedAs(TAG_BRICK) || m_collisionObject->IsTaggedAs(TAG_CONCRETE) ||
 				m_collisionObject->IsTaggedAs(TAG_OCEAN) || m_collisionObject->IsTaggedAs(TAG_SCREENCOLLIDER)))
 			{
-				TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
+				
 				tankController->m_lockDirection = tankController->m_direction;
 
 				if(tankController->m_direction == Direction::DIR_UP)
@@ -224,30 +227,35 @@ void Collider2D::Update()
 				switch(itemManager->m_item)
 				{
 					case Item::ITEM_HP:
-						static_cast<HealthControl*>(m_baseEntity->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health += itemManager->m_plusHP;
+						healthControl->m_health += itemManager->m_plusHP;
+						if(healthControl->m_health > MAX_HP)
+							healthControl->m_health = MAX_HP;
 						break;
 					case Item::ITEM_SPEED:
-						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_speed += itemManager->m_plusSpeed;
+						tankController->m_speed += itemManager->m_plusSpeed;
+						if(tankController->m_speed > MAX_SPEED)
+							tankController->m_speed = MAX_SPEED;
 						break;
 					case Item::ITEM_DAMAGE:
-						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_damage += itemManager->m_plusDamage;
+						tankController->m_damage += itemManager->m_plusDamage;
+						if(tankController->m_damage > MAX_DAMAGE)
+							tankController->m_damage = MAX_DAMAGE;
 						break;
 					case Item::ITEM_TANK:
-					{
-						TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 						if(tankController->m_team == Team::TEAM_RED)
 							Map::GetInstance()->m_teamRed[tankController->m_tank]++;
 						else
 							Map::GetInstance()->m_teamBlue[tankController->m_tank]++;
-					}
-					break;
+						break;
 					case Item::ITEM_INVISIBLE:
-						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_invisible = true;
-						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_timer = clock();
-						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_expTime = 10.0f;
+						tankController->m_invisible = true;
+						tankController->m_timer = clock();
+						tankController->m_expTime = 10.0f;
 						break;
 					case Item::ITEM_BULLET:
-						static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_shootPerSec += 2;
+						tankController->m_shootPerSec += 2;
+						if(tankController->m_shootPerSec > MAX_SHOOT_PER_SEC)
+							tankController->m_shootPerSec = MAX_SHOOT_PER_SEC;
 						break;
 				}
 				static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->CalculateHeuristic();
