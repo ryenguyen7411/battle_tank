@@ -46,10 +46,10 @@ static const char*	SPR_TANK_3_RIGHT	= "image//spr_tank3_right.png";
 // BULLET
 static const char*	SPR_BULLET_NORMAL	= "image//spr_normal_bullet.png";
 
-static const char*	SPR_BULLET_EXPLODE_UP		= "image//spr_normal_bullet.png";
-static const char*	SPR_BULLET_EXPLODE_DOWN		= "image//spr_normal_bullet.png";
-static const char*	SPR_BULLET_EXPLODE_LEFT		= "image//spr_normal_bullet.png";
-static const char*	SPR_BULLET_EXPLODE_RIGHT	= "image//spr_normal_bullet.png";
+static const char*	SPR_BULLET_EXPLODE_UP		= "image//spr_explode_bullet_up.png";
+static const char*	SPR_BULLET_EXPLODE_DOWN		= "image//spr_explode_bullet_down.png";
+static const char*	SPR_BULLET_EXPLODE_LEFT		= "image//spr_explode_bullet_left.png";
+static const char*	SPR_BULLET_EXPLODE_RIGHT	= "image//spr_explode_bullet_right.png";
 
 
 // MESSAGE

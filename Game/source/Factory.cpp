@@ -40,17 +40,39 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	else if(_team == Team::TEAM_BLUE)
 		tank->m_transform->m_position = Map::GetInstance()->m_blueDefaultLocation[rand() % 4];
 
-	Renderer* renderer;
-	if(_team == Team::TEAM_RED)
-		renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[0]);
-	else
-		renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[1]);
+	Renderer* renderer = NULL;
+	if(_tankType == Tank::TANK_NORMAL)
+	{
+		renderer = new Renderer(ResourcesManager::GetInstance()->m_tank1[_team - 1]);
+	}
+	else if(_tankType == Tank::TANK_DEFENSE)
+	{
+		renderer = new Renderer(ResourcesManager::GetInstance()->m_tank2[_team - 1]);
+	}
+	else if(_tankType == Tank::TANK_BOLT)
+	{
+		renderer = new Renderer(ResourcesManager::GetInstance()->m_tank3[_team - 1]);
+	}
 	tank->AddComponent(renderer);
 
 	Animator* animator = new Animator();
 	tank->AddComponent(animator);
-	animator->SetFrameList(4, ResourcesManager::GetInstance()->m_tank1[0], ResourcesManager::GetInstance()->m_tank1[1],
-		ResourcesManager::GetInstance()->m_tank1[2], ResourcesManager::GetInstance()->m_tank1[3]);
+
+	if(_tankType == Tank::TANK_NORMAL)
+	{
+		animator->SetFrameList(4, ResourcesManager::GetInstance()->m_tank1[0], ResourcesManager::GetInstance()->m_tank1[1],
+			ResourcesManager::GetInstance()->m_tank1[2], ResourcesManager::GetInstance()->m_tank1[3]);
+	}
+	else if(_tankType == Tank::TANK_DEFENSE)
+	{
+		animator->SetFrameList(4, ResourcesManager::GetInstance()->m_tank2[0], ResourcesManager::GetInstance()->m_tank2[1],
+			ResourcesManager::GetInstance()->m_tank2[2], ResourcesManager::GetInstance()->m_tank2[3]);
+	}
+	else if(_tankType == Tank::TANK_BOLT)
+	{
+		animator->SetFrameList(4, ResourcesManager::GetInstance()->m_tank3[0], ResourcesManager::GetInstance()->m_tank3[1],
+			ResourcesManager::GetInstance()->m_tank3[2], ResourcesManager::GetInstance()->m_tank3[3]);
+	}
 
 	Rect bound = Rect(_position.x - renderer->m_sprite->getWidth() / 2 + 3, _position.y - renderer->m_sprite->getHeight() / 2 - 2,
 		renderer->m_sprite->getWidth() - 6, renderer->m_sprite->getHeight() - 2);
@@ -103,13 +125,17 @@ Entity* Factory::CreateTank(Team _team, Vec3 _position, Control _control, Tank _
 	return tank;
 }
 
-Entity* Factory::CreateBullet(Team _team, Vec3 _position, Direction _direction, Bullet _type, float _speed, float _range, float _damage)
+Entity* Factory::CreateBullet(Team _team, Vec3 _position, Direction _direction, Bullet _bulletType, float _speed, float _range, float _damage)
 {
 	Entity* bullet = new Entity();
 	bullet->SetTag(TAG_BULLET);
 	bullet->m_transform->m_position = _position;
 
-	Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_bulletNormal);
+	Renderer* renderer;
+	if(_bulletType == Bullet::BULLET_NORMAL)
+		renderer = new Renderer(ResourcesManager::GetInstance()->m_bulletNormal);
+	else
+		renderer = new Renderer(ResourcesManager::GetInstance()->m_bulletExplode[_direction]);
 	bullet->AddComponent(renderer);
 
 	Rect bound = Rect(_position.x - renderer->m_sprite->getWidth() / 2, _position.y - renderer->m_sprite->getHeight() / 2,

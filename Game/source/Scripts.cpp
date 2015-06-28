@@ -17,9 +17,6 @@ TankController::TankController(Tank _tankType)
 	m_type = CompType::COMP_TANKCONTROLLER;
 
 	m_tank = _tankType;
-	m_bullet = Bullet::BULLET_NORMAL;
-
-	m_timer = 0;
 
 	switch(m_tank)
 	{
@@ -30,6 +27,8 @@ TankController::TankController(Tank _tankType)
 			m_shootSpeed = 10.0f;
 			m_shootRange = 400.0f;
 			m_shootPerSec = 2;
+
+			m_bullet = Bullet::BULLET_NORMAL;
 			break;
 		case Tank::TANK_DEFENSE:
 			m_speed = 2.0f;
@@ -38,6 +37,8 @@ TankController::TankController(Tank _tankType)
 			m_shootSpeed = 10.0f;
 			m_shootRange = 200.0f;
 			m_shootPerSec = 1;
+
+			m_bullet = Bullet::BULLET_EXPLODE;
 			break;
 		case Tank::TANK_BOLT:
 			m_speed = 7.0f;
@@ -46,9 +47,12 @@ TankController::TankController(Tank _tankType)
 			m_shootSpeed = 20.0f;
 			m_shootRange = 300.0f;
 			m_shootPerSec = 4;
+
+			m_bullet = Bullet::BULLET_NORMAL;
 			break;
 	}
 
+	m_timer = 0;
 	m_previousTime = clock();
 	m_canShoot = true;
 	m_lockDirection = Direction::DIR_NONE;
