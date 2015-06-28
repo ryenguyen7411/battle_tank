@@ -36,9 +36,11 @@ enum Team
 
 enum GameState
 {
+	STATE_READY,
 	STATE_PLAY,
-	STATE_WIN,
-	STATE_GAME_OVER,
+	STATE_RED_WIN,
+	STATE_BLUE_WIN,
+	STATE_DRAW,
 };
 
 enum Direction

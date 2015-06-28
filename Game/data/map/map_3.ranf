@@ -51,11 +51,11 @@ collider=10,15,6,1,3
 collider=15,10,1,3,3
 
 [DefaultLocation]
-location=3,0
-location=5,0
-location=14,0
-location=12,0
 location=3,17
 location=5,17
 location=12,17
 location=14,17
+location=3,0
+location=5,0
+location=14,0
+location=12,0

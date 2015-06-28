@@ -24,11 +24,13 @@ void Map::Release()
 
 }
 
-void Map::ChangeMap(const char* _path)
+void Map::ChangeMap(const char* _path, int level)
 {
 	UnloadMap();
 	strcpy(m_mapPath, _path);
+	m_mapPath[9] = (char)level + '0';
 	LoadMap();
+	m_gameState = GameState::STATE_READY;
 
 	m_currentMap++;
 }

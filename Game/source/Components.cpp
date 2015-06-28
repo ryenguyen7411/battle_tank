@@ -70,7 +70,7 @@ void Transform::Release()
 
 void Transform::Update()
 {
-
+	int x = 0;
 }
 
 void Transform::SetParent(Transform* _parent)

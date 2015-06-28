@@ -5,8 +5,6 @@ using namespace stdio_fw;
 class Game : public Application
 {
 private:
-	GameState			m_state;
-
 	long				m_itemTimer;
 public:
 	Game();

@@ -26,13 +26,15 @@ public:
 	Vec3		m_blueDefaultLocation[4];
 
 	std::vector<Entity*>	m_mapPartList;
+
+	GameState		m_gameState;
 public:
 	Map();
 	virtual ~Map();
 
 	virtual void	Release();
 
-	void			ChangeMap(const char* _path);
+	void			ChangeMap(const char* _path, int level);
 
 	ErrorCode		LoadMap();
 	void			UnloadMap();

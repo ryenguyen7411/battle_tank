@@ -77,6 +77,16 @@ void ResourcesManager::LoadResources()
 		m_item[i]->loadImage();
 	}
 
+
+	m_message[0] = new Image(SPR_READY);
+	m_message[1] = new Image(SPR_RED_WIN);
+	m_message[2] = new Image(SPR_BLUE_WIN);
+	m_message[3] = new Image(SPR_DRAW);
+	for(int i = 0; i < 4; i++)
+	{
+		m_message[i]->loadImage();
+	}
+
 	LoadFont(FNT_DEFINE);
 }
 
@@ -116,6 +126,12 @@ void ResourcesManager::Release()
 	{
 		m_item[i]->unloadImage();
 		SAFE_DEL(m_item[i]);
+	}
+
+	for(int i = 0; i < 4; i++)
+	{
+		m_message[i]->unloadImage();
+		SAFE_DEL(m_message[i]);
 	}
 }
 

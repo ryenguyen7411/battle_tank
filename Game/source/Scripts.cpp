@@ -563,7 +563,9 @@ void DetectEnemy::Update()
 			for(int j = 0; j < obstacleList.size(); j++)
 			{
 				if(obstacleList[j]->m_transform->IsMiddle(m_baseEntity->m_transform, enemyList[i]->m_transform))
+				{
 					h += obstacleList[j]->m_collider2d->m_bound.width + obstacleList[j]->m_collider2d->m_bound.height;
+				}
 			}
 
 			if(h < minH)
@@ -701,6 +703,20 @@ void AutoTankManager::Move()
 	}
 }
 
+void AutoTankManager::Shoot()
+{
+	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
+
+	if(tankController->m_canShoot && rand() % 100 < 10)
+	{
+		Factory::GetInstance()->CreateBullet(tankController->m_team, m_baseEntity->m_transform->m_position, tankController->m_direction,
+			tankController->m_bullet, tankController->m_shootSpeed, tankController->m_shootRange, tankController->m_damage);
+
+		tankController->m_canShoot = false;
+		tankController->m_previousTime = clock();
+	}
+}
+
 void AutoTankManager::ChangeDirection()
 {
 	std::vector<Component*> collider2dList = m_baseEntity->GetComponents(CompType::COMP_COLLIDER2D);
@@ -835,45 +851,72 @@ Direction AutoTankManager::GetShootDirection(Vec3 _targetPosition)
 
 Direction AutoTankManager::GetDirectionToEnemy(Vec3 _targetPosition)
 {
-	Vec3 mapPosition = Map::GetInstance()->GetMapPosition(m_baseEntity->m_transform->m_position);
+	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 	Vec3 targetMapPosition = Map::GetInstance()->GetMapPosition(_targetPosition);
 
-	if(mapPosition.x == targetMapPosition.x && mapPosition.y == targetMapPosition.y)
-		return Direction::DIR_NONE;
-	
+	Rect bound = m_baseEntity->m_collider2d->m_bound;
+
 	int canMove[4] = {0};
 	int distance[4] = {0};
+	int deltaDistance[4] = {0};
 
 	int optimalDirection = -1;
 
-	if(mapPosition.y > 0 && Map::GetInstance()->m_map[(int)mapPosition.x][(int)mapPosition.y - 1] < 2)
+	int	nextMapValue[4] = {0};
+
+	if(nextMapValue[0] = Map::GetInstance()->GetMapValue(Map::GetInstance()->GetMapPosition(
+		Vec3(bound.x + bound.width / 2, bound.y - tankController->m_speed, 0))) < 2 || nextMapValue[0] >= 4)
 	{
 		canMove[0] = 1;
-		distance[0] = Map::GetInstance()->MinCost(Vec3(mapPosition.x, mapPosition.y - 1, 0), targetMapPosition);
+		distance[0] = abs(bound.x + bound.width / 2 - _targetPosition.x) + abs(bound.y - tankController->m_speed - _targetPosition.y);
+		deltaDistance[0] = abs(abs(m_baseEntity->m_transform->m_position.x - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y - tankController->m_speed - _targetPosition.y));
 	}
-	if(mapPosition.y < Map::GetInstance()->m_mapHeight - 1 && Map::GetInstance()->m_map[(int)mapPosition.x][(int)mapPosition.y + 1] < 2)
+	if(nextMapValue[1] = Map::GetInstance()->GetMapValue(Map::GetInstance()->GetMapPosition(
+		Vec3(bound.x + bound.width / 2, bound.y + bound.height + tankController->m_speed, 0))) < 2 || nextMapValue[1] >= 4)
 	{
 		canMove[1] = 1;
-		distance[1] = Map::GetInstance()->MinCost(Vec3(mapPosition.x, mapPosition.y + 1, 0), targetMapPosition);
+		distance[1] = abs(bound.x + bound.width / 2 - _targetPosition.x) + abs(bound.y + bound.height + tankController->m_speed - _targetPosition.y);
+		deltaDistance[1] = abs(abs(m_baseEntity->m_transform->m_position.x - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y + tankController->m_speed - _targetPosition.y));
 	}
-	if(mapPosition.x > 0 && Map::GetInstance()->m_map[(int)mapPosition.x - 1][(int)mapPosition.y] < 2)
+	if(nextMapValue[2] = Map::GetInstance()->GetMapValue(Map::GetInstance()->GetMapPosition(
+		Vec3(bound.x - tankController->m_speed, bound.y + bound.height / 2, 0))) < 2 || nextMapValue[2] >= 4)
 	{
 		canMove[2] = 1;
-		distance[2] = Map::GetInstance()->MinCost(Vec3(mapPosition.x - 1, mapPosition.y, 0), targetMapPosition);
+		distance[2] = abs(bound.x - tankController->m_speed - _targetPosition.x) + abs(bound.y + bound.height / 2 - tankController->m_speed - _targetPosition.y);
+		deltaDistance[2] = abs(abs(m_baseEntity->m_transform->m_position.x - tankController->m_speed - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y - _targetPosition.y));
 	}
-	if(mapPosition.x < Map::GetInstance()->m_mapWidth - 1 && Map::GetInstance()->m_map[(int)mapPosition.x + 1][(int)mapPosition.y] < 2)
+	if(nextMapValue[3] = Map::GetInstance()->GetMapValue(Map::GetInstance()->GetMapPosition(
+		Vec3(bound.x + bound.width + tankController->m_speed, bound.y + bound.height / 2, 0))) < 2 || nextMapValue[3] >= 4)
 	{
 		canMove[3] = 1;
-		distance[3] = Map::GetInstance()->MinCost(Vec3(mapPosition.x + 1, mapPosition.y, 0), targetMapPosition);
+		distance[3] = abs(bound.x + bound.width + tankController->m_speed - _targetPosition.x) + abs(bound.y + bound.height / 2 - _targetPosition.y);
+		deltaDistance[3] = abs(abs(m_baseEntity->m_transform->m_position.x + tankController->m_speed - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y - _targetPosition.y));
 	}
+	
+	
 
+	if(canMove[tankController->m_direction])
+		optimalDirection = tankController->m_direction;
+	else
 	for(int i = 0; i < Direction::DIR_COUNT; i++)
 	{
 		if(canMove[i])
 		{
-			if((optimalDirection != -1 && distance[optimalDirection] > distance[i]) || optimalDirection == -1)
+			if(optimalDirection == -1)
 				optimalDirection = i;
+			else
+			{
+				if(distance[optimalDirection] > distance[i])
+					optimalDirection = i;
+				else if(distance[optimalDirection] == distance[i] && deltaDistance[optimalDirection] < deltaDistance[i])
+					optimalDirection = i;
+			}
 		}
+	}
+
+	if(nextMapValue[optimalDirection] >= 4)
+	{
+		Shoot();
 	}
 
 	return (Direction)optimalDirection;
@@ -881,51 +924,87 @@ Direction AutoTankManager::GetDirectionToEnemy(Vec3 _targetPosition)
 
 Direction AutoTankManager::GetDirectionAwayFromEnemy(Vec3 _targetPosition)
 {
-	Vec3 mapPosition = Map::GetInstance()->GetMapPosition(m_baseEntity->m_transform->m_position);
+	TankController* tankController = static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER));
 	Vec3 targetMapPosition = Map::GetInstance()->GetMapPosition(_targetPosition);
 
-	if(mapPosition.x == targetMapPosition.x && mapPosition.y == targetMapPosition.y)
-		return Direction::DIR_NONE;
+	Rect bound = m_baseEntity->m_collider2d->m_bound;
 
 	int canMove[4] = {0};
 	int distance[4] = {0};
+	int deltaDistance[4] = {0};
 
 	int optimalDirection = -1;
 
-	if(mapPosition.y > 0 && Map::GetInstance()->m_map[(int)mapPosition.x][(int)mapPosition.y - 1] < 2)
+	int	nextMapValue[4] = {0};
+
+	if(nextMapValue[0] = Map::GetInstance()->GetMapValue(Map::GetInstance()->GetMapPosition(
+		Vec3(bound.x + bound.width / 2, bound.y - tankController->m_speed, 0))) < 2 || nextMapValue[0] >= 4)
 	{
 		canMove[0] = 1;
-		distance[0] = Map::GetInstance()->MinCost(Vec3(mapPosition.x, mapPosition.y - 1, 0), targetMapPosition);
+		distance[0] = abs(bound.x + bound.width / 2 - _targetPosition.x) + abs(bound.y - tankController->m_speed - _targetPosition.y);
+		deltaDistance[0] = abs(abs(m_baseEntity->m_transform->m_position.x - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y - tankController->m_speed - _targetPosition.y));
 	}
-	if(mapPosition.y < Map::GetInstance()->m_mapHeight - 1 && Map::GetInstance()->m_map[(int)mapPosition.x][(int)mapPosition.y + 1] < 2)
+	if(nextMapValue[1] = Map::GetInstance()->GetMapValue(Map::GetInstance()->GetMapPosition(
+		Vec3(bound.x + bound.width / 2, bound.y + bound.height + tankController->m_speed, 0))) < 2 || nextMapValue[1] >= 4)
 	{
 		canMove[1] = 1;
-		distance[1] = Map::GetInstance()->MinCost(Vec3(mapPosition.x, mapPosition.y + 1, 0), targetMapPosition);
+		distance[1] = abs(bound.x + bound.width / 2 - _targetPosition.x) + abs(bound.y + bound.height + tankController->m_speed - _targetPosition.y);
+		deltaDistance[1] = abs(abs(m_baseEntity->m_transform->m_position.x - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y + tankController->m_speed - _targetPosition.y));
 	}
-	if(mapPosition.x > 0 && Map::GetInstance()->m_map[(int)mapPosition.x - 1][(int)mapPosition.y] < 2)
+	if(nextMapValue[2] = Map::GetInstance()->GetMapValue(Map::GetInstance()->GetMapPosition(
+		Vec3(bound.x - tankController->m_speed, bound.y + bound.height / 2, 0))) < 2 || nextMapValue[2] >= 4)
 	{
 		canMove[2] = 1;
-		distance[2] = Map::GetInstance()->MinCost(Vec3(mapPosition.x - 1, mapPosition.y, 0), targetMapPosition);
+		distance[2] = abs(bound.x - tankController->m_speed - _targetPosition.x) + abs(bound.y + bound.height / 2 - tankController->m_speed - _targetPosition.y);
+		deltaDistance[2] = abs(abs(m_baseEntity->m_transform->m_position.x - tankController->m_speed - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y - _targetPosition.y));
 	}
-	if(mapPosition.x < Map::GetInstance()->m_mapWidth - 1 && Map::GetInstance()->m_map[(int)mapPosition.x + 1][(int)mapPosition.y] < 2)
+	if(nextMapValue[3] = Map::GetInstance()->GetMapValue(Map::GetInstance()->GetMapPosition(
+		Vec3(bound.x + bound.width + tankController->m_speed, bound.y + bound.height / 2, 0))) < 2 || nextMapValue[3] >= 4)
 	{
 		canMove[3] = 1;
-		distance[3] = Map::GetInstance()->MinCost(Vec3(mapPosition.x + 1, mapPosition.y, 0), targetMapPosition);
+		distance[3] = abs(bound.x + bound.width + tankController->m_speed - _targetPosition.x) + abs(bound.y + bound.height / 2 - _targetPosition.y);
+		deltaDistance[3] = abs(abs(m_baseEntity->m_transform->m_position.x + tankController->m_speed - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y - _targetPosition.y));
 	}
 
-	for(int i = 0; i < Direction::DIR_COUNT; i++)
-	{
-		if(canMove[i])
+
+
+	if(canMove[tankController->m_direction])
+		optimalDirection = tankController->m_direction;
+	else
+		for(int i = 0; i < Direction::DIR_COUNT; i++)
 		{
-			if((optimalDirection != -1 && distance[optimalDirection] < distance[i]) || optimalDirection == -1)
-				optimalDirection = i;
+			if(canMove[i])
+			{
+				if(optimalDirection == -1)
+					optimalDirection = i;
+				else
+				{
+					if(distance[optimalDirection] < distance[i])
+						optimalDirection = i;
+					else if(distance[optimalDirection] == distance[i] && deltaDistance[optimalDirection] > deltaDistance[i])
+						optimalDirection = i;
+				}
+			}
 		}
+
+	if(nextMapValue[optimalDirection] >= 4)
+	{
+		Shoot();
 	}
 
 	return (Direction)optimalDirection;
 }
 
 bool AutoTankManager::IsInShootRange(Vec3 _targetPosition)
+{
+	DetectEnemy* detectEnemy = static_cast<DetectEnemy*>(m_baseEntity->GetComponent(CompType::COMP_DETECTENEMY));
+	if(abs(detectEnemy->m_targetEnemy->m_transform->m_position.x - m_baseEntity->m_transform->m_position.x) <= 16
+		|| abs(detectEnemy->m_targetEnemy->m_transform->m_position.y - m_baseEntity->m_transform->m_position.y) <= 16)
+		return true;
+	return false;
+}
+
+bool AutoTankManager::IsInShootRegion(Vec3 _targetPosition)
 {
 	DetectEnemy* detectEnemy = static_cast<DetectEnemy*>(m_baseEntity->GetComponent(CompType::COMP_DETECTENEMY));
 	if(abs(detectEnemy->m_targetEnemy->m_transform->m_position.x - m_baseEntity->m_transform->m_position.x) <= 64

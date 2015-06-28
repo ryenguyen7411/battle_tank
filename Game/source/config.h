@@ -21,7 +21,7 @@
 #define MAX_SPEED			10.0f
 #define MAX_DAMAGE			40.0f
 #define MAX_SHOOT_PER_SEC	10
-#define MAX_TANK			1
+#define MAX_TANK			4
 
 #define OUT_OF_MAP			10000
 
@@ -52,6 +52,13 @@ static const char*	SPR_BULLET_EXPLODE_LEFT		= "image//spr_normal_bullet.png";
 static const char*	SPR_BULLET_EXPLODE_RIGHT	= "image//spr_normal_bullet.png";
 
 
+// MESSAGE
+static const char*	SPR_READY			= "image//spr_ready.png";
+static const char*	SPR_RED_WIN			= "image//spr_red_win.png";
+static const char*	SPR_BLUE_WIN		= "image/spr_blue_win.png";
+static const char*	SPR_DRAW			= "image//spr_draw.png";
+
+
 // FONT
 static const char*	FNT_BLACK			= "font//font_black.png";
 static const char*	FNT_RED				= "font//font_red.png";
@@ -66,9 +73,7 @@ static float		FNT_SIZE_TITLE		= FNT_SIZE_DESIGN;
 
 
 // MAP
-static const char*	MAP_1			= "map//map1.ranf";
-static const char*	MAP_2			= "map//map2.ranf";
-static const char*	MAP_3			= "map//map3.ranf";
+static const char*	MAP				= "map//map_x.ranf";
 
 static const char*	SPR_GRASS		= "image//spr_grass.png";
 static const char*	SPR_WATER		= "image//spr_water.png";

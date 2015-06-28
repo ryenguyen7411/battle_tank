@@ -112,36 +112,6 @@ Quadtree* EntitiesSystem::UpdateQuadtree()
 	return m_quadtree;
 }
 
-std::vector<Entity*> EntitiesSystem::GetReds()
-{
-	std::vector<Entity*> redTeam;
-	for(int i = 0; i < m_entitiesList.size(); i++)
-	{
-		if(m_entitiesList[i] && m_entitiesList[i]->IsTaggedAs("Tank"))
-		{
-			if(static_cast<TankController*>(m_entitiesList[i]->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team == Team::TEAM_RED)
-				redTeam.push_back(m_entitiesList[i]);
-		}
-	}
-
-	return redTeam;
-}
-
-std::vector<Entity*> EntitiesSystem::GetBlues()
-{
-	std::vector<Entity*> blueTeam;
-	for(int i = 0; i < m_entitiesList.size(); i++)
-	{
-		if(m_entitiesList[i] && m_entitiesList[i]->IsTaggedAs("Tank"))
-		{
-			if(static_cast<TankController*>(m_entitiesList[i]->GetComponent(CompType::COMP_TANKCONTROLLER))->m_team == Team::TEAM_BLUE)
-				blueTeam.push_back(m_entitiesList[i]);
-		}
-	}
-
-	return blueTeam;
-}
-
 std::vector<Entity*> EntitiesSystem::Retrieve(Rect _rect, Team _team)
 {
 	std::vector<Entity*> retrieveList;

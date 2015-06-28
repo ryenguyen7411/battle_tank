@@ -94,10 +94,10 @@ void Fighting::Execute(Entity* _entity)
 		healthControl->m_health < 0.5 * static_cast<HealthControl*>(detectEnemy->m_targetEnemy->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health &&
 		healthControl->m_health >= 0.25 * static_cast<HealthControl*>(detectEnemy->m_targetEnemy->GetComponent(CompType::COMP_HEALTHCONTROL))->m_health)
 	{
-		if(autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
+		if(autoTankManager->IsInShootRegion(detectEnemy->m_targetEnemy->m_transform->m_position))
 			tankController->m_stateMachine.ChangeState(Fleeing::GetInstance());
 	}
-	else if(!autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
+	else if(!autoTankManager->IsInShootRegion(detectEnemy->m_targetEnemy->m_transform->m_position))
 		tankController->m_stateMachine.ChangeState(Chasing::GetInstance());
 
 	// Fighting
@@ -108,14 +108,12 @@ void Fighting::Execute(Entity* _entity)
 
 		if(autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
 		{
-			if(tankController->m_canShoot && rand() % 100 < 10)
-			{
-				Factory::GetInstance()->CreateBullet(tankController->m_team, _entity->m_transform->m_position, tankController->m_direction,
-					tankController->m_bullet, tankController->m_shootSpeed, tankController->m_shootRange, tankController->m_damage);
-
-				tankController->m_canShoot = false;
-				tankController->m_previousTime = clock();
-			}
+			autoTankManager->Shoot();
+		}
+		else
+		{
+			autoTankManager->SetKeyForDirection(autoTankManager->GetDirectionToEnemy(detectEnemy->m_targetEnemy->m_transform->m_position));
+			autoTankManager->Move();
 		}
 	}
 }
@@ -153,11 +151,11 @@ void Chasing::Execute(Entity* _entity)
 
 	if(!detectEnemy->m_targetEnemy)
 		tankController->m_stateMachine.ChangeState(Roaming::GetInstance());
-	else if(autoTankManager->IsInShootRange(detectEnemy->m_targetEnemy->m_transform->m_position))
+	else if(autoTankManager->IsInShootRegion(detectEnemy->m_targetEnemy->m_transform->m_position))
 		tankController->m_stateMachine.ChangeState(Fighting::GetInstance());
 
 	// Chasing
-	else
+	else if(rand() % 100 < 20)
 	{
 		autoTankManager->SetKeyForDirection(autoTankManager->GetDirectionToEnemy(detectEnemy->m_targetEnemy->m_transform->m_position));
 		autoTankManager->Move();

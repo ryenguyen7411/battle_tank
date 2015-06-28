@@ -21,6 +21,8 @@ public:
 	Image*		m_mapPart[7];
 	Image*		m_item[Item::ITEM_COUNT];
 
+	Image*		m_message[4];
+
 	ResourcesManager();
 	virtual ~ResourcesManager();
 

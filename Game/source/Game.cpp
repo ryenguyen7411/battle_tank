@@ -31,12 +31,11 @@ ErrorCode Game::init(int screenW, int screenH, const char* title)
 
 	srand((unsigned)time(NULL));
 	ResourcesManager::GetInstance()->LoadResources();
-	Map::GetInstance()->ChangeMap(MAP_1);
+	Map::GetInstance()->ChangeMap(MAP, 1);
 
 	Factory::GetInstance()->CreateManager(Team::TEAM_RED);
 	Factory::GetInstance()->CreateManager(Team::TEAM_BLUE);
 
-	m_state = GameState::STATE_PLAY;
 	m_itemTimer = clock();
 	
 	return errCode;
@@ -47,8 +46,12 @@ ErrorCode Game::init(int screenW, int screenH, const char* title)
 // NULL entity will be remove
 void Game::update(float deltaTime)
 {
-	switch(m_state)
+	switch(Map::GetInstance()->m_gameState)
 	{
+		case GameState::STATE_READY:
+			if(GetAsyncKeyState(VK_SPACE))
+				Map::GetInstance()->m_gameState = GameState::STATE_PLAY;
+			break;
 		case GameState::STATE_PLAY:
 		{
 			EntitiesSystem::GetInstance()->UpdateQuadtree();
@@ -75,10 +78,13 @@ void Game::update(float deltaTime)
 			}
 		}
 			break;
-		case GameState::STATE_WIN:
-
-			break;
-		case GameState::STATE_GAME_OVER:
+		case GameState::STATE_RED_WIN:
+		case GameState::STATE_BLUE_WIN:
+		case GameState::STATE_DRAW:
+			if(GetAsyncKeyState(VK_SPACE))
+				Map::GetInstance()->ChangeMap(MAP, Map::GetInstance()->m_currentMap);
+			if(GetAsyncKeyState(VK_RETURN))
+				Map::GetInstance()->ChangeMap(MAP, Map::GetInstance()->m_currentMap + 1);
 			break;
 	}
 	
@@ -104,11 +110,19 @@ void Game::render(Graphics* g)
 
 	Map::GetInstance()->Draw(g);	// Bullet will be behind map - Fix later
 
-	switch(m_state)
+	switch(Map::GetInstance()->m_gameState)
 	{
-		case GameState::STATE_WIN:
+		case GameState::STATE_READY:
+			g->drawImage(ResourcesManager::GetInstance()->m_message[0], Rect(44, 172, 512, 256));
 			break;
-		case GameState::STATE_GAME_OVER:
+		case GameState::STATE_RED_WIN:
+			g->drawImage(ResourcesManager::GetInstance()->m_message[1], Rect(44, 172, 512, 256));
+			break;
+		case GameState::STATE_BLUE_WIN:
+			g->drawImage(ResourcesManager::GetInstance()->m_message[2], Rect(44, 172, 512, 256));
+			break;
+		case GameState::STATE_DRAW:
+			g->drawImage(ResourcesManager::GetInstance()->m_message[3], Rect(44, 172, 512, 256));
 			break;
 	}
 }

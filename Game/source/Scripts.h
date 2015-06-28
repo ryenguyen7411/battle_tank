@@ -170,6 +170,7 @@ public:
 	virtual void	Update();
 
 	void			Move();
+	void			Shoot();
 	void			ChangeDirection();
 
 	KeyCode			GetNextRandomKey();
@@ -178,6 +179,7 @@ public:
 	Direction		GetDirectionAwayFromEnemy(Vec3 _targetPosition);
 
 	bool			IsInShootRange(Vec3 _targetPosition);
+	bool			IsInShootRegion(Vec3 _targetPosition);
 	void			SetKeyForDirection(Direction _direction);
 };
 #pragma endregion
