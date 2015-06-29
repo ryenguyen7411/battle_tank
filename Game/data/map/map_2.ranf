@@ -27,12 +27,12 @@ tileheight=32
 [TeamRed]
 tanktype_1=10
 tanktype_2=3
-tanktype_3=5
+tanktype_3=7
 
 [TeamBlue]
 tanktype_1=10
 tanktype_2=3
-tanktype_3=5
+tanktype_3=7
 
 [Collider]
 collider=1,2,3,1,3

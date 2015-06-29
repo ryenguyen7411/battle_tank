@@ -84,7 +84,16 @@ void Game::update(float deltaTime)
 			if(GetAsyncKeyState(VK_SPACE))
 				Map::GetInstance()->ChangeMap(MAP, Map::GetInstance()->m_currentMap);
 			if(GetAsyncKeyState(VK_RETURN))
+			{
 				Map::GetInstance()->ChangeMap(MAP, Map::GetInstance()->m_currentMap + 1);
+				std::vector<Entity*>* entitiesList = &EntitiesSystem::GetInstance()->m_entitiesList;
+				for(int i = 0; i < entitiesList->size(); i++)
+				{
+					if(entitiesList->at(i) && entitiesList->at(i)->IsTaggedAs(TAG_ITEM))
+						EntitiesSystem::GetInstance()->Remove(entitiesList->at(i));
+				}
+				m_itemTimer = 0;
+			}
 			break;
 	}
 	

@@ -25,12 +25,12 @@ tileheight=32
 1,1,0,0,0,0,0,0,3,3,0,0,0,0,0,0,1,1
 
 [TeamRed]
-tanktype_1=16
+tanktype_1=10
 tanktype_2=5
 tanktype_3=5
 
 [TeamBlue]
-tanktype_1=16
+tanktype_1=10
 tanktype_2=5
 tanktype_3=5
 
