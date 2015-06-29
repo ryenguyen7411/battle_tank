@@ -177,11 +177,10 @@ void TankController::Update()
 		if(m_baseEntity->m_transform->m_position.x < 12 || m_baseEntity->m_transform->m_position.x > 600 ||
 			m_baseEntity->m_transform->m_position.y < 12 || m_baseEntity->m_transform->m_position.y > 600)
 		{
-			if(tankController->m_team == Team::TEAM_RED)
+			if(m_team == Team::TEAM_RED)
 				m_baseEntity->m_transform->m_position = Map::GetInstance()->m_redDefaultLocation[rand() % 4];
 			else
 				m_baseEntity->m_transform->m_position = Map::GetInstance()->m_blueDefaultLocation[rand() % 4];
-
 		}
 	}
 	else if(m_control == Control::CTRL_WSAD)
