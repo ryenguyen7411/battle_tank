@@ -21,7 +21,7 @@
 #define MAX_SPEED			15.0f
 #define MAX_DAMAGE			80.0f
 #define MAX_SHOOT_PER_SEC	10
-#define MAX_TANK			4
+#define MAX_TANK			10
 
 #define OUT_OF_MAP			10000
 

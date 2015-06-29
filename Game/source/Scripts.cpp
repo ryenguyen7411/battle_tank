@@ -580,7 +580,7 @@ void DetectEnemy::Update()
 {
 	std::vector<Entity*> enemyList;
 	Rect radar;
-	radar.width = radar.height = 2 * static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_shootRange;
+	radar.width = radar.height = 2.0f / 3 * static_cast<TankController*>(m_baseEntity->GetComponent(CompType::COMP_TANKCONTROLLER))->m_shootRange;
 	radar.x = m_baseEntity->m_transform->m_position.x - radar.width / 2;
 	radar.y = m_baseEntity->m_transform->m_position.y - radar.height / 2;
 
@@ -740,6 +740,16 @@ void AutoTankManager::Move()
 
 		m_baseEntity->m_animator->m_currentFrame = 3;
 		m_baseEntity->m_renderer->m_sprite = m_baseEntity->m_animator->m_frameList[m_baseEntity->m_animator->m_currentFrame];
+	}
+
+	if(m_baseEntity->m_transform->m_position.x < 12 || m_baseEntity->m_transform->m_position.x > 600 ||
+		m_baseEntity->m_transform->m_position.y < 12 || m_baseEntity->m_transform->m_position.y > 600)
+	{
+		if(tankController->m_team == Team::TEAM_RED)
+			m_baseEntity->m_transform->m_position = Map::GetInstance()->m_redDefaultLocation[rand() % 4];
+		else
+			m_baseEntity->m_transform->m_position = Map::GetInstance()->m_blueDefaultLocation[rand() % 4];
+		
 	}
 }
 
