@@ -77,6 +77,9 @@ void ResourcesManager::LoadResources()
 		m_item[i]->loadImage();
 	}
 
+	m_cloak = new Image(SPR_CLOAK);
+	m_cloak->loadImage();
+
 
 	m_message[0] = new Image(SPR_READY);
 	m_message[1] = new Image(SPR_RED_WIN);
@@ -127,6 +130,9 @@ void ResourcesManager::Release()
 		m_item[i]->unloadImage();
 		SAFE_DEL(m_item[i]);
 	}
+
+	m_cloak->unloadImage();
+	SAFE_DEL(m_cloak);
 
 	for(int i = 0; i < 4; i++)
 	{

@@ -248,9 +248,23 @@ void Collider2D::Update()
 							Map::GetInstance()->m_teamBlue[tankController->m_tank]++;
 						break;
 					case Item::ITEM_INVISIBLE:
+					{
 						tankController->m_invisible = true;
 						tankController->m_timer = clock();
 						tankController->m_expTime = 10.0f;
+
+						if(!m_baseEntity->m_transform->m_childList.back()->m_baseEntity->IsTaggedAs(TAG_CLOAK))
+						{
+							Entity* cloak = new Entity();
+							cloak->SetTag(TAG_CLOAK);
+
+							Renderer* renderer = new Renderer(ResourcesManager::GetInstance()->m_cloak);
+							cloak->AddComponent(renderer);
+							cloak->m_transform->SetParent(m_baseEntity->m_transform);
+
+							EntitiesSystem::GetInstance()->m_entitiesList.push_back(cloak);
+						}
+					}
 						break;
 					case Item::ITEM_BULLET:
 						tankController->m_shootPerSec += 2;

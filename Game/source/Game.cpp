@@ -73,7 +73,7 @@ void Game::update(float deltaTime)
 
 			if(1.0f * (clock() - m_itemTimer) / CLOCKS_PER_SEC >= ITEM_TIME)
 			{
-				Factory::GetInstance()->CreateItem(Item(rand() % Item::ITEM_COUNT));
+				Factory::GetInstance()->CreateItem(/*Item(rand() % Item::ITEM_COUNT)*/Item::ITEM_INVISIBLE);
 				m_itemTimer = clock();
 			}
 		}

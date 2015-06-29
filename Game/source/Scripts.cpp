@@ -173,6 +173,16 @@ void TankController::Update()
 				m_previousTime = clock();
 			}
 		}
+
+		if(m_baseEntity->m_transform->m_position.x < 12 || m_baseEntity->m_transform->m_position.x > 600 ||
+			m_baseEntity->m_transform->m_position.y < 12 || m_baseEntity->m_transform->m_position.y > 600)
+		{
+			if(tankController->m_team == Team::TEAM_RED)
+				m_baseEntity->m_transform->m_position = Map::GetInstance()->m_redDefaultLocation[rand() % 4];
+			else
+				m_baseEntity->m_transform->m_position = Map::GetInstance()->m_blueDefaultLocation[rand() % 4];
+
+		}
 	}
 	else if(m_control == Control::CTRL_WSAD)
 	{
@@ -186,7 +196,19 @@ void TankController::Update()
 	if(m_invisible)
 	{
 		if(1.0f * (clock() - m_timer) / CLOCKS_PER_SEC >= m_expTime)
+		{
 			m_invisible = false;
+			
+			for(int i = 0; i < m_baseEntity->m_transform->m_childList.size(); i++)
+			{
+				if(m_baseEntity->m_transform->m_childList[i]->m_baseEntity->IsTaggedAs(TAG_CLOAK))
+				{
+					EntitiesSystem::GetInstance()->Remove(m_baseEntity->m_transform->m_childList[i]->m_baseEntity);
+					m_baseEntity->m_transform->m_childList.pop_back();
+					m_baseEntity->m_transform->m_childCount--;
+				}
+			}
+		}
 	}
 
 	if(1.0f * (clock() - m_previousTime) / CLOCKS_PER_SEC >= 1.0f / m_shootPerSec)
@@ -437,10 +459,7 @@ void Manager::Update()
 		if(m_team == Team::TEAM_RED)
 		{
 			if(!Map::GetInstance()->m_teamRed[0] && !Map::GetInstance()->m_teamRed[1] && !Map::GetInstance()->m_teamRed[2])
-			{
-				Map::GetInstance()->m_gameState = GameState::STATE_BLUE_WIN;
-				return;
-			}
+				break;
 
 			if(!m_teamRed[i])
 			{
@@ -449,6 +468,7 @@ void Manager::Update()
 					int iTeamRed = rand() % 3;
 					if(Map::GetInstance()->m_teamRed[iTeamRed])
 					{
+#ifdef PLAYER
 						if(!m_player)
 						{
 							m_teamRed[i] = Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(), CTRL_ARROW, RandomTank(iTeamRed));
@@ -456,6 +476,7 @@ void Manager::Update()
 							Map::GetInstance()->m_teamRed[iTeamRed]--;
 						}
 						else
+#endif
 						{
 							m_teamRed[i] = Factory::GetInstance()->CreateTank(Team::TEAM_RED, Vec3(), CTRL_AUTO, RandomTank(iTeamRed));
 							Map::GetInstance()->m_teamRed[iTeamRed]--;
@@ -469,10 +490,7 @@ void Manager::Update()
 		else
 		{
 			if(!Map::GetInstance()->m_teamBlue[0] && !Map::GetInstance()->m_teamBlue[1] && !Map::GetInstance()->m_teamBlue[2])
-			{
-				Map::GetInstance()->m_gameState = GameState::STATE_RED_WIN;
-				return;
-			}
+				break;
 
 			if(!m_teamBlue[i])
 			{
@@ -488,6 +506,29 @@ void Manager::Update()
 				}
 			}
 		}
+	}
+
+	int numberOfTankLeft = 0;
+	for(int i = 0; i < MAX_TANK; i++)
+	{
+		if(m_team == Team::TEAM_RED)
+		{
+			if(m_teamRed[i])
+				numberOfTankLeft++;
+		}
+		else
+		{
+			if(m_teamBlue[i])
+				numberOfTankLeft++;
+		}
+	}
+
+	if(numberOfTankLeft == 0)
+	{
+		if(m_team == Team::TEAM_RED)
+			Map::GetInstance()->m_gameState = GameState::STATE_BLUE_WIN;
+		else
+			Map::GetInstance()->m_gameState = GameState::STATE_RED_WIN;
 	}
 }
 
@@ -618,9 +659,6 @@ void DetectEnemy::Update()
 	{
 		m_targetEnemy = NULL;
 	}
-
-	if(m_targetEnemy && !m_targetEnemy->IsTaggedAs(TAG_TANK))
-		m_targetEnemy = NULL;
 }
 #pragma endregion
 
@@ -918,28 +956,28 @@ Direction AutoTankManager::GetDirectionToEnemy(Vec3 _targetPosition)
 		Vec3(bound.x + bound.width / 2, bound.y - tankController->m_speed, 0))) < 2 || nextMapValue[0] >= 4)
 	{
 		canMove[0] = 1;
-		distance[0] = abs(bound.x + bound.width / 2 - _targetPosition.x) + abs(bound.y - tankController->m_speed - _targetPosition.y);
+		distance[0] = abs(m_baseEntity->m_transform->m_position.x - _targetPosition.x) + abs(m_baseEntity->m_transform->m_position.y - tankController->m_speed - _targetPosition.y);
 		deltaDistance[0] = abs(abs(m_baseEntity->m_transform->m_position.x - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y - tankController->m_speed - _targetPosition.y));
 	}
 	if(nextMapValue[1] = Map::GetInstance()->GetMapValue(Map::GetInstance()->GetMapPosition(
 		Vec3(bound.x + bound.width / 2, bound.y + bound.height + tankController->m_speed, 0))) < 2 || nextMapValue[1] >= 4)
 	{
 		canMove[1] = 1;
-		distance[1] = abs(bound.x + bound.width / 2 - _targetPosition.x) + abs(bound.y + bound.height + tankController->m_speed - _targetPosition.y);
+		distance[1] = abs(m_baseEntity->m_transform->m_position.x - _targetPosition.x) + abs(m_baseEntity->m_transform->m_position.y + tankController->m_speed - _targetPosition.y);
 		deltaDistance[1] = abs(abs(m_baseEntity->m_transform->m_position.x - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y + tankController->m_speed - _targetPosition.y));
 	}
 	if(nextMapValue[2] = Map::GetInstance()->GetMapValue(Map::GetInstance()->GetMapPosition(
 		Vec3(bound.x - tankController->m_speed, bound.y + bound.height / 2, 0))) < 2 || nextMapValue[2] >= 4)
 	{
 		canMove[2] = 1;
-		distance[2] = abs(bound.x - tankController->m_speed - _targetPosition.x) + abs(bound.y + bound.height / 2 - tankController->m_speed - _targetPosition.y);
+		distance[2] = abs(m_baseEntity->m_transform->m_position.x - tankController->m_speed - _targetPosition.x) + abs(m_baseEntity->m_transform->m_position.y - _targetPosition.y);
 		deltaDistance[2] = abs(abs(m_baseEntity->m_transform->m_position.x - tankController->m_speed - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y - _targetPosition.y));
 	}
 	if(nextMapValue[3] = Map::GetInstance()->GetMapValue(Map::GetInstance()->GetMapPosition(
 		Vec3(bound.x + bound.width + tankController->m_speed, bound.y + bound.height / 2, 0))) < 2 || nextMapValue[3] >= 4)
 	{
 		canMove[3] = 1;
-		distance[3] = abs(bound.x + bound.width + tankController->m_speed - _targetPosition.x) + abs(bound.y + bound.height / 2 - _targetPosition.y);
+		distance[3] = abs(m_baseEntity->m_transform->m_position.x + tankController->m_speed - _targetPosition.x) + abs(m_baseEntity->m_transform->m_position.y - _targetPosition.y);
 		deltaDistance[3] = abs(abs(m_baseEntity->m_transform->m_position.x + tankController->m_speed - _targetPosition.x) - abs(m_baseEntity->m_transform->m_position.y - _targetPosition.y));
 	}
 	

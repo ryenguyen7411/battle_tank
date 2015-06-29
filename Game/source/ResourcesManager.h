@@ -10,6 +10,7 @@ public:
 	Image*		m_tank1[4];
 	Image*		m_tank2[4];
 	Image*		m_tank3[4];
+
 	Image*		m_bulletNormal;
 	Image*		m_bulletExplode[4];
 
@@ -20,6 +21,7 @@ public:
 
 	Image*		m_mapPart[7];
 	Image*		m_item[Item::ITEM_COUNT];
+	Image*		m_cloak;
 
 	Image*		m_message[4];
 

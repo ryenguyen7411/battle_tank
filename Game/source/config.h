@@ -21,9 +21,11 @@
 #define MAX_SPEED			15.0f
 #define MAX_DAMAGE			80.0f
 #define MAX_SHOOT_PER_SEC	10
-#define MAX_TANK			10
+#define MAX_TANK			4
 
 #define OUT_OF_MAP			10000
+
+#define PLAYER
 
 
 // TANK
@@ -91,6 +93,7 @@ static const char*	SPR_ITEM_DAMAGE		= "image//spr_item_damage.png";
 static const char*	SPR_ITEM_TANK		= "image//spr_item_tank.png";
 static const char*	SPR_ITEM_INVI		= "image//spr_item_invisible.png";
 static const char*	SPR_ITEM_BULLET		= "image//spr_item_bullet.png";
+static const char*	SPR_CLOAK			= "image//spr_cloak.png";
 
 
 // TAG
@@ -105,6 +108,6 @@ static const char*	TAG_SCREENCOLLIDER	= "ScreenCollider";
 static const char*	TAG_TEAMMANAGER		= "TeamManager";
 static const char*	TAG_UITEXT			= "UiText";
 static const char*	TAG_ITEM			= "Item";
-
+static const char*	TAG_CLOAK			= "Cloak";
 
 #endif
