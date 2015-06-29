@@ -81,7 +81,7 @@ void Game::update(float deltaTime)
 		case GameState::STATE_RED_WIN:
 		case GameState::STATE_BLUE_WIN:
 		case GameState::STATE_DRAW:
-			if(GetAsyncKeyState(VK_SPACE))
+			if(GetAsyncKeyState(VK_TAB))
 				Map::GetInstance()->ChangeMap(MAP, Map::GetInstance()->m_currentMap);
 			if(GetAsyncKeyState(VK_RETURN))
 			{
